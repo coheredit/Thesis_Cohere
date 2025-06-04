@@ -1,0 +1,230 @@
+/* === Global Styles === */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Playfair Display", serif;
+  background: #fdfaf4; /* Soft beige */
+}
+
+/* === Header === */
+.header-image {
+  width: 100%;
+  height: 90px;
+  background: url("../assets/background_picture.jpeg") no-repeat center center/cover;
+}
+
+/* === Navbar === */
+.navbar {
+  display: flex;
+  justify-content: center;
+  background: #fff;
+  padding: 15px 0;
+  border-bottom: 2px solid #ccc;
+}
+
+.navbar ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 30px;
+}
+
+.navbar li {
+  display: inline;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #333;
+  font-size: 17px;
+  font-weight: 600;
+  padding: 6px 12px;
+  transition: 0.2s ease-in-out;
+}
+
+.navbar a:hover,
+.navbar a.active {
+  color: #007b3d;
+  border-bottom: 2px solid #007b3d;
+}
+
+/* === Layout Container === */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* === Reservation Form === */
+.reservation-container {
+  width: 50%;
+}
+
+.reservation-container h2 {
+  margin-bottom: 30px;
+  color: #2b2b2b;
+  font-size: 22px;
+}
+
+/* === Form Styling (Updated) === */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-group span {
+  color: red;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 75%;
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #007b3d;
+  box-shadow: 0 0 5px rgba(0, 123, 61, 0.25);
+  outline: none;
+}
+
+.form-group textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.form-group button {
+  width: 75%;
+  padding: 10px;
+  background: #007b3d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.form-group button:hover {
+  background: #28a745;
+}
+
+/* === Calendar === */
+.calendar-container {
+  width: 350px;
+  padding: 20px;
+  background: #fefefe;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.calendar-header button {
+  background: #e0e0e0;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.calendar-header button:hover {
+  background: #c5c5c5;
+}
+
+#calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  padding-top: 10px;
+}
+
+.calendar-day {
+  padding: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.calendar-day:hover {
+  background-color: #f0f0f0;
+}
+
+.day-header {
+  font-weight: bold;
+  background: #f2f2f2;
+}
+
+.empty {
+  background: none;
+  border: none;
+}
+
+/* Calendar Status Colors */
+.calendar-day[data-status="free"] {
+  background: #28a745;
+  color: white;
+}
+
+.calendar-day[data-status="full"] {
+  background: #ffc107;
+  color: black;
+}
+
+.calendar-day[data-status="closed"] {
+  background: #dc3545;
+  color: white;
+}
+
+/* === Responsive === */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .reservation-container,
+  .calendar-container {
+    width: 100%;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .form-group button {
+    width: 100%;
+  }
+}
