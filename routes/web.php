@@ -61,50 +61,40 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 
-// Patron route group
 Route::prefix('patron')->name('patron.')->group(function () {
-    // GET: Patron home
     Route::get('/home', function () {
-        return view('patron.p_home'); // corresponds to p_home.blade.php
-    })->name('home');
+        return view('patron.p_home');
+    })->name('p_home');
 
-    // GET: FAQ page
     Route::get('/faq', function () {
-        return view('patron.faq'); // corresponds to faq.blade.php
+        return view('patron.faq');
     })->name('faq');
 
-    // GET: Show feedback form
     Route::get('/feedback', function () {
-        return view('patron.feedback'); // corresponds to feedback.blade.php
-    })->name('feedback.form');
+        return view('patron.feedback');
+    })->name('feedback');
 
-    // GET: Show manual reservation form
-    Route::get('/mreserve', function () {
-        return view('patron.p_mreserve'); // corresponds to p_mreserve.blade.php
-    })->name('reserve.form');
+    Route::get('/p_mreserve', function () {
+        return view('patron.p_mreserve');
+    })->name('p_mreserve');
 
-    // GET: Payment form (client-side only)
     Route::get('/payment', function () {
-        return view('patron.p_payment'); // corresponds to p_payment.blade.php
-    })->name('payment');
+        return view('patron.p_payment');
+    })->name('p_payment');
 
-    // GET: View reservation form
     Route::get('/vreserve', function () {
-        return view('patron.p_vreserve'); // corresponds to p_vreserve.blade.php
-    })->name('view.form');
+        return view('patron.p_vreserve');
+    })->name('p_vreserve');
 
-    // POST: Process view reservation
     Route::post('/vreserve', function (Request $request) {
         // Handle view reservation logic here
-    })->name('view.submit');
+    })->name('p_vreserve.submit');
 
-    // POST: Handle feedback submission
     Route::post('/feedback', function (Request $request) {
         // Handle feedback logic here
     })->name('feedback.submit');
 
-    // POST: Handle manual reservation submission
     Route::post('/mreserve', function (Request $request) {
         // Handle reservation logic here
-    })->name('reserve.submit');
+    })->name('p_mreserve.submit');
 });

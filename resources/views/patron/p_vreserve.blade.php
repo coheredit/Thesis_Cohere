@@ -9,7 +9,7 @@
 @section('content')
 <div class="reservation-container">
     <h2>View Your Reservation</h2>
-    <form method="POST" action="{{ route('patron.view.submit') }}">
+    <form method="POST" action="{{ route('patron.p_vreserve') }}">
         @csrf
 
         <div class="form-group">

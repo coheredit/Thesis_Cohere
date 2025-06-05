@@ -3,30 +3,35 @@
 @section('title', 'Patron Home')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('style/p_home.css') }}">
+    @vite('resources/css/p_home.css')
 @endpush
 
 @section('content')
-    <section class="home-hero">
-        <h1>Welcome to Villa Salud Catering!</h1>
-        <p>Your go-to destination for elegant events and hassle-free reservations.</p>
-        <a href="{{ route('patron.reserve') }}" class="btn">Book Now</a>
-    </section>
+    <div class="banner-container">
+        <div class="banner">
+            Welcome to Villa Salud Catering! Your go-to destination for elegant events and hassle-free reservations.
+        </div>
+    </div>
 
-    <section class="features">
-        <div class="feature">
-            <h2>Make a Reservation</h2>
-            <p>Book your event with ease in just a few clicks.</p>
+    <div class="packages">
+        <div class="package-card">
+            <img src="{{ asset('assets/theme1.jpg') }}" alt="Theme 1">
+            <h3>Make a Reservation</h3>
+            <a href="{{ route('patron.p_mreserve') }}" class="btn">Book Now</a>
         </div>
-        <div class="feature">
-            <h2>Track Your Booking</h2>
-            <p>Stay updated with your reservation status anytime.</p>
+
+        <div class="package-card">
+            <img src="{{ asset('assets/theme2.jpg') }}" alt="Theme 2">
+            <h3>Track Your Booking</h3>
+            <a href="{{ route('patron.p_vreserve') }}" class="btn">View Status</a>
         </div>
-        <div class="feature">
-            <h2>Secure Payments</h2>
-            <p>Pay securely with multiple payment options available.</p>
+
+        <div class="package-card">
+            <img src="{{ asset('assets/theme3.jpg') }}" alt="Theme 3">
+            <h3>Secure Payments</h3>
+            <a href="{{ route('patron.p_payment') }}" class="btn">Pay Now</a>
         </div>
-    </section>
+    </div>
 @endsection
 
 @push('scripts')

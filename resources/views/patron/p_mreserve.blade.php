@@ -9,7 +9,7 @@
 @section('content')
 <div class="reservation-container">
     <h2>Reserve Your Event</h2>
-    <form method="POST" action="{{ route('patron.reserve.submit') }}">
+    <form method="POST" action="{{ route('patron.p_mreserve') }}">
         @csrf
 
         <div class="form-group">
