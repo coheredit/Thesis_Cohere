@@ -3,12 +3,13 @@
 @section('title', 'View Reservation')
 
 @push('styles')
-    <link rel="stylesheet" href="{{ asset('style/p_view_reservation.css') }}">
+    @vite('resources/css/p_vreserve.css')
 @endpush
 
 @section('content')
 <div class="reservation-container">
-    <h2>View Your Reservation</h2>
+    <h2>Reservation Form</h2>
+    <p>To view your reservation form, please enter your Appointment Code and Email Address, then click "View Details."</p>
     <form method="POST" action="{{ route('patron.p_vreserve') }}">
         @csrf
 
@@ -22,9 +23,10 @@
             <input type="email" id="email" name="email" required />
         </div>
 
-        <button type="submit">View Details</button>
+        <button type="submit" class="view-details">View Details</button>
     </form>
 </div>
+
 @endsection
 
 @push('scripts')
