@@ -12,24 +12,25 @@
 </section>
 
 {{-- Package Cards --}}
-<section class="packages row g-2" id="packagesContainer">
+<section class="packages row" id="packagesContainer">
     @foreach([
         ['name' => 'Baptism Package', 'img' => 'baptism_package.jpg'],
         ['name' => 'Debut Package', 'img' => 'debut_package.jpg'],
         ['name' => 'Wedding Package', 'img' => 'wedding_package.jpg'],
         ['name' => 'Kiddie Package', 'img' => 'kiddie_package.jpg'],
     ] as $pkg)
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="package-card" data-package="{{ $pkg['name'] }}">
-            <img src="{{ asset('images/' . $pkg['img']) }}" alt="{{ $pkg['name'] }}">
-            <h3>{{ $pkg['name'] }}</h3>
-            <div class="package-details"></div>
-            <div class="buttons d-flex flex-column gap-2">
-                <button class="btn btn-outline-success btn-sm view-package view-btn">View Package</button>
-                <button class="btn btn-warning btn-sm text-white edit-btn">Edit</button>
-                <button class="btn btn-danger btn-sm delete-btn">Delete</button>
-            </div>
+    <div class="package-wrapper">
+    <div class="package-card" data-package="{{ $pkg['name'] }}">
+        <img src="{{ asset('images/' . $pkg['img']) }}" alt="{{ $pkg['name'] }}">
+        <h3>{{ $pkg['name'] }}</h3>
+        <div class="package-details"></div>
+        <div class="buttons d-flex flex-column gap-2">
+            <button class="btn btn-outline-success btn-sm view-package view-btn">View Package</button>
+            <button class="btn btn-warning btn-sm text-white edit-btn">Edit</button>
+            <button class="btn btn-danger btn-sm delete-btn">Delete</button>
         </div>
+    </div>
+</div>
     </div>
     @endforeach
 </section>
