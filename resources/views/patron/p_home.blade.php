@@ -14,29 +14,22 @@
     </div>
 
     <div class="packages">
-        <div class="package-card">
-            <img src="{{ asset('images/baptism_package.jpg') }}" alt="Theme 1">
-            <h3>Make a Reservation</h3>
-            <a href="{{ route('patron.p_mreserve') }}" class="btn">Book Now</a>
-        </div>
+        @foreach ($packages as $package)
+            <div class="package-card">
+                <img src="{{ asset('storage/' . $package->image_path) }}" alt="{{ $package->name }}">
+                <h3>{{ $package->name }}</h3>
+                <p>{{ $package->description }}</p>
+                <strong>₱{{ number_format($package->price, 2) }}</strong>
+            </div>
+        @endforeach
 
-        <div class="package-card">
-            <img src="{{ asset('images/debut_package.jpg') }}" alt="Theme 2">
-            <h3>Track Your Booking</h3>
-            <a href="{{ route('patron.p_vreserve') }}" class="btn">View Status</a>
-        </div>
-
-        <div class="package-card">
-            <img src="{{ asset('images/wedding_package.jpg') }}" alt="Theme 3">
-            <h3>Secure Payments</h3>
-            <a href="{{ route('patron.p_payment') }}" class="btn">Pay Now</a>
-        </div>
+        {{-- Optionally, fallback if no packages exist --}}
+        @if($packages->isEmpty())
+            <p style="text-align: center;">No packages available at the moment. Please check back later.</p>
+        @endif
     </div>
-
-    
 @endsection
 
 @push('scripts')
     @vite('resources/js/p_homepage.js')
 @endpush
-
