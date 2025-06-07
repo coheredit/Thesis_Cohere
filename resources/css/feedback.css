@@ -9,8 +9,14 @@ body {
 /* === Header === */
 .header-image {
   width: 100%;
+  height: auto;
+}
+
+.header-banner {
+  width: 100%;
   height: 90px;
-  background: url("../assets/background_picture.jpeg") no-repeat center center/cover;
+  object-fit: cover;
+  display: block;
 }
 
 /* === Navbar === */
@@ -129,19 +135,22 @@ button:hover {
 /* === Map Section === */
 .right-section iframe {
   width: 100%;
-  height: 800px;
+  height: 750px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-/* === Contact Info === */
 .contact-info {
-  margin-top: 20px;
+  margin-top: 40px;
+  padding: 15px;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
-  padding: 10px;
 }
 
-.contact-info h3 {
+.contact-info h2 {
   color: #007b3d;
 }
 
