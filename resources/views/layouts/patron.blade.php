@@ -17,14 +17,45 @@
 
 
     <nav class="navbar">
-        <ul>
-            <li><a href="{{ route('patron.p_home') }}">Home</a></li>
-            <li><a href="{{ route('patron.p_mreserve') }}">Make Reservation</a></li>
-            <li><a href="{{ route('patron.p_vreserve') }}">View Reservation</a></li>
-            <li><a href="{{ route('patron.p_payment') }}">Payment Order</a></li>
-            <li><a href="{{ route('patron.faq') }}">FAQs</a></li>
-            <li><a href="{{ route('patron.feedback') }}">Feedback</a></li>
+        <ul class="navbar">
+            <li>
+                <a href="{{ route('patron.p_home') }}"
+                    class="{{ request()->routeIs('patron.p_home') ? 'active' : '' }}">
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('patron.p_mreserve') }}"
+                    class="{{ request()->routeIs('patron.p_mreserve') ? 'active' : '' }}">
+                    Make Reservation
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('patron.p_vreserve') }}"
+                    class="{{ request()->routeIs('patron.p_vreserve') ? 'active' : '' }}">
+                    View Reservation
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('patron.p_payment') }}"
+                    class="{{ request()->routeIs('patron.p_payment') ? 'active' : '' }}">
+                    Payment Order
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('patron.faq') }}"
+                    class="{{ request()->routeIs('patron.faq') ? 'active' : '' }}">
+                    FAQs
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('patron.feedback') }}"
+                    class="{{ request()->routeIs('patron.feedback') ? 'active' : '' }}">
+                    Feedback
+                </a>
+            </li>
         </ul>
+
     </nav>
 
     <main class="patron-content">
