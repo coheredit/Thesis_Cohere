@@ -1,6 +1,6 @@
 @extends('layouts.patron')
 
-@section('title', 'Payment Order')
+@section('title', 'User Info Form')
 
 @push('styles')
     @vite('resources/css/payment_order.css')
@@ -10,13 +10,13 @@
 <div class="payment-wrapper">
     <div class="payment-container">
         <div class="payment-header">
-            <h2>Payment Order</h2>
-            <p>Complete your order by selecting a payment method</p>
+            <h2>User Information</h2>
+            <p>Please enter your details below</p>
         </div>
 
-        <h3 class="form-title">Fill out your order details</h3>
+        <h3 class="form-title">Fill out your details</h3>
 
-        <form method="POST" action="{{ route('patron.p_payment') }}">
+        <form method="POST" action="#">
             @csrf
 
             <div class="form-group">
@@ -30,31 +30,14 @@
             </div>
 
             <div class="form-group">
-                <label for="amount">Payment Amount (PHP):</label>
-                <input type="number" id="amount" name="amount" placeholder="Minimum amount: PHP 5,000" required>
+                <label for="photo">Upload Photo:</label>
+                <input type="file" id="photo" name="photo" accept="image/*">
             </div>
 
-            <div class="form-group">
-                <label for="downpayment">Downpayment Option:</label>
-                <select id="downpayment" name="downpayment">
-                    <option>Full Payment (100%)</option>
-                    <option>50% Downpayment</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="method">Payment Method:</label>
-                <select id="method" name="method">
-                    <option>GCash</option>
-                    <option>Bank Transfer</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn-submit">Generate Payment Order</button>
+            <button type="submit" class="btn-submit">Submit</button>
         </form>
     </div>
 </div>
-
 @endsection
 
 @push('scripts')
