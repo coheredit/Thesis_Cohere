@@ -29,9 +29,11 @@
         <div class="contact-info">
             <h2>Visit Us</h2>
             <p>Address: #229 MLQ St., Purok 3, New Lower Bicutan, Taguig City, Metro Manila, Philippines</p>
-            <p>Email: villasaludcateringservices@gmail.com</p>
-            <p>Landline: (02) 837-6801 / (02) 856-2181</p>
-            <p>Mobile: +63 906 223 6120</p>
+            <p>Email: <a href="villasaludcateringservices@gmail.com" target="_blank">villasaludcateringservices@gmail.com</a></p>
+            <p>Facebook: <a href="https://www.facebook.com/villasaludcatering" target="_blank">Villa Salud Catering Services</a></p>
+            <p>Instagram: <a href="https://www.instagram.com/villasaludcatering?igsh=aDQ0bGQ4eW9pczlv" target="_blank">@villasaludcatering (IG)</a></p>
+            <p>Office Tel. No. 8837-68-01/8776-68-67│Tele-fax: 8856-21-81</p>
+            <p>Office CP No.0928-492-5493│0906-223-6120</p>
         </div>
     </div>
 
