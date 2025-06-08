@@ -11,7 +11,7 @@
 
     {{-- Header image from the correct design --}}
     <header class="header-image">
-        <img src="{{ asset('images/background_picture.jpeg') }}" alt="Header" class="header-img">
+        <img src="{{ asset('images/background_picture.jpeg') }}" alt="Villa Salud Header" class="header-banner">
     </header>
 
     {{-- Navbar from the correct design with route-aware active class --}}

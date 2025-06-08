@@ -12,6 +12,10 @@ class Package extends Model
         'name',
         'description',
         'price',
-        'image_path',
+        'images', // use this instead of image_path
+    ];
+
+    protected $casts = [
+        'images' => 'array', // decode JSON automatically
     ];
 }

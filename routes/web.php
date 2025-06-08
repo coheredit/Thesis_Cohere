@@ -10,6 +10,7 @@ use App\Http\Controllers\Patron\PaymentController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AdminHomeController;
 use App\Http\Controllers\Admin\InquiryController;
+use App\Http\Controllers\Admin\PackageController;
 
 Route::name('patron.')->group(function () {
     // Home page
@@ -44,6 +45,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Admin Home/Dashboard
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
+
+    // Packages
+    Route::get('/packages', [PackageController::class, 'index']);
+    Route::post('/packages', [PackageController::class, 'store']);
+    Route::put('/packages/{package}', [PackageController::class, 'update']);
+    Route::delete('/packages/{package}', [PackageController::class, 'destroy']);
 
     Route::view('/inquiry', 'admin.a_inquiry')->name('inquiry');
     Route::view('/reserve', 'admin.a_reserve')->name('reserve');
