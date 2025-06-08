@@ -50,7 +50,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/packages', [PackageController::class, 'index']);
     Route::post('/packages', [PackageController::class, 'store']);
     Route::put('/packages/{package}', [PackageController::class, 'update']);
-    Route::delete('/packages/{package}', [PackageController::class, 'destroy']);
+    Route::delete('/admin/packages/{package}', [PackageController::class, 'destroy'])->name('admin.packages.destroy');
+    Route::post('/admin/packages', [PackageController::class, 'store'])->name('admin.packages.store');
 
     Route::view('/inquiry', 'admin.a_inquiry')->name('inquiry');
     Route::view('/reserve', 'admin.a_reserve')->name('reserve');

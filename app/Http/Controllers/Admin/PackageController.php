@@ -15,15 +15,26 @@ class PackageController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric',
+            'image' => 'required|image|max:2048', // 2MB max
+        ]);
+
+        // Store uploaded image
+        $imagePath = $request->file('image')->store('packages', 'public');
+
         $package = Package::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'images' => $request->images, // handled by cast
+            'images' => ["/storage/$imagePath"], // store as JSON array
         ]);
 
         return response()->json($package);
     }
+
 
     public function update(Request $request, Package $package)
     {
