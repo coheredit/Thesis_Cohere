@@ -6,7 +6,10 @@ use App\Http\Controllers\Patron\FeedbackController;
 use App\Http\Controllers\Patron\ReservationController;
 use App\Http\Controllers\Patron\PaymentController;
 
+
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\AdminHomeController;
+use App\Http\Controllers\Admin\InquiryController;
 
 Route::name('patron.')->group(function () {
     // Home page
@@ -30,13 +33,18 @@ Route::name('patron.')->group(function () {
     Route::view('/guidelines', 'patron.guidelines')->name('guidelines');
 });
 
-
-
 Route::prefix('admin')->name('admin.')->group(function () {
+    // Signup
     Route::get('/signup', [AuthController::class, 'showSignupForm'])->name('signup');
     Route::post('/signup', [AuthController::class, 'signup'])->name('signup.submit');
 
     // Login
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+
+    // Admin Home/Dashboard
+    Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
+
+    //Inquiry
+    Route::get('/inquiry', [InquiryController::class, 'index'])->name('inquiry');
 });

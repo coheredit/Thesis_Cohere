@@ -106,6 +106,7 @@
     </div>
 </div>
 
+<div class="page-wrapper">
 <div class="container">
     <div class="reservation-container">
         <h2>Manual Reservation Form</h2>
@@ -213,6 +214,7 @@
             </div>
         </form>
     </div>
+</div>
 </div>
 @endsection
 

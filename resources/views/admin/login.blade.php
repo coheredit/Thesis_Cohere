@@ -43,7 +43,7 @@
                 </p>
             </div>
         </div>
-        <div class="right-section"></div>
+        <<div class="right-section" style="background: url('{{ asset('images/background_picture.jpeg') }}') no-repeat center center / cover;"></div>
     </div>
     @vite('resources/js/login.js')
 

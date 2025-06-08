@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;
 
 class AuthController extends Controller
@@ -36,8 +37,6 @@ class AuthController extends Controller
             'l_name' => $request->l_name,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'time_created' => now(),
-            'time_updated' => now(),
         ]);
 
         return redirect()->route('admin.login')->with('success', 'Account created successfully. Please log in.');
@@ -46,5 +45,19 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         return view('admin.login');
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        $admin = Admin::where('email', $credentials['email'])->first();
+
+        if ($admin && Hash::check($credentials['password'], $admin->password)) {
+            Auth::login($admin); // optionally use guard here
+            return redirect()->route('admin.home');
+        }
+
+        return redirect()->back()->with('error', 'Invalid email or password.');
     }
 }
