@@ -57,7 +57,7 @@
             <li>
                 <a href="{{ route('patron.guidelines') }}"
                     class="{{ request()->routeIs('patron.guidelines') ? 'active' : '' }}">
-                    Feedback
+                    Guidelines
                 </a>
             </li>
         </ul>

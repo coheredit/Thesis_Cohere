@@ -21,4 +21,7 @@ Route::name('patron.')->group(function () {
     Route::view('/p_vreserve', 'patron.p_vreserve')->name('p_vreserve');
     Route::view('/p_payment', 'patron.p_payment')->name('p_payment');
     Route::view('/faq', 'patron.faq')->name('faq');
+
+    // Guidelines page
+    Route::view('/guidelines', 'patron.guidelines')->name('guidelines');
 });
