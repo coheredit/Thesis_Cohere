@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,6 +9,7 @@
 </head>
 
 <body>
+    <div class="wrapper">
     <div class="container">
         <div class="left-section">
             <h1>Welcome to Villa Salud Catering System</h1>
@@ -16,15 +18,15 @@
                 <h2>Create Account!</h2>
 
                 @if(session('error'))
-                    <div class="error-message" style="color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
-                        {{ session('error') }}
-                    </div>
+                <div class="error-message" style="color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    {{ session('error') }}
+                </div>
                 @endif
 
                 @if(session('success'))
-                    <div class="success-message" style="color: #28a745; background: #d4edda; border: 1px solid #c3e6cb; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
-                        {{ session('success') }}
-                    </div>
+                <div class="success-message" style="color: #28a745; background: #d4edda; border: 1px solid #c3e6cb; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    {{ session('success') }}
+                </div>
                 @endif
 
                 <form method="POST" action="{{ route('admin.signup.submit') }}" id="signupForm">
@@ -56,8 +58,12 @@
                 </p>
             </div>
         </div>
-        <div class="right-section"></div>
+        <div class="right-section">
+            <img src="{{ asset('images/background_picture.jpeg') }}" alt="Background" class="right-img">
+        </div>
+    </div>
     </div>
     @vite('resources/js/signup.js')
 </body>
+
 </html>
