@@ -19,7 +19,7 @@
         <ul>
             <li><a href="{{ route('admin.home') }}" class="{{ request()->is('admin/home') ? 'active' : '' }}">Home</a></li>
             <li><a href="{{ route('admin.inquiry') }}" class="{{ request()->is('admin/inquiry') ? 'active' : '' }}">Inquiries</a></li>
-            <li><a href="{{ route('admin.reserve') }}" class="{{ request()->is('admin/reserver') ? 'active' : '' }}">Reservations</a></li>
+            <li><a href="{{ route('admin.reserve') }}" class="{{ request()->is('admin/reserve') ? 'active' : '' }}">Reservations</a></li>
             <li><a href="{{ route('admin.report') }}" class="{{ request()->is('admin/report') ? 'active' : '' }}">Reports</a></li>
             <li><a href="{{ route('admin.profile') }}" class="{{ request()->is('admin/profile') ? 'active' : '' }}">Admin Profile</a></li>
         </ul>

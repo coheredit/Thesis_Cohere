@@ -3,17 +3,17 @@
 @section('title', 'Manual Reservation')
 
 @push('styles')
-    @vite('resources/css/p_mreserve.css')
+@vite('resources/css/p_mreserve.css')
 @endpush
 
 @section('content')
 <!-- Agreement Modal -->
 <div id="agreementModal" class="modal agreement-modal">
     <div class="guidelines-content" id="agreementContent">
-        <h2>Reservation Guidelines</h2>
+        <h3>Reservation Guidelines</h3>
 
         <section>
-            <h2>Reservation & Payment Policy</h2>
+            <h3>Reservation & Payment Policy</h3>
             <p><strong>Reservation Fee:</strong> Php 25,000.00 (Venue & Catering) / Php 5,000.00 (Swimming Pool). Non-refundable, non-consumable, non-transferable.</p>
             <p><strong>Payment Terms:</strong> 50% due one month prior, full payment due two weeks before event. Cash or approved credit cards only. Bank deposits must be advised via fax/email.</p>
             <p><strong>Cancellation Charges:</strong></p>
@@ -26,7 +26,7 @@
         </section>
 
         <section>
-            <h2>Catering Coverage & Policies</h2>
+            <h3>Catering Coverage & Policies</h3>
             <ul>
                 <li>Excess guests will be charged accordingly.</li>
                 <li>Up to 10% reduction in guest count allowed 2 weeks before the event.</li>
@@ -39,7 +39,7 @@
         </section>
 
         <section>
-            <h2>Function Set-up</h2>
+            <h3>Function Set-up</h3>
             <ul>
                 <li>Villa Salud controls layout and equipment setup.</li>
                 <li>No attachment to walls, ceilings, or floors is allowed.</li>
@@ -49,7 +49,7 @@
         </section>
 
         <section>
-            <h2>Safety and Security</h2>
+            <h3>Safety and Security</h3>
             <ul>
                 <li>No flammable or explosive materials allowed.</li>
                 <li>No fireworks allowed during events.</li>
@@ -59,7 +59,7 @@
         </section>
 
         <section>
-            <h2>Swimming Pool Rental Terms</h2>
+            <h3>Swimming Pool Rental Terms</h3>
             <p><strong>Rates:</strong> AM (7:00 AM – 5:00 PM): Php 8,500 | PM (7:00 PM – 5:00 AM): Php 9,500</p>
             <p><strong>Standard Amenities:</strong> 50 monobloc chairs, 6 tables, buffet table, griller</p>
             <p><strong>Extra Charges:</strong></p>
@@ -80,7 +80,7 @@
         </section>
 
         <section>
-            <h2>Guidelines for Outside Caterers & Suppliers</h2>
+            <h3>Guidelines for Outside Caterers & Suppliers</h3>
             <ul>
                 <li>No removal or rearranging of Villa Salud’s equipment without permission.</li>
                 <li>Cooking is not allowed. Food warming only.</li>
@@ -96,7 +96,7 @@
         </section>
 
         <section>
-            <h2>Force Majeure Clause</h2>
+            <h3>Force Majeure Clause</h3>
             <p>Villa Salud is not liable for performance failures caused by uncontrollable events (e.g., natural disasters, war, governmental regulations). In such cases, Villa Salud reserves the right to provide alternative accommodations or menus as fulfillment of the contract.</p>
         </section>
 
@@ -107,117 +107,104 @@
 </div>
 
 <div class="page-wrapper">
-<div class="container">
-    <div class="reservation-container">
-        <h2>Manual Reservation Form</h2>
+    <div class="container">
+        <div class="reservation-container">
+            <h2>Manual Reservation Form</h2>
 
-        @if(session('success'))
+            @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+            @endif
 
- <form method="POST" action="{{ route('patron.p_mreserve.submit') }}">
-            @csrf
+            <form method="POST" action="{{ route('patron.p_mreserve.submit') }}">
+                @csrf
 
-            {{-- Name --}}
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" name="name" id="name" value="{{ old('name') }}" required>
+                {{-- Name --}}
+                <div class="form-group">
+                    <label for="name">Name:<span>*</span></label>
+                    <input type="text" id="name" name="name" placeholder="First Name, Last Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:<span>*</span></label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact">Contact Number:<span>*</span></label>
+                    <input type="tel" id="contact" name="contact_number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Date:<span>*</span></label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="time">Time:<span>*</span></label>
+                    <input type="time" id="time" name="time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="venue">Venue:<span>*</span></label>
+                    <select id="venue" name="venue">
+                        <option value="Villa I">Villa I</option>
+                        <option value="Villa II">Villa II</option>
+                        <option value="Elizabeth Hall">Elizabeth Hall</option>
+                        <option value="Private Pool">Private Pool</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    <input type="text" id="otherVenue" name="other_venue" style="display: none;" placeholder="Please specify">
+                </div>
+
+                <div class="form-group">
+                    <label for="event_type">Event Type:<span>*</span></label>
+                    <select id="event_type" name="event_type">
+                        <option value="Baptismal Package">Baptismal Package</option>
+                        <option value="Birthday Package">Birthday Package</option>
+                        <option value="Debut Package">Debut Package</option>
+                        <option value="Kiddie Package">Kiddie Package</option>
+                        <option value="Wedding Package">Wedding Package</option>
+                        <option value="Standard Package">Standard Package</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    <input type="text" id="otherEventType" name="other_event_type" style="display: none;" placeholder="Please specify">
+                </div>
+
+                <div class="form-group">
+                    <label for="theme_motif">Theme/Motif:<span>*</span></label>
+                    <select id="theme_motif" name="theme_motif">
+                        <option value="Floral">Floral</option>
+                        <option value="Rustic">Rustic</option>
+                        <option value="Elegant">Elegant</option>
+                        <option value="Beach">Beach</option>
+                        <option value="Modern">Modern</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    <input type="text" id="otherThemeMotif" name="other_theme_motif" style="display: none;" placeholder="Please specify">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Other Request:<span>*</span></label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit">Submit Inquiry</button>
+                </div>
+            </form>
+        </div>
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <button id="prevMonth">◀</button>
+                <span id="month-year"></span>
+                <button id="nextMonth">▶</button>
             </div>
-
-            {{-- Email --}}
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}" required>
-            </div>
-
-            {{-- Contact --}}
-            <div class="form-group">
-                <label for="contact_number">Contact Number</label>
-                <input type="text" name="contact_number" id="contact_number" value="{{ old('contact_number') }}" required>
-            </div>
-
-            {{-- Event Type (ENUM) --}}
-            <div class="form-group">
-                <label for="event_type">Event Type</label>
-                <select name="event_type" id="event_type" required>
-                    <option disabled selected value="">Select Event Type</option>
-                    <option value="Baptismal Package">Baptismal Package</option>
-                    <option value="Birthday Package">Birthday Package</option>
-                    <option value="Debut Package">Debut Package</option>
-                    <option value="Wedding Package">Wedding Package</option>
-                </select>
-            </div>
-
-            {{-- Other Event Type --}}
-            <div class="form-group">
-                <label for="other_event_type">Other Event Type (optional)</label>
-                <input type="text" name="other_event_type" id="other_event_type" value="{{ old('other_event_type') }}">
-            </div>
-
-            {{-- Theme (ENUM) --}}
-            <div class="form-group">
-                <label for="theme_motif">Theme / Motif</label>
-                <select name="theme_motif" id="theme_motif" required>
-                    <option disabled selected value="">Select Theme</option>
-                    <option value="Floral">Floral</option>
-                    <option value="Rustic">Rustic</option>
-                    <option value="Elegant">Elegant</option>
-                    <option value="Beach">Beach</option>
-                    <option value="Modern">Modern</option>
-                </select>
-            </div>
-
-            {{-- Other Theme --}}
-            <div class="form-group">
-                <label for="other_theme_motif">Other Theme (optional)</label>
-                <input type="text" name="other_theme_motif" id="other_theme_motif" value="{{ old('other_theme_motif') }}">
-            </div>
-
-            {{-- Venue (ENUM) --}}
-            <div class="form-group">
-                <label for="venue">Venue</label>
-                <select name="venue" id="venue" required>
-                    <option disabled selected value="">Select Venue</option>
-                    <option value="Villa I">Villa I</option>
-                    <option value="Villa II">Villa II</option>
-                    <option value="Elizabeth Hall">Elizabeth Hall</option>
-                    <option value="Private Venue">Private Venue</option>
-                </select>
-            </div>
-
-            {{-- Other Venue --}}
-            <div class="form-group">
-                <label for="other_venue">Other Venue (optional)</label>
-                <input type="text" name="other_venue" id="other_venue" value="{{ old('other_venue') }}">
-            </div>
-
-            {{-- Date --}}
-            <div class="form-group">
-                <label for="date">Event Date</label>
-                <input type="date" name="date" id="date" value="{{ old('date') }}" required>
-            </div>
-
-            {{-- Time --}}
-            <div class="form-group">
-                <label for="time">Event Time</label>
-                <input type="time" name="time" id="time" value="{{ old('time') }}" required>
-            </div>
-
-            {{-- Message --}}
-            <div class="form-group">
-                <label for="message">Message</label>
-                <textarea name="message" id="message" rows="4" required>{{ old('message') }}</textarea>
-            </div>
-
-            <div class="form-group">
-                <button type="submit">Submit Reservation</button>
-            </div>
-        </form>
+            <div id="calendar"></div>
+        </div>
     </div>
-</div>
 </div>
 @endsection
 
 @push('scripts')
-    @vite('resources/js/p_mreserve.js')
+@vite('resources/js/p_mreserve.js')
 @endpush
