@@ -3,7 +3,7 @@
 @section('title', 'View Inquiries')
 
 @push('styles')
-    @vite('resources/css/a_inquiry.css')
+@vite('resources/css/a_inquiry.css')
 @endpush
 
 @section('content')
@@ -47,38 +47,37 @@
                         </thead>
                         <tbody>
                             @foreach ($inquiries as $index => $inquiry)
-                                <tr data-inquiry-id="{{ $inquiry->id }}">
-                                    <td>
-                                        {{ optional($inquiry->patron)->first_name ?? 'N/A' }}
-                                        {{ optional($inquiry->patron)->last_name ?? '' }}
-                                    </td>
-                                    <td>{{ optional($inquiry->patron)->email ?? '-' }}</td>
-                                    <td>{{ optional($inquiry->patron)->contact_number ?? '-' }}</td>
-                                    <td>{{ $inquiry->event_time ?? '-' }}</td>
-                                    <td>{{ $inquiry->event_date ?? '-' }}</td>
-                                    <td>{{ $inquiry->venue ?? '-' }}</td>
-                                    <td>{{ $inquiry->event_type ?? '-' }}</td>
-                                    <td>{{ $inquiry->theme_motif ?? '-' }}</td>
-                                    <td>{{ $inquiry->other_event_type ?? '-' }}</td>
-                                    <td>{{ $inquiry->other_theme_motif ?? '-' }}</td>
-                                    <td>{{ $inquiry->other_venue ?? '-' }}</td>
-                                    <td>
-                                        <select class="status-dropdown" data-index="{{ $index }}">
-                                            <option value="" {{ $inquiry->status == null ? 'selected hidden' : 'hidden' }}>Set Status</option>
-                                            <option value="Pending" {{ $inquiry->status === 'Pending' ? 'selected' : '' }}>Pending</option>
-                                            <option value="In Progress" {{ $inquiry->status === 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                            <option value="Completed" {{ $inquiry->status === 'Completed' ? 'selected' : '' }}>Completed</option>
-                                            <option value="Cancelled" {{ $inquiry->status === 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                        </select>
-                                    </td>
-                                    <td>patron</td>
-                                    <td>
-                                        <button class="reply-btn" data-index="{{ $index }}">Reply</button>
-                                        @if ($inquiry->status === 'Completed')
-                                            <button class="undo-btn" data-inquiry-id="{{ $inquiry->id }}">Undo</button>
-                                        @endif
-                                    </td>
-                                </tr>
+                            <tr data-inquiry-id="{{ $inquiry->inquiry_id }}">
+                                <td>
+                                    {{ $inquiry->patron->name ?? 'N/A' }}
+                                </td>
+                                <td>{{ $inquiry->patron->email ?? '-' }}</td>
+                                <td>{{ $inquiry->patron->contact_number ?? '-' }}</td>
+                                <td>{{ $inquiry->time ?? '-' }}</td>
+                                <td>{{ $inquiry->date ?? '-' }}</td>
+                                <td>{{ $inquiry->venue ?? '-' }}</td>
+                                <td>{{ $inquiry->event_type ?? '-' }}</td>
+                                <td>{{ $inquiry->theme_motif ?? '-' }}</td>
+                                <td>{{ $inquiry->other_event_type ?? '-' }}</td>
+                                <td>{{ $inquiry->other_theme_motif ?? '-' }}</td>
+                                <td>{{ $inquiry->other_venue ?? '-' }}</td>
+                                <td>
+                                    <select class="status-dropdown" data-index="{{ $index }}">
+                                        <option value="" {{ $inquiry->status == null ? 'selected hidden' : 'hidden' }}>Set Status</option>
+                                        <option value="Pending" {{ $inquiry->status === 'Pending' ? 'selected' : '' }}>Pending</option>
+                                        <option value="In Progress" {{ $inquiry->status === 'In Progress' ? 'selected' : '' }}>In Progress</option>
+                                        <option value="Completed" {{ $inquiry->status === 'Completed' ? 'selected' : '' }}>Completed</option>
+                                        <option value="Cancelled" {{ $inquiry->status === 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                    </select>
+                                </td>
+                                <td>patron</td>
+                                <td>
+                                    <button class="reply-btn" data-index="{{ $index }}">Reply</button>
+                                    @if ($inquiry->status === 'Completed')
+                                    <button class="undo-btn" data-inquiry-id="{{ $inquiry->inquiry_id }}">Undo</button>
+                                    @endif
+                                </td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -87,7 +86,6 @@
         </main>
     </section>
 
-    <!-- Modal for setting status (optional for now) -->
     <div id="statusModal" class="modal">
         <div class="modal-content">
             <h2>Set Inquiry Status</h2>
@@ -105,5 +103,5 @@
 @endsection
 
 @push('scripts')
-    @vite('resources/js/a_inquiries.js')
+@vite('resources/js/a_inquiries.js')
 @endpush
