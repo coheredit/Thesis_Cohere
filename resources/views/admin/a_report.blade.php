@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <!-- Key Metrics Overview -->
+        <!-- Key Metrics Overview - Forced to Single Row -->
         <div class="metrics-overview">
             <div class="metric-card primary">
                 <div class="metric-icon">

@@ -137,464 +137,435 @@ class DashboardManager {
             const response = await fetch(`fetch_inquiry_data.php?filter=${timeRange}`);
             const data = await response.json();
             
-            // Update inquiry count
-            document.getElementById("total-inquiries").textContent = data.total;
-            
-            // Destroy existing chart
-            if (this.charts.inquiryChart) {
-                this.charts.inquiryChart.destroy();
+            if (data.error) {
+                throw new Error(data.error);
             }
 
-            // Create new chart with professional styling
-            const ctx = document.getElementById("inquiry-sparkline").getContext("2d");
-            this.charts.inquiryChart = new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: "Inquiries",
-                        data: data.counts,
-                        fill: true,
-                        backgroundColor: "rgba(0, 123, 61, 0.1)",
-                        borderColor: "#007b3d",
-                        borderWidth: 3,
-                        tension: 0.4,
-                        pointRadius: 5,
-                        pointHoverRadius: 8,
-                        pointBackgroundColor: "#007b3d",
-                        pointBorderColor: "#fff",
-                        pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            borderColor: '#007b3d',
-                            borderWidth: 1,
-                            cornerRadius: 8,
-                            displayColors: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { 
-                                display: false 
-                            },
-                            ticks: {
-                                color: "#6b7280",
-                                font: { size: 12, weight: '500' }
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: { 
-                                color: "#f1f5f9",
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: "#6b7280",
-                                font: { size: 12, weight: '500' }
-                            }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    }
-                }
-            });
-
-            // Update stats
-            this.updateInquiryStats(data);
-
+            // Update inquiry chart
+            this.updateInquiryChart(data);
+            
+            // Update inquiry summary
+            this.updateInquirySummary(data);
+            
         } catch (error) {
-            console.error("Failed to load inquiry data:", error);
+            console.error('Error fetching inquiry data:', error);
             this.showNotification('Failed to load inquiry data', 'error');
         }
     }
 
-    updateInquiryStats(data) {
-        // Find peak day
-        const maxIndex = data.counts.indexOf(Math.max(...data.counts));
-        const peakDay = data.labels[maxIndex] || 'N/A';
-        document.getElementById("inquiry-peak-day").textContent = peakDay;
+    updateInquiryChart(data) {
+        const ctx = document.getElementById('inquiryChart')?.getContext('2d');
+        if (!ctx) return;
 
-        // Calculate average daily
-        const avgDaily = data.counts.length > 0 ? 
-            (data.counts.reduce((sum, val) => sum + val, 0) / data.counts.length).toFixed(1) : 0;
-        document.getElementById("inquiry-avg-daily").textContent = avgDaily;
-    }
+        // Destroy existing chart if it exists
+        if (this.charts.inquiry) {
+            this.charts.inquiry.destroy();
+        }
 
-    async fetchThemeData(timeRange) {
-        try {
-            const response = await fetch(`fetch_theme_data.php?filter=${timeRange}`);
-            const data = await response.json();
-
-            if (this.charts.themeChart) {
-                this.charts.themeChart.destroy();
-            }
-
-            const ctx = document.getElementById("theme-barchart").getContext("2d");
-            this.charts.themeChart = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: data.themes,
-                    datasets: [{
-                        label: "Usage",
-                        data: data.counts,
-                        backgroundColor: data.themes.map((_, index) => {
-                            const colors = ['#007b3d', '#16a34a', '#22c55e', '#4ade80', '#86efac'];
-                            return colors[index % colors.length];
-                        }),
-                        borderRadius: 8,
-                        borderSkipped: false
-                    }]
+        this.charts.inquiry = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels || [],
+                datasets: [{
+                    label: 'Inquiries',
+                    data: data.data || [],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            borderColor: '#007b3d',
-                            borderWidth: 1,
-                            cornerRadius: 8
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
                         }
                     },
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: {
-                                color: "#6b7280",
-                                font: { size: 11, weight: '500' },
-                                maxRotation: 45
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: { 
-                                color: "#f1f5f9",
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: "#6b7280",
-                                font: { size: 12, weight: '500' }
-                            }
+                    x: {
+                        grid: {
+                            display: false
                         }
                     }
                 }
-            });
-
-            // Update theme stats
-            this.updateThemeStats(data);
-
-        } catch (error) {
-            console.error("Failed to load theme data:", error);
-        }
-    }
-
-    updateThemeStats(data) {
-        // Find most popular theme
-        if (data.themes.length > 0) {
-            const maxIndex = data.counts.indexOf(Math.max(...data.counts));
-            const mostPopular = data.themes[maxIndex] || 'N/A';
-            document.getElementById("most-popular-theme").textContent = mostPopular;
-        }
-        
-        document.getElementById("total-themes").textContent = data.themes.length;
-    }
-
-    async loadReservationChart(filter = 'month') {
-        try {
-            const response = await fetch(`../pages/get_reservation_chart.php?filter=${filter}`);
-            const chartData = await response.json();
-            
-            // Update total reservations
-            const total = chartData.data.reduce((sum, val) => sum + val, 0);
-            document.getElementById("total-reservations").textContent = total;
-
-            if (this.charts.reservationChart) {
-                this.charts.reservationChart.destroy();
             }
-
-            const ctx = document.getElementById("reservation-chart").getContext("2d");
-            this.charts.reservationChart = new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: chartData.labels,
-                    datasets: [{
-                        label: "Reservations",
-                        data: chartData.data,
-                        fill: true,
-                        backgroundColor: "rgba(37, 99, 235, 0.1)",
-                        borderColor: "#2563eb",
-                        borderWidth: 3,
-                        tension: 0.4,
-                        pointRadius: 5,
-                        pointHoverRadius: 8,
-                        pointBackgroundColor: "#2563eb",
-                        pointBorderColor: "#fff",
-                        pointBorderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            borderColor: '#2563eb',
-                            borderWidth: 1,
-                            cornerRadius: 8,
-                            displayColors: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: {
-                                color: "#6b7280",
-                                font: { size: 12, weight: '500' }
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: { 
-                                color: "#f1f5f9",
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: "#6b7280",
-                                font: { size: 12, weight: '500' }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Update reservation stats
-            this.updateReservationStats(chartData);
-
-        } catch (error) {
-            console.error("Failed to load reservation chart:", error);
-        }
+        });
     }
 
-    updateReservationStats(chartData) {
-        // Find best month
-        const maxIndex = chartData.data.indexOf(Math.max(...chartData.data));
-        const bestMonth = chartData.labels[maxIndex] || 'N/A';
-        document.getElementById("reservation-best-month").textContent = bestMonth;
-
-        // Mock growth rate (replace with actual calculation)
-        document.getElementById("reservation-growth").textContent = "+15%";
-    }
-
-    async loadInquiryTypeChart(filter = 'month') {
-        try {
-            const response = await fetch(`../pages/get_inquiry_type_chart.php?filter=${filter}`);
-            const chartData = await response.json();
-
-            if (this.charts.inquiryTypeChart) {
-                this.charts.inquiryTypeChart.destroy();
-            }
-
-            const ctx = document.getElementById("inquiry-type-chart").getContext("2d");
-            this.charts.inquiryTypeChart = new Chart(ctx, {
-                type: "doughnut",
-                data: {
-                    labels: chartData.labels,
-                    datasets: [{
-                        data: chartData.data,
-                        backgroundColor: [
-                            '#dc2626', '#ea580c', '#ca8a04', '#16a34a', 
-                            '#0891b2', '#2563eb', '#7c3aed', '#be185d'
-                        ],
-                        borderWidth: 0,
-                        hoverBorderWidth: 4,
-                        hoverBorderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                font: { size: 12, weight: '500' },
-                                color: '#374151'
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: '#fff',
-                            bodyColor: '#fff',
-                            cornerRadius: 8
-                        }
-                    },
-                    cutout: '60%'
-                }
-            });
-
-            // Update inquiry type stats
-            this.updateInquiryTypeStats(chartData);
-
-        } catch (error) {
-            console.error("Failed to load inquiry type chart:", error);
-        }
-    }
-
-    updateInquiryTypeStats(chartData) {
-        // Find top category
-        if (chartData.labels.length > 0) {
-            const maxIndex = chartData.data.indexOf(Math.max(...chartData.data));
-            const topCategory = chartData.labels[maxIndex] || 'N/A';
-            document.getElementById("top-inquiry-category").textContent = topCategory;
-        }
-
-        // Mock response rate (replace with actual data)
-        document.getElementById("inquiry-response-rate").textContent = "94%";
-    }
-
-    async loadActivityLog() {
-        try {
-            const response = await fetch("fetch_activity_log.php");
-            const logs = await response.json();
-            const container = document.getElementById("activity-log");
-
-            if (logs.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class='bx bx-history'></i>
-                        <p>No recent activity found</p>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = "";
-            logs.forEach(log => {
-                const item = document.createElement("div");
-                item.className = "activity-item";
-
-                const date = new Date(log.time_created);
-                const formattedDate = isNaN(date.getTime()) 
-                    ? "Unknown time" 
-                    : date.toLocaleString();
-
-                item.innerHTML = `
-                    <div class="activity-icon">
-                        <i class='bx bx-user'></i>
-                    </div>
-                    <div class="activity-details">
-                        <strong>${log.admin_name}</strong>: ${log.activity_type}
-                        <span class="timestamp">${formattedDate}</span>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
-
-        } catch (error) {
-            console.error("Error loading activity log:", error);
-            document.getElementById("activity-log").innerHTML = `
-                <div class="error-state">
-                    <i class='bx bx-error'></i>
-                    <p>Error loading activity log</p>
+    updateInquirySummary(data) {
+        const summaryElement = document.getElementById('inquiry-summary');
+        if (summaryElement && data.summary) {
+            summaryElement.innerHTML = `
+                <div class="summary-item">
+                    <span class="label">Total:</span>
+                    <span class="value">${data.summary.total || 0}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Pending:</span>
+                    <span class="value pending">${data.summary.pending || 0}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="label">Completed:</span>
+                    <span class="value completed">${data.summary.completed || 0}</span>
                 </div>
             `;
         }
     }
-}
 
-// Global refresh function
-function refreshDashboard() {
-    if (window.dashboardManager) {
-        window.dashboardManager.updateLastUpdatedTime();
-        window.dashboardManager.loadAllData();
-        window.dashboardManager.showNotification('Dashboard refreshed successfully', 'success');
+    async loadReservationChart(timeRange) {
+        try {
+            const response = await fetch(`../pages/get_reservation_chart.php?filter=${timeRange}`);
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            this.updateReservationChart(data);
+            
+        } catch (error) {
+            console.error('Error loading reservation chart:', error);
+            this.showNotification('Failed to load reservation data', 'error');
+        }
+    }
+
+    updateReservationChart(data) {
+        const ctx = document.getElementById('reservationChart')?.getContext('2d');
+        if (!ctx) return;
+
+        // Destroy existing chart if it exists
+        if (this.charts.reservation) {
+            this.charts.reservation.destroy();
+        }
+
+        this.charts.reservation = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels || [],
+                datasets: [{
+                    label: 'Reservations',
+                    data: data.data || [],
+                    backgroundColor: '#10b981',
+                    borderColor: '#059669',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    async fetchThemeData(timeRange) {
+        try {
+            const response = await fetch(`get_theme_data.php?filter=${timeRange}`);
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            this.updateThemeChart(data);
+            
+        } catch (error) {
+            console.error('Error fetching theme data:', error);
+            this.showNotification('Failed to load theme data', 'error');
+        }
+    }
+
+    updateThemeChart(data) {
+        const ctx = document.getElementById('themeChart')?.getContext('2d');
+        if (!ctx) return;
+
+        // Destroy existing chart if it exists
+        if (this.charts.theme) {
+            this.charts.theme.destroy();
+        }
+
+        this.charts.theme = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: data.labels || [],
+                datasets: [{
+                    data: data.data || [],
+                    backgroundColor: [
+                        '#f59e0b',
+                        '#ef4444',
+                        '#8b5cf6',
+                        '#06b6d4',
+                        '#84cc16',
+                        '#f97316'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    async loadInquiryTypeChart(timeRange) {
+        try {
+            const response = await fetch(`get_inquiry_type_data.php?filter=${timeRange}`);
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            this.updateInquiryTypeChart(data);
+            
+        } catch (error) {
+            console.error('Error loading inquiry type chart:', error);
+            this.showNotification('Failed to load inquiry type data', 'error');
+        }
+    }
+
+    updateInquiryTypeChart(data) {
+        const ctx = document.getElementById('inquiryTypeChart')?.getContext('2d');
+        if (!ctx) return;
+
+        // Destroy existing chart if it exists
+        if (this.charts.inquiryType) {
+            this.charts.inquiryType.destroy();
+        }
+
+        this.charts.inquiryType = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: data.labels || [],
+                datasets: [{
+                    data: data.data || [],
+                    backgroundColor: [
+                        '#3b82f6',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444',
+                        '#8b5cf6',
+                        '#06b6d4'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    async loadActivityLog() {
+        try {
+            const response = await fetch('get_activity_log.php');
+            const data = await response.json();
+            
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            this.updateActivityLog(data.activities || []);
+            
+        } catch (error) {
+            console.error('Error loading activity log:', error);
+            this.showNotification('Failed to load activity log', 'error');
+        }
+    }
+
+    updateActivityLog(activities) {
+        const logContainer = document.getElementById('activity-log');
+        if (!logContainer) return;
+
+        if (activities.length === 0) {
+            logContainer.innerHTML = '<div class="no-activities">No recent activities</div>';
+            return;
+        }
+
+        const activityHtml = activities.map(activity => `
+            <div class="activity-item">
+                <div class="activity-icon">
+                    <i class='bx ${this.getActivityIcon(activity.type)}'></i>
+                </div>
+                <div class="activity-content">
+                    <div class="activity-text">${activity.description}</div>
+                    <div class="activity-time">${this.formatTime(activity.timestamp)}</div>
+                </div>
+            </div>
+        `).join('');
+
+        logContainer.innerHTML = activityHtml;
+    }
+
+    getActivityIcon(type) {
+        const icons = {
+            'inquiry': 'bx-message-detail',
+            'reservation': 'bx-calendar-check',
+            'user': 'bx-user',
+            'system': 'bx-cog',
+            'default': 'bx-info-circle'
+        };
+        return icons[type] || icons.default;
+    }
+
+    formatTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diff = now - date;
+        
+        if (diff < 60000) { // Less than 1 minute
+            return 'Just now';
+        } else if (diff < 3600000) { // Less than 1 hour
+            const minutes = Math.floor(diff / 60000);
+            return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        } else if (diff < 86400000) { // Less than 1 day
+            const hours = Math.floor(diff / 3600000);
+            return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        } else {
+            return date.toLocaleDateString();
+        }
+    }
+
+    async refreshDashboard() {
+        if (this.isLoading) return;
+        
+        try {
+            this.showNotification('Refreshing dashboard...', 'info');
+            await this.loadAllData();
+            this.showNotification('Dashboard updated successfully', 'success');
+        } catch (error) {
+            console.error('Error refreshing dashboard:', error);
+            this.showNotification('Failed to refresh dashboard', 'error');
+        }
+    }
+
+    // Export functionality
+    exportData(type, format = 'csv') {
+        const exportButton = document.querySelector(`[data-export="${type}"]`);
+        if (exportButton) {
+            exportButton.classList.add('loading');
+        }
+
+        fetch(`export_data.php?type=${type}&format=${format}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Export failed');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${type}_export_${new Date().toISOString().split('T')[0]}.${format}`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                this.showNotification(`${type} data exported successfully`, 'success');
+            })
+            .catch(error => {
+                console.error('Export error:', error);
+                this.showNotification('Export failed', 'error');
+            })
+            .finally(() => {
+                if (exportButton) {
+                    exportButton.classList.remove('loading');
+                }
+            });
+    }
+
+    // Utility method to handle responsive chart resizing
+    handleResize() {
+        Object.values(this.charts).forEach(chart => {
+            if (chart && typeof chart.resize === 'function') {
+                chart.resize();
+            }
+        });
+    }
+
+    // Cleanup method
+    destroy() {
+        Object.values(this.charts).forEach(chart => {
+            if (chart && typeof chart.destroy === 'function') {
+                chart.destroy();
+            }
+        });
+        this.charts = {};
     }
 }
 
 // Initialize dashboard when DOM is loaded
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', () => {
     window.dashboardManager = new DashboardManager();
+    
+    // Handle window resize for responsive charts
+    window.addEventListener('resize', () => {
+        window.dashboardManager.handleResize();
+    });
+    
+    // Setup export buttons
+    document.querySelectorAll('[data-export]').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const type = e.target.dataset.export;
+            const format = e.target.dataset.format || 'csv';
+            window.dashboardManager.exportData(type, format);
+        });
+    });
 });
 
-// Add notification styles dynamically
-const notificationStyles = `
-    <style>
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            padding: 16px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 10000;
-            animation: slideIn 0.3s ease;
-            min-width: 250px;
-        }
-        
-        .notification.success {
-            border-left: 4px solid #16a34a;
-            color: #16a34a;
-        }
-        
-        .notification.error {
-            border-left: 4px solid #dc2626;
-            color: #dc2626;
-        }
-        
-        .notification.info {
-            border-left: 4px solid #2563eb;
-            color: #2563eb;
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        .empty-state, .error-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            color: #6b7280;
-            text-align: center;
-        }
-        
-        .empty-state i, .error-state i {
-            font-size: 48px;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-    </style>
-`;
-
-document.head.insertAdjacentHTML('beforeend', notificationStyles);
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (window.dashboardManager) {
+        window.dashboardManager.destroy();
+    }
+});
