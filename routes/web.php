@@ -45,6 +45,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Admin Home/Dashboard
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
 
-    //Inquiry
-    Route::get('/inquiry', [InquiryController::class, 'index'])->name('inquiry');
+    Route::view('/inquiry', 'admin.a_inquiry')->name('inquiry');
+    Route::view('/reserve', 'admin.a_reserve')->name('reserve');
+    Route::view('/report', 'admin.a_report')->name('report');
+    Route::view('/profile', 'admin.a_profile')->name('profile');
 });
