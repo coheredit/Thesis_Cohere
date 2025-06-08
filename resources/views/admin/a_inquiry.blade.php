@@ -8,7 +8,6 @@
 
 @section('content')
 <div class="inquiry-content">
-
     <section id="content">
         <nav>
             <h2>View Inquiries</h2>
@@ -21,27 +20,6 @@
                     <p>View and manage customer inquiries.</p>
                 </div>
             </div>
-
-            @php
-                $inquiries = collect([
-                    (object)[
-                        'inquiry_id' => 1,
-                        'full_name' => 'Sample Name',
-                        'email' => 'sample@email.com',
-                        'contact_number' => '1234567890',
-                        'time' => '14:00:00',
-                        'date' => '2025-07-01',
-                        'venue' => 'Sample Venue',
-                        'event_type' => 'Birthday Package',
-                        'theme_motif' => 'Rustic',
-                        'other_event_type' => '',
-                        'other_theme_motif' => '',
-                        'other_venue' => '',
-                        'status' => 'Pending',
-                        'created_by_type' => 'patron'
-                    ]
-                ]);
-            @endphp
 
             <div class="table-data">
                 <div class="order">
@@ -69,18 +47,21 @@
                         </thead>
                         <tbody>
                             @foreach ($inquiries as $index => $inquiry)
-                                <tr data-inquiry-id="{{ $inquiry->inquiry_id }}">
-                                    <td>{{ $inquiry->full_name ?? 'Admin' }}</td>
-                                    <td>{{ $inquiry->email ?? '-' }}</td>
-                                    <td>{{ $inquiry->contact_number ?? '-' }}</td>
-                                    <td>{{ $inquiry->time }}</td>
-                                    <td>{{ $inquiry->date }}</td>
-                                    <td>{{ $inquiry->venue }}</td>
-                                    <td>{{ $inquiry->event_type }}</td>
-                                    <td>{{ $inquiry->theme_motif }}</td>
-                                    <td>{{ $inquiry->other_event_type }}</td>
-                                    <td>{{ $inquiry->other_theme_motif }}</td>
-                                    <td>{{ $inquiry->other_venue }}</td>
+                                <tr data-inquiry-id="{{ $inquiry->id }}">
+                                    <td>
+                                        {{ optional($inquiry->patron)->first_name ?? 'N/A' }}
+                                        {{ optional($inquiry->patron)->last_name ?? '' }}
+                                    </td>
+                                    <td>{{ optional($inquiry->patron)->email ?? '-' }}</td>
+                                    <td>{{ optional($inquiry->patron)->contact_number ?? '-' }}</td>
+                                    <td>{{ $inquiry->event_time ?? '-' }}</td>
+                                    <td>{{ $inquiry->event_date ?? '-' }}</td>
+                                    <td>{{ $inquiry->venue ?? '-' }}</td>
+                                    <td>{{ $inquiry->event_type ?? '-' }}</td>
+                                    <td>{{ $inquiry->theme_motif ?? '-' }}</td>
+                                    <td>{{ $inquiry->other_event_type ?? '-' }}</td>
+                                    <td>{{ $inquiry->other_theme_motif ?? '-' }}</td>
+                                    <td>{{ $inquiry->other_venue ?? '-' }}</td>
                                     <td>
                                         <select class="status-dropdown" data-index="{{ $index }}">
                                             <option value="" {{ $inquiry->status == null ? 'selected hidden' : 'hidden' }}>Set Status</option>
@@ -90,11 +71,11 @@
                                             <option value="Cancelled" {{ $inquiry->status === 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                                         </select>
                                     </td>
-                                    <td>{{ $inquiry->created_by_type ?? 'unknown' }}</td>
+                                    <td>patron</td>
                                     <td>
                                         <button class="reply-btn" data-index="{{ $index }}">Reply</button>
                                         @if ($inquiry->status === 'Completed')
-                                            <button class="undo-btn" data-inquiry-id="{{ $inquiry->inquiry_id }}">Undo</button>
+                                            <button class="undo-btn" data-inquiry-id="{{ $inquiry->id }}">Undo</button>
                                         @endif
                                     </td>
                                 </tr>

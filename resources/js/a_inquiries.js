@@ -87,20 +87,20 @@ function attachEventListeners() {
 function saveStatusToDatabase(selectElement, newStatus) {
   const inquiryId = selectElement.closest("tr").getAttribute("data-inquiry-id");
 
-  fetch("update_inquiry_status.php", {
+  fetch(`/admin/inquiries/${inquiryId}/update-status`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     },
     body: JSON.stringify({
-      inquiry_id: inquiryId,
-      status: newStatus,
+      status: newStatus
     }),
   })
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        console.log("Status updated and logged successfully.");
+        console.log("Status updated successfully.");
       } else {
         console.error("Failed to update status:", data.message);
       }
@@ -109,3 +109,4 @@ function saveStatusToDatabase(selectElement, newStatus) {
       console.error("Error:", error);
     });
 }
+

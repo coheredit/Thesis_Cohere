@@ -44,4 +44,21 @@ class InquiryController extends Controller
 
         return redirect()->route('admin.inquiry')->with('success', 'Inquiry status updated.');
     }
+
+    public function updateStatusAjax(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|string|in:Pending,In Progress,Completed,Cancelled',
+        ]);
+
+        $inquiry = Inquiry::find($id);
+        if (!$inquiry) {
+            return response()->json(['success' => false, 'message' => 'Inquiry not found.'], 404);
+        }
+
+        $inquiry->status = $request->input('status');
+        $inquiry->save();
+
+        return response()->json(['success' => true]);
+    }
 }

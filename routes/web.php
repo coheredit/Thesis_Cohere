@@ -53,7 +53,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/admin/packages/{package}', [PackageController::class, 'destroy'])->name('admin.packages.destroy');
     Route::post('/admin/packages', [PackageController::class, 'store'])->name('admin.packages.store');
 
-    Route::view('/inquiry', 'admin.a_inquiry')->name('inquiry');
+    // Inquiry
+    Route::get('/inquiry', [InquiryController::class, 'index'])->name('inquiry');
+    Route::post('/inquiries/{id}/update-status', [InquiryController::class, 'updateStatusAjax'])->name('inquiries.updateStatus');
+
+
+
     Route::view('/reserve', 'admin.a_reserve')->name('reserve');
     Route::view('/report', 'admin.a_report')->name('report');
     Route::view('/profile', 'admin.a_profile')->name('profile');

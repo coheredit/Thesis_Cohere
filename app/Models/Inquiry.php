@@ -37,6 +37,6 @@ class Inquiry extends Model
 
     public function patron()
     {
-        return $this->belongsTo(Patron::class, 'patron_id');
+        return $this->belongsTo(Patron::class, 'patron_id', 'patron_id');
     }
 }
