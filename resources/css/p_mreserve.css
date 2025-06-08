@@ -1,9 +1,9 @@
-/* === Global Styles === */
 body {
   margin: 0;
   padding: 0;
   font-family: "Playfair Display", serif;
   background: #fdfaf4; /* Soft beige */
+  zoom: 90%;
 }
 
 /* === Header === */
@@ -269,6 +269,7 @@ body {
   color: #333;
   line-height: 1.6;
   position: relative;
+  transform: scale(0.9);
 }
 
 /* Scrollbar styling */

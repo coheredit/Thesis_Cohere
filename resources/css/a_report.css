@@ -4,8 +4,8 @@ body {
   padding: 0;
   background-color: #fdfaf4;
   font-family: 'Poppins', sans-serif;
+  zoom: 90%;
 }
-
 
 /* === Header === */
 .header-image {

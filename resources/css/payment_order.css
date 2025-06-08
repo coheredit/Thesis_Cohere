@@ -3,6 +3,7 @@ body {
   padding: 0;
   font-family: "Playfair Display", serif;
   background: #fdfaf4; /* Soft beige from original code */
+  zoom: 90%;
 }
 
 .header-image {
