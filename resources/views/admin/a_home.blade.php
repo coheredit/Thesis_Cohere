@@ -11,21 +11,26 @@
     </div>
 </section>
 
+{{-- Add New Package Button --}}
+<div class="add-package-container text-center mt-4 mb-4">
+    <button id="addPackageBtn" class="add-package-btn btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#addPackageModal">+ Add New Package</button>
+</div>
+
 {{-- Package Cards --}}
-<section class="packages row" id="packagesContainer">
+<section class="packages-grid" id="packagesContainer">
     @foreach([
         ['name' => 'Baptism Package', 'img' => 'baptism_package.jpg'],
         ['name' => 'Debut Package', 'img' => 'debut_package.jpg'],
         ['name' => 'Wedding Package', 'img' => 'wedding_package.jpg'],
         ['name' => 'Kiddie Package', 'img' => 'kiddie_package.jpg'],
     ] as $pkg)
-    <div class="package-wrapper">
-        <div class="package-card" data-package="{{ $pkg['name'] }}">
-            <img src="{{ asset('images/' . $pkg['img']) }}" alt="{{ $pkg['name'] }}">
+    <div class="package-card" data-package="{{ $pkg['name'] }}">
+        <img src="{{ asset('images/' . $pkg['img']) }}" alt="{{ $pkg['name'] }}">
+        <div class="package-content">
             <h3>{{ $pkg['name'] }}</h3>
             <div class="package-details"></div>
-            <div class="buttons d-flex flex-column gap-2">
-                <button class="btn btn-outline-success btn-sm view-package view-btn" data-bs-toggle="modal" data-bs-target="#packageModal">View Package</button>
+            <div class="buttons-row">
+                <button class="btn btn-success btn-sm view-package" data-bs-toggle="modal" data-bs-target="#packageModal">View Package</button>
                 <button class="btn btn-warning btn-sm text-white edit-btn" data-bs-toggle="modal" data-bs-target="#editPackageModal">Edit</button>
                 <button class="btn btn-danger btn-sm delete-btn">Delete</button>
             </div>
@@ -34,21 +39,48 @@
     @endforeach
 </section>
 
-{{-- Add New Package Button --}}
-<div class="add-package-container text-end mt-4">
-    <button id="addPackageBtn" class="add-package-btn btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#addPackageModal">+ Add New Package</button>
-</div>
-
 {{-- View Package Modal --}}
 <div class="modal fade" id="packageModal" tabindex="-1" aria-labelledby="packageModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="packageModalLabel">Package Title</h5>
+                <h5 class="modal-title" id="packageModalLabel">Package Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p id="packageModalDescription">Description goes here...</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <img id="modalMainImage" src="" alt="Package Image" class="img-fluid rounded mb-3">
+                        <div class="row">
+                            <div class="col-4">
+                                <img id="modalImg1" src="" alt="Image 1" class="img-fluid rounded thumbnail-img">
+                            </div>
+                            <div class="col-4">
+                                <img id="modalImg2" src="" alt="Image 2" class="img-fluid rounded thumbnail-img">
+                            </div>
+                            <div class="col-4">
+                                <img id="modalImg3" src="" alt="Image 3" class="img-fluid rounded thumbnail-img">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 id="modalTitle">Package Name</h4>
+                        <p id="modalDescription">Package description will appear here...</p>
+                        <h5 class="text-success" id="modalPrice">₱0.00</h5>
+                        <div class="package-inclusions mt-3">
+                            <h6>Package Inclusions:</h6>
+                            <ul id="modalInclusions">
+                                <li>Professional coordination</li>
+                                <li>Event setup and decoration</li>
+                                <li>Photography coverage</li>
+                                <li>Catering service</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -62,10 +94,32 @@
                 <h5 class="modal-title" id="editPackageModalLabel">Edit Package</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <input type="text" id="editPackageModalName" class="form-control mb-2" placeholder="Package Name">
-                <textarea id="editPackageModalDescription" class="form-control" rows="4" placeholder="Description"></textarea>
-            </div>
+            <form id="editPackageForm">
+                <div class="modal-body">
+                    <input type="hidden" id="editPackageId">
+                    <div class="mb-3">
+                        <label class="form-label">Package Name</label>
+                        <input type="text" id="editPackageName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea id="editPackageDescription" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Price</label>
+                        <input type="number" id="editPackagePrice" class="form-control" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Current Main Image</label>
+                        <img id="currentMainImage" src="" alt="Current Image" class="img-fluid rounded mb-2" style="max-height: 150px;">
+                        <input type="file" id="editPackageImage" class="form-control" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -78,9 +132,50 @@
                 <h5 class="modal-title" id="addPackageModalLabel">Add New Package</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form id="addPackageForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Package Name</label>
+                        <input type="text" id="newPackageName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea id="newPackageDescription" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Price</label>
+                        <input type="number" id="newPackagePrice" class="form-control" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Package Image</label>
+                        <input type="file" id="newPackageImage" class="form-control" accept="image/*">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add Package</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Success Modal --}}
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Success</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <div class="modal-body">
-                <input type="text" id="newPackageName" class="form-control mb-2" placeholder="Package Name">
-                <textarea id="newPackageDescription" class="form-control" rows="4" placeholder="Description"></textarea>
+                <div class="text-center">
+                    <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                    <p id="successMessage">Operation completed successfully!</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
