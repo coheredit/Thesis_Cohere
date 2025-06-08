@@ -54,6 +54,12 @@
                     Feedback
                 </a>
             </li>
+            <li>
+                <a href="{{ route('patron.guidelines') }}"
+                    class="{{ request()->routeIs('patron.guidelines') ? 'active' : '' }}">
+                    Feedback
+                </a>
+            </li>
         </ul>
 
     </nav>
