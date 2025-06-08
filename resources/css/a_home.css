@@ -58,7 +58,7 @@ body {
 .banner-container {
   display: flex;
   justify-content: center;
-  padding: 16px 0;
+  padding: 20px 0;
 }
 
 .banner {
@@ -102,12 +102,14 @@ body {
 
 /* === Packages Grid Layout === */
 .packages-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: stretch;
+  overflow-x: auto;
+  gap: 20px;
   padding: 20px 40px;
-  max-width: 1200px;
-  margin: 0 auto;
+  flex-wrap: nowrap !important;
 }
 
 /* === Package Cards === */

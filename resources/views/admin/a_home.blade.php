@@ -6,15 +6,11 @@
 
 {{-- Promotional Banner --}}
 <section class="banner-container">
-    <div class="banner text-center text-white fw-bold py-2">
+    <div class="banner text-center text-white fw-bold py-4">
         ✨ Big events, bigger savings! Grab our special deals for weddings, birthdays, and more! ✨
     </div>
 </section>
 
-{{-- Add New Package Button --}}
-<div class="add-package-container text-center mt-4 mb-4">
-    <button id="addPackageBtn" class="add-package-btn btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#addPackageModal">+ Add New Package</button>
-</div>
 
 {{-- Package Cards --}}
 <section class="packages-grid" id="packagesContainer">
@@ -38,6 +34,11 @@
     </div>
     @endforeach
 </section>
+
+{{-- Add New Package Button --}}
+<div class="add-package-container text-center mt-4 mb-4">
+    <button id="addPackageBtn" class="add-package-btn btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#addPackageModal">+ Add New Package</button>
+</div>
 
 {{-- View Package Modal --}}
 <div class="modal fade" id="packageModal" tabindex="-1" aria-labelledby="packageModalLabel" aria-hidden="true">

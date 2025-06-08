@@ -42,6 +42,50 @@
         </div>
     </div>
 
+     <div class="admin-history">
+      <div class="history-header">
+        <h3>Admin History</h3>
+        <div class="history-controls">
+          <select id="history-filter" class="filter-select">
+            <option value="all">All Activities</option>
+            <option value="login">Login/Logout</option>
+            <option value="profile">Profile Changes</option>
+            <option value="system">System Actions</option>
+          </select>
+          <button class="clear-history-btn" id="clear-history-btn">Clear History</button>
+        </div>
+      </div>
+      
+      <div class="history-stats">
+        <div class="stat-item">
+          <span class="stat-number" id="total-activities">0</span>
+          <span class="stat-label">Total Activities</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="today-activities">0</span>
+          <span class="stat-label">Today</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="this-week-activities">0</span>
+          <span class="stat-label">This Week</span>
+        </div>
+      </div>
+
+      <div class="history-list-container">
+        <ul id="history-list" class="history-list">
+          <!-- History items will be populated by JavaScript -->
+        </ul>
+        <div id="history-empty" class="history-empty" style="display: none;">
+          <div class="empty-icon">📝</div>
+          <p>No history available</p>
+        </div>
+      </div>
+      
+      <div class="history-pagination">
+        <button id="load-more-btn" class="load-more-btn" style="display: none;">Load More</button>
+      </div>
+    </div>
+
     {{-- History, Stats, Modals (no changes needed) --}}
     {{-- ... KEEP ALL MODAL + HISTORY HTML UNCHANGED ... --}}
 </section>
