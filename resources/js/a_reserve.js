@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Form logic for 'Others' fields
     const venueSelect = document.getElementById("venue");
     const otherVenueInput = document.getElementById("otherVenue");
 
@@ -10,10 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const form = document.querySelector("form");
 
-    // Function to toggle visibility of "Other" input fields
     function toggleOtherInput(selectElement, otherInput, otherValue) {
         if (selectElement && otherInput) {
-            otherInput.style.display = selectElement.value === otherValue ? "block" : "none";
+            otherInput.style.display =
+                selectElement.value === otherValue ? "block" : "none";
             otherInput.required = selectElement.value === otherValue;
             if (selectElement.value !== otherValue) {
                 otherInput.value = "";
@@ -21,44 +22,63 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Attach event listeners
-    if (venueSelect) venueSelect.addEventListener("change", () => toggleOtherInput(venueSelect, otherVenueInput, "Others"));
-    if (themeMotifSelect) themeMotifSelect.addEventListener("change", () => toggleOtherInput(themeMotifSelect, otherThemeMotifInput, "Others"));
-    if (eventTypeSelect) eventTypeSelect.addEventListener("change", () => toggleOtherInput(eventTypeSelect, otherEventTypeInput, "Others"));
+    if (venueSelect)
+        venueSelect.addEventListener("change", () =>
+            toggleOtherInput(venueSelect, otherVenueInput, "Others")
+        );
+    if (themeMotifSelect)
+        themeMotifSelect.addEventListener("change", () =>
+            toggleOtherInput(themeMotifSelect, otherThemeMotifInput, "Others")
+        );
+    if (eventTypeSelect)
+        eventTypeSelect.addEventListener("change", () =>
+            toggleOtherInput(eventTypeSelect, otherEventTypeInput, "Others")
+        );
 
-    // Ensure correct fields are visible when page loads
     toggleOtherInput(venueSelect, otherVenueInput, "Others");
     toggleOtherInput(themeMotifSelect, otherThemeMotifInput, "Others");
     toggleOtherInput(eventTypeSelect, otherEventTypeInput, "Others");
 
-    // Form validation before submission
     form.addEventListener("submit", function (event) {
         const name = document.getElementById("name")?.value.trim();
         const email = document.getElementById("email")?.value.trim();
         const contact = document.getElementById("contact")?.value.trim();
         const message = document.getElementById("message")?.value.trim();
         const date = document.getElementById("date")?.value.trim();
-        const time = document.getElementById("time")?.value.trim();
-        
+        const time =
+            document.getElementById("time")?.value?.trim() ||
+            document.getElementById("time_slot")?.value?.trim();
+
         if (!name || !email || !contact || !message || !date || !time) {
             alert("Please fill in all required fields.");
             event.preventDefault();
             return;
         }
 
-        if (!venueSelect.value || (venueSelect.value === "Others" && !otherVenueInput.value.trim())) {
+        if (
+            !venueSelect.value ||
+            (venueSelect.value === "Others" && !otherVenueInput.value.trim())
+        ) {
             alert("Please specify the venue.");
             event.preventDefault();
             return;
         }
 
-        if (!eventTypeSelect.value || (eventTypeSelect.value === "Others" && !otherEventTypeInput.value.trim())) {
+        if (
+            !eventTypeSelect.value ||
+            (eventTypeSelect.value === "Others" &&
+                !otherEventTypeInput.value.trim())
+        ) {
             alert("Please specify the event type.");
             event.preventDefault();
             return;
         }
 
-        if (!themeMotifSelect.value || (themeMotifSelect.value === "Others" && !otherThemeMotifInput.value.trim())) {
+        if (
+            !themeMotifSelect.value ||
+            (themeMotifSelect.value === "Others" &&
+                !otherThemeMotifInput.value.trim())
+        ) {
             alert("Please specify the theme/motif.");
             event.preventDefault();
             return;
@@ -66,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // ---------------------------- //
-    //       CALENDAR FUNCTION       //
+    //       CALENDAR FUNCTION     //
     // ---------------------------- //
     const calendar = document.getElementById("calendar");
     const monthYear = document.getElementById("month-year");
@@ -79,35 +99,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let currentDate = new Date();
     let selectedDate = null;
-    let dateStatuses = {};  // Stores the date statuses in memory
+    let dateStatuses = {};
 
     function renderCalendar() {
         const month = currentDate.getMonth();
         const year = currentDate.getFullYear();
-        monthYear.textContent = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(currentDate);
+        monthYear.textContent = new Intl.DateTimeFormat("en-US", {
+            month: "long",
+            year: "numeric",
+        }).format(currentDate);
 
-        const firstDay = new Date(year, month, 1).getDay(); 
-        const lastDate = new Date(year, month + 1, 0).getDate(); 
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
 
         calendar.innerHTML = "";
-        
-        // Add day of week headers
+
         const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        daysOfWeek.forEach(day => {
+        daysOfWeek.forEach((day) => {
             const dayHeader = document.createElement("div");
             dayHeader.classList.add("calendar-day", "day-header");
             dayHeader.textContent = day;
             calendar.appendChild(dayHeader);
         });
-        
-        // Fill empty days before the first day of the month
+
         for (let i = 0; i < firstDay; i++) {
             const emptyCell = document.createElement("div");
             emptyCell.classList.add("calendar-day", "empty");
             calendar.appendChild(emptyCell);
         }
 
-        // Fill actual days of the month
         for (let day = 1; day <= lastDate; day++) {
             const dayCell = document.createElement("div");
             dayCell.classList.add("calendar-day");
@@ -115,7 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const dateKey = `${year}-${month + 1}-${day}`;
             dayCell.setAttribute("data-date", dateKey);
 
-            // Apply saved status
             if (dateStatuses[dateKey]) {
                 dayCell.setAttribute("data-status", dateStatuses[dateKey]);
                 applyStatusStyle(dayCell, dateStatuses[dateKey]);
@@ -147,15 +166,36 @@ document.addEventListener("DOMContentLoaded", function () {
     saveStatusBtn.addEventListener("click", function () {
         if (selectedDate) {
             const selectedStatus = statusSelect.value;
-            dateStatuses[selectedDate] = selectedStatus; // Save status in memory
+            dateStatuses[selectedDate] = selectedStatus;
 
-            // Update UI
             const dayCells = document.querySelectorAll(".calendar-day");
             dayCells.forEach((cell) => {
                 if (cell.getAttribute("data-date") === selectedDate) {
                     applyStatusStyle(cell, selectedStatus);
                 }
             });
+
+            fetch("/admin/availability/toggle", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({
+                    date: selectedDate,
+                    status: selectedStatus,
+                }),
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    console.log("Toggled:", data);
+                })
+                .catch((err) => {
+                    console.error("Error saving availability:", err);
+                });
 
             modal.style.display = "none";
         }
@@ -175,5 +215,53 @@ document.addEventListener("DOMContentLoaded", function () {
         renderCalendar();
     });
 
-    renderCalendar();
+    // ---------------------------- //
+    //   AM/PM → Time Slot Filter   //
+    // ---------------------------- //
+    const periodSelect = document.getElementById("period");
+    const timeSlotWrapper = document.getElementById("timeSlotWrapper");
+    const timeSlotSelect = document.getElementById("time_slot");
+
+    const timeSlots = {
+        AM: ["9am-1pm", "10am-2pm", "11am-3pm"],
+        PM: ["4pm-8pm", "5pm-9pm", "6pm-10pm"],
+    };
+
+    if (periodSelect && timeSlotSelect && timeSlotWrapper) {
+        timeSlotWrapper.style.display = "none";
+
+        periodSelect.addEventListener("change", function () {
+            const selectedPeriod = this.value;
+            timeSlotSelect.innerHTML =
+                '<option value="">Select a time slot</option>';
+
+            if (timeSlots[selectedPeriod]) {
+                timeSlots[selectedPeriod].forEach((slot) => {
+                    const option = document.createElement("option");
+                    option.value = slot;
+                    option.textContent = slot;
+                    timeSlotSelect.appendChild(option);
+                });
+
+                timeSlotWrapper.style.display = "block";
+                timeSlotSelect.disabled = false;
+            } else {
+                timeSlotWrapper.style.display = "none";
+                timeSlotSelect.disabled = true;
+            }
+        });
+    }
+
+    fetch("/admin/availability")
+        .then((res) => res.json())
+        .then((dateStatusMap) => {
+            Object.entries(dateStatusMap).forEach(([date, status]) => {
+                dateStatuses[date] = status;
+            });
+            renderCalendar();
+        })
+        .catch((err) => {
+            console.error("Error loading availability:", err);
+            renderCalendar();
+        });
 });

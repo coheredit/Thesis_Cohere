@@ -8,7 +8,7 @@
 
 
 @section('content')
-<div class="container"> 
+<div class="container">
     <div class="reservation-container">
         <h2>Let's bring your vision to life—just fill out the form.</h2>
         <form method="POST" action="{{ route('admin.reserve') }}">
@@ -36,8 +36,19 @@
             </div>
 
             <div class="form-group">
-                <label for="time">Time:<span>*</span></label>
-                <input type="time" id="time" name="time" required>
+                <label for="period">Select Period:<span>*</span></label>
+                <select id="period" name="period" required>
+                    <option value="" selected disabled>Choose AM or PM</option>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="timeSlotWrapper" style="display: none;">
+                <label for="time_slot">Select Time Slot:<span>*</span></label>
+                <select id="time_slot" name="time" required disabled>
+                    <option value="">Select a time slot</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -105,9 +116,9 @@
     <div class="modal-box">
         <h3>Select Status</h3>
         <select id="statusSelect">
-            <option value="free">Free (Green)</option>
-            <option value="full">Fully Booked (Yellow)</option>
-            <option value="closed">Closed (Red)</option>
+            <option value="free">Free</option>
+            <option value="full">Fully Booked</option>
+            <option value="closed">Closed</option>
         </select>
         <button id="saveStatus">Save</button>
         <button id="closeModal">Cancel</button>

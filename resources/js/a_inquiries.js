@@ -70,7 +70,7 @@ function attachEventListeners() {
           .then((data) => {
             if (data.success) {
               alert("Undo successful. Please refresh the page.");
-              location.reload(); // Refresh the page to update UI
+              location.reload();
             } else {
               alert("Undo failed: " + data.message);
             }
@@ -91,13 +91,20 @@ function saveStatusToDatabase(selectElement, newStatus) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Accept": "application/json",
       "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
     },
     body: JSON.stringify({
       status: newStatus
     }),
   })
-    .then((response) => response.json())
+    .then(async (response) => {
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error ${response.status}: ${errorText}`);
+      }
+      return response.json();
+    })
     .then((data) => {
       if (data.success) {
         console.log("Status updated successfully.");
@@ -106,7 +113,7 @@ function saveStatusToDatabase(selectElement, newStatus) {
       }
     })
     .catch((error) => {
-      console.error("Error:", error);
+      console.error("Error:", error.message);
     });
 }
 

@@ -8,6 +8,8 @@ class Inquiry extends Model
 {
     protected $table = 'inquiry';
 
+    protected $primaryKey = 'inquiry_id'; 
+
     protected $fillable = [
         'patron_id',
         'tracking_code',
@@ -28,7 +30,6 @@ class Inquiry extends Model
         parent::boot();
 
         static::creating(function ($inquiry) {
-            // Only set tracking_code if it's not already provided
             if (empty($inquiry->tracking_code)) {
                 $inquiry->tracking_code = 'VS-' . strtoupper(substr(uniqid(), -6));
             }

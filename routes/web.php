@@ -1,16 +1,18 @@
 <?php
 
+// Patron Controller Related
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Patron\HomeController;
 use App\Http\Controllers\Patron\FeedbackController;
 use App\Http\Controllers\Patron\ReservationController;
 use App\Http\Controllers\Patron\PaymentController;
 
-
+// Admin Controller Related
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AdminHomeController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\PackageController;
+use App\Http\Controllers\Admin\AvailabilityController;
 
 Route::name('patron.')->group(function () {
     // Home page
@@ -43,10 +45,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
-    // Admin Home/Dashboard
+    // Admin Homepage
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
 
-    // Packages
+    // Packages on Admin homepage
     Route::get('/packages', [PackageController::class, 'index']);
     Route::post('/packages', [PackageController::class, 'store']);
     Route::put('/packages/{package}', [PackageController::class, 'update']);
@@ -55,8 +57,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Inquiry
     Route::get('/inquiry', [InquiryController::class, 'index'])->name('inquiry');
-    Route::post('/inquiries/{id}/update-status', [InquiryController::class, 'updateStatusAjax'])->name('inquiries.updateStatus');
+    Route::post('/inquiries/{id}/update-status', [InquiryController::class, 'updateStatusAjax']);
 
+    // Availability for the calendar on admin making inquir/reservation
+    Route::get('/availability', [AvailabilityController::class, 'index'])->name('availability.index');
+    Route::post('/availability/toggle', [AvailabilityController::class, 'toggle'])->name('availability.toggle');
 
 
     Route::view('/reserve', 'admin.a_reserve')->name('reserve');
