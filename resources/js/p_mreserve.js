@@ -17,16 +17,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Show agreement modal immediately on load
     if (agreementModal) {
-        agreementModal.style.display = "flex";
-        agreementModal.classList.add("show");
+        // Use setTimeout to ensure DOM is fully rendered
+        setTimeout(() => {
+            agreementModal.style.display = "flex";
+            agreementModal.classList.add("show");
 
-        // Disable form interaction
-        if (form) {
-            form.classList.add("form-disabled");
-        }
+            // Disable form interaction
+            if (form) {
+                form.classList.add("form-disabled");
+            }
 
-        // Disable scroll on body
-        document.body.style.overflow = "hidden";
+            // Disable scroll on body
+            document.body.style.overflow = "hidden";
+        }, 100);
     }
 
     // Toggle display of "Other" fields
@@ -101,25 +104,61 @@ document.addEventListener("DOMContentLoaded", function () {
     // Agreement logic
     let hasScrolledToBottom = false;
 
-    agreementContent?.addEventListener("scroll", () => {
-        const { scrollTop, scrollHeight, clientHeight } = agreementContent;
-        if (scrollTop + clientHeight >= scrollHeight - 10) {
-            hasScrolledToBottom = true;
-            if (agreeButton) agreeButton.disabled = false;
-        }
-    });
+    // Check if content is scrollable, if not, enable button immediately
+    if (agreementContent) {
+        // Check after a short delay to ensure content is rendered
+        setTimeout(() => {
+            const { scrollHeight, clientHeight } = agreementContent;
+            if (scrollHeight <= clientHeight + 10) {
+                // Content fits without scrolling
+                hasScrolledToBottom = true;
+                if (agreeButton) agreeButton.disabled = false;
+            }
+        }, 200);
+
+        agreementContent.addEventListener("scroll", () => {
+            const { scrollTop, scrollHeight, clientHeight } = agreementContent;
+            if (scrollTop + clientHeight >= scrollHeight - 10) {
+                hasScrolledToBottom = true;
+                if (agreeButton) agreeButton.disabled = false;
+            }
+        });
+    }
 
     agreeButton?.addEventListener("click", () => {
         if (hasScrolledToBottom) {
+            // Hide modal
             agreementModal.classList.remove("show");
-            agreementModal.style.display = "none";
+            
+            // Use setTimeout to ensure smooth transition
+            setTimeout(() => {
+                agreementModal.style.display = "none";
+            }, 300);
 
             // Enable form
-            form?.classList.remove("form-disabled");
-            form?.classList.add("form-enabled");
+            if (form) {
+                form.classList.remove("form-disabled");
+                form.classList.add("form-enabled");
+            }
 
             // Enable scroll
             document.body.style.overflow = "auto";
         }
     });
+
+    // Prevent modal from closing when clicking inside the content
+    if (agreementContent) {
+        agreementContent.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
+    }
+
+    // Optional: Close modal when clicking outside (uncomment if desired)
+    /*
+    agreementModal?.addEventListener("click", (e) => {
+        if (e.target === agreementModal && hasScrolledToBottom) {
+            agreeButton.click();
+        }
+    });
+    */
 });

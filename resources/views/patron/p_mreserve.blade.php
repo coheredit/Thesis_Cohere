@@ -82,7 +82,7 @@
         <section>
             <h3>Guidelines for Outside Caterers & Suppliers</h3>
             <ul>
-                <li>No removal or rearranging of Villa Salud’s equipment without permission.</li>
+                <li>No removal or rearranging of Villa Salud's equipment without permission.</li>
                 <li>Cooking is not allowed. Food warming only.</li>
                 <li>No dishwashing in premises. Clean-up required.</li>
                 <li>Sufficient garbage bags must be provided by suppliers.</li>
@@ -100,8 +100,8 @@
             <p>Villa Salud is not liable for performance failures caused by uncontrollable events (e.g., natural disasters, war, governmental regulations). In such cases, Villa Salud reserves the right to provide alternative accommodations or menus as fulfillment of the contract.</p>
         </section>
 
-        <div style="text-align: center; margin-top: 20px;">
-            <button id="agreeButton" disabled>I Agree</button>
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="agreeButton" disabled>I Agree to the Terms</button>
         </div>
     </div>
 </div>
@@ -130,8 +130,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="contact">Contact Number:<span>*</span></label>
-                    <input type="tel" id="contact" name="contact_number" required>
+                    <label for="contact_number">Contact Number:<span>*</span></label>
+                    <input type="tel" id="contact_number" name="contact_number" required>
                 </div>
 
                 <div class="form-group">
@@ -146,19 +146,21 @@
 
                 <div class="form-group">
                     <label for="venue">Venue:<span>*</span></label>
-                    <select id="venue" name="venue">
+                    <select id="venue" name="venue" required>
+                        <option value="">Select a venue</option>
                         <option value="Villa I">Villa I</option>
                         <option value="Villa II">Villa II</option>
                         <option value="Elizabeth Hall">Elizabeth Hall</option>
                         <option value="Private Pool">Private Pool</option>
                         <option value="Others">Others</option>
                     </select>
-                    <input type="text" id="otherVenue" name="other_venue" style="display: none;" placeholder="Please specify">
+                    <input type="text" id="other_venue" name="other_venue" style="display: none;" placeholder="Please specify">
                 </div>
 
                 <div class="form-group">
                     <label for="event_type">Event Type:<span>*</span></label>
-                    <select id="event_type" name="event_type">
+                    <select id="event_type" name="event_type" required>
+                        <option value="">Select event type</option>
                         <option value="Baptismal Package">Baptismal Package</option>
                         <option value="Birthday Package">Birthday Package</option>
                         <option value="Debut Package">Debut Package</option>
@@ -167,12 +169,13 @@
                         <option value="Standard Package">Standard Package</option>
                         <option value="Others">Others</option>
                     </select>
-                    <input type="text" id="otherEventType" name="other_event_type" style="display: none;" placeholder="Please specify">
+                    <input type="text" id="other_event_type" name="other_event_type" style="display: none;" placeholder="Please specify">
                 </div>
 
                 <div class="form-group">
                     <label for="theme_motif">Theme/Motif:<span>*</span></label>
-                    <select id="theme_motif" name="theme_motif">
+                    <select id="theme_motif" name="theme_motif" required>
+                        <option value="">Select theme/motif</option>
                         <option value="Floral">Floral</option>
                         <option value="Rustic">Rustic</option>
                         <option value="Elegant">Elegant</option>
@@ -180,12 +183,12 @@
                         <option value="Modern">Modern</option>
                         <option value="Others">Others</option>
                     </select>
-                    <input type="text" id="otherThemeMotif" name="other_theme_motif" style="display: none;" placeholder="Please specify">
+                    <input type="text" id="other_theme_motif" name="other_theme_motif" style="display: none;" placeholder="Please specify">
                 </div>
 
                 <div class="form-group">
                     <label for="message">Other Request:<span>*</span></label>
-                    <textarea id="message" name="message" required></textarea>
+                    <textarea id="message" name="message" placeholder="Please provide details about your event, number of guests, special requirements, etc." required></textarea>
                 </div>
 
                 <div class="form-group">
@@ -193,6 +196,7 @@
                 </div>
             </form>
         </div>
+        
         <div class="calendar-container">
             <div class="calendar-header">
                 <button id="prevMonth">◀</button>
