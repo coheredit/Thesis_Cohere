@@ -11,40 +11,103 @@
     <div class="payment-container">
         <div class="payment-header">
             <h2>Submit Proof of Payment</h2>
-            <p>Please provide your payment details and receipt.</p>
+            <p>Please complete the form and upload your payment receipt.</p>
         </div>
 
-        @if(session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
-        @elseif(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
-        <form method="POST" action="{{ route('patron.payment.store') }}" enctype="multipart/form-data">
-            @csrf
+        <div id="orderForm">
+            <div class="form-group">
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" placeholder="e.g. John Doe">
+                <span id="fullNameError" class="input-error">Full name is required.</span>
+            </div>
 
             <div class="form-group">
                 <label for="email">Email Address:</label>
-                <input type="email" name="email" id="email" required>
+                <input type="email" id="email" placeholder="e.g. johndoe@gmail.com">
+                <span id="emailError" class="input-error">Valid email is required.</span>
             </div>
 
             <div class="form-group">
-                <label for="tracking_code">Tracking Code:</label>
-                <input type="text" name="tracking_code" id="tracking_code" required>
+                <label for="downpaymentType">Payment Type:</label>
+                <select id="downpaymentType">
+                    <option value="full">Full Payment</option>
+                    <option value="half">25% Downpayment</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="reference_code">Reference Code (optional):</label>
-                <input type="text" name="reference_code" id="reference_code">
+                <label for="paymentMethod">Payment Method:</label>
+                <select id="paymentMethod">
+                    <option value="cash">Cash (Onsite)</option>
+                    <option value="gcash">GCash</option>
+                    <option value="bank">Bank Transfer (BPI)</option>
+                </select>
             </div>
 
-            <div class="form-group">
-                <label for="receipt">Upload Receipt (jpg, png, or pdf):</label>
-                <input type="file" name="receipt" id="receipt" accept=".jpg,.jpeg,.png,.pdf" required>
+            <button type="button" id="generateOrder" class="btn-submit">Generate Payment Instructions</button>
+        </div>
+
+        <div id="paymentInstructions" style="display: none;">
+            <div class="payment-info">
+                <p><strong>Name:</strong> <span id="customerName"></span></p>
+                <p><strong>Tracking Code:</strong> <span id="trackingNumber" class="reference-number"></span></p>
+                <p><strong>Payment Type:</strong> <span class="payment-badge" id="paymentBadge"></span></p>
             </div>
 
-            <button type="submit" class="btn-submit">Submit Payment</button>
-        </form>
+            <div id="gcashInstructions" class="payment-method" style="display: none;">
+                <h3>GCash Payment</h3>
+                <ul class="steps">
+                    <li>Scan the QR code below using your GCash app.</li>
+                    <li>Account Name: <strong>Elizabeth R.</strong></li>
+                    <li>Mobile Number: <strong>09062236120</strong></li>
+                    <li>Include your tracking code in the note.</li>
+                    <li>Upload a screenshot of your payment below.</li>
+                </ul>
+                <div class="qr-code-container">
+                    <img src="{{ asset('images/gcash_qr.jpg') }}" alt="GCash QR Code">
+                </div>
+            </div>
+
+            <div id="bankInstructions" class="payment-method" style="display: none;">
+                <h3>Bank Transfer (BPI Only)</h3>
+                <div class="bank-note">Note: BDO is currently unavailable. Please use BPI.</div>
+                <ul class="steps">
+                    <li>Bank: <strong>BPI Savings Bank</strong></li>
+                    <li>Account Name: <strong>Ernesto Rafael Jr. and/or Elizabeth Rafael</strong></li>
+                    <li>Account Number: <strong>8230001538</strong></li>
+                    <li>Include your tracking code in the deposit note.</li>
+                    <li>Upload a photo of your deposit slip below.</li>
+                </ul>
+            </div>
+
+            <div id="cashInstructions" class="payment-method" style="display: none;">
+                <h3>Cash Payment</h3>
+                <ul class="steps">
+                    <li>Pay in person at the Villa office.</li>
+                    <li>Provide your tracking code at the counter.</li>
+                    <li>Upload a photo of your official receipt below.</li>
+                </ul>
+            </div>
+
+            <div class="receipt-upload">
+                <form id="receiptForm">
+                    <label for="receiptUpload">Upload Receipt (JPG, PNG, PDF):</label>
+                    <input type="file" id="receiptUpload" accept=".jpg,.jpeg,.png,.pdf">
+                    <span id="receiptError" class="input-error">Please upload your payment receipt.</span>
+                    <button type="submit" id="submitReceipt" class="btn-submit">Submit Receipt</button>
+                </form>
+                <button type="button" id="backButton" class="btn-submit" style="background-color:#6c757d;">Back</button>
+                <div class="loader">
+                    <div class="loader-spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="successMessage" class="success-message">
+            <h3>Submission Successful!</h3>
+            <p>Thank you. Your receipt has been submitted and is under review.</p>
+            <p>We’ll contact <span class="customer-name"></span> once it’s verified.</p>
+        </div>
     </div>
 </div>
 @endsection

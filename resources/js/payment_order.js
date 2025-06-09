@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // DOM elements
+    // Form elements
     const orderForm = document.getElementById('orderForm');
     const paymentInstructions = document.getElementById('paymentInstructions');
     const generateOrderBtn = document.getElementById('generateOrder');
@@ -9,276 +9,240 @@ document.addEventListener('DOMContentLoaded', function () {
     const successMessage = document.getElementById('successMessage');
     const loader = document.querySelector('.loader');
 
-    // Form inputs
+    // Input elements
     const fullNameInput = document.getElementById('fullName');
     const emailInput = document.getElementById('email');
-    const orderAmountInput = document.getElementById('orderAmount');
     const downpaymentTypeSelect = document.getElementById('downpaymentType');
     const paymentMethodSelect = document.getElementById('paymentMethod');
     const receiptUpload = document.getElementById('receiptUpload');
 
-    // Error messages
+    // Error elements
     const fullNameError = document.getElementById('fullNameError');
     const emailError = document.getElementById('emailError');
-    const orderAmountError = document.getElementById('orderAmountError');
     const receiptError = document.getElementById('receiptError');
 
     // Display elements
-    const totalAmountSpan = document.getElementById('totalAmount');
-    const downpaymentAmountSpan = document.getElementById('downpaymentAmount');
     const paymentBadge = document.getElementById('paymentBadge');
     const customerNameSpan = document.getElementById('customerName');
-    const paymentAmountSpans = document.querySelectorAll('.payment-amount');
+    const trackingNumberSpan = document.getElementById('trackingNumber');
     const customerNameSpans = document.querySelectorAll('.customer-name');
-    const referenceNumberSpan = document.getElementById('referenceNumber');
-    const referenceNumberSpans = document.querySelectorAll('.reference-number');
 
+    // Payment method sections
     const gcashInstructions = document.getElementById('gcashInstructions');
     const bankInstructions = document.getElementById('bankInstructions');
+    const cashInstructions = document.getElementById('cashInstructions');
 
-    // Generate a unique order reference number
+    // Utility functions
     function generateReferenceNumber() {
         const timestamp = new Date().getTime().toString().slice(-6);
         const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-        return 'ORD-' + timestamp + '-' + random;
+        return 'VS-' + timestamp + '-' + random;
     }
 
-    // Validate email format
     function isValidEmail(email) {
-        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email.toLowerCase());
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email.toLowerCase());
     }
 
-    // Validate the form
     function validateForm() {
         let isValid = true;
 
+        // Reset previous error states
+        fullNameInput.classList.remove('error');
+        emailInput.classList.remove('error');
+        fullNameError.style.display = 'none';
+        emailError.style.display = 'none';
+
         // Validate full name
-        if (fullNameInput.value.trim() === '') {
+        const fullName = fullNameInput.value.trim();
+        if (fullName === '' || fullName.length < 2) {
+            fullNameError.textContent = 'Please enter a valid full name (at least 2 characters).';
             fullNameError.style.display = 'block';
             fullNameInput.classList.add('error');
             isValid = false;
-        } else {
-            fullNameError.style.display = 'none';
-            fullNameInput.classList.remove('error');
         }
 
         // Validate email
-        if (!isValidEmail(emailInput.value.trim())) {
+        const email = emailInput.value.trim();
+        if (email === '' || !isValidEmail(email)) {
+            emailError.textContent = 'Please enter a valid email address.';
             emailError.style.display = 'block';
             emailInput.classList.add('error');
             isValid = false;
-        } else {
-            emailError.style.display = 'none';
-            emailInput.classList.remove('error');
-        }
-
-        // Validate order amount
-        const amount = parseFloat(orderAmountInput.value);
-        if (isNaN(amount) || amount < 100) {
-            orderAmountError.style.display = 'block';
-            orderAmountInput.classList.add('error');
-            isValid = false;
-        } else {
-            orderAmountError.style.display = 'none';
-            orderAmountInput.classList.remove('error');
         }
 
         return isValid;
     }
 
-    // Calculate downpayment amount based on the selected option
-    function calculateDownpayment(orderAmount) {
-        const downpaymentType = downpaymentTypeSelect.value;
-        let downpayment = 0;
-        let badgeText = '';
-
-        switch (downpaymentType) {
-            case 'half':
-                downpayment = orderAmount * 0.5;
-                badgeText = '50% PAYMENT';
-                break;
-            case 'thirty':
-                downpayment = orderAmount * 0.3;
-                badgeText = '30% PAYMENT';
-                break;
-            default:
-                downpayment = orderAmount;
-                badgeText = 'FULL PAYMENT';
+    function validateReceipt() {
+        receiptError.style.display = 'none';
+        
+        if (receiptUpload.files.length === 0) {
+            receiptError.textContent = 'Please upload your payment receipt.';
+            receiptError.style.display = 'block';
+            return false;
         }
 
-        paymentBadge.textContent = badgeText;
-        return downpayment;
+        const file = receiptUpload.files[0];
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        if (!allowedTypes.includes(file.type)) {
+            receiptError.textContent = 'Please upload a valid file (JPG, PNG, or PDF).';
+            receiptError.style.display = 'block';
+            return false;
+        }
+
+        if (file.size > maxSize) {
+            receiptError.textContent = 'File size must be less than 5MB.';
+            receiptError.style.display = 'block';
+            return false;
+        }
+
+        return true;
     }
 
-    // Update payment instructions and order summary
-    function updateOrderDetails() {
+    function updatePaymentInstructions() {
         const fullName = fullNameInput.value.trim();
-        const orderAmount = parseFloat(orderAmountInput.value);
-        const downpaymentAmount = calculateDownpayment(orderAmount);
+        const paymentType = downpaymentTypeSelect.value;
+        const paymentMethod = paymentMethodSelect.value;
 
-        // Update the payment summary
-        totalAmountSpan.textContent = orderAmount.toFixed(2);
-        downpaymentAmountSpan.textContent = downpaymentAmount.toFixed(2);
-        
-        // Update all payment amount references
-        paymentAmountSpans.forEach(span => {
-            span.textContent = downpaymentAmount.toFixed(2);
-        });
+        // Generate and display reference number
+        const trackingCode = generateReferenceNumber();
+        trackingNumberSpan.textContent = trackingCode;
 
-        // Update customer name
+        // Update customer name in all locations
         customerNameSpan.textContent = fullName;
         customerNameSpans.forEach(span => {
             span.textContent = fullName;
         });
 
-        // Select the appropriate payment instructions
-        if (paymentMethodSelect.value === 'gcash') {
-            gcashInstructions.style.display = 'block';
-            bankInstructions.style.display = 'none';
-        } else {
-            gcashInstructions.style.display = 'none';
-            bankInstructions.style.display = 'block';
+        // Update payment badge
+        let badgeText = 'FULL PAYMENT';
+        if (paymentType === 'half') {
+            badgeText = '25% DOWNPAYMENT';
         }
+        paymentBadge.textContent = badgeText;
 
-        // Generate a new reference number
-        const referenceNumber = generateReferenceNumber();
-        referenceNumberSpan.textContent = referenceNumber;
-        referenceNumberSpans.forEach(span => {
-            span.textContent = referenceNumber;
+        // Hide all payment method instructions
+        gcashInstructions.style.display = 'none';
+        bankInstructions.style.display = 'none';
+        cashInstructions.style.display = 'none';
+
+        // Show relevant payment method instructions
+        switch (paymentMethod) {
+            case 'gcash':
+                gcashInstructions.style.display = 'block';
+                break;
+            case 'bank':
+                bankInstructions.style.display = 'block';
+                break;
+            case 'cash':
+                cashInstructions.style.display = 'block';
+                break;
+        }
+    }
+
+    function smoothScrollTo(element) {
+        const offsetTop = element.offsetTop - 20;
+        window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
         });
     }
 
-    // Reset form validation styling
-    function resetFormStyles() {
-        fullNameError.style.display = 'none';
-        emailError.style.display = 'none';
-        orderAmountError.style.display = 'none';
-        receiptError.style.display = 'none';
-        
-        fullNameInput.classList.remove('error');
-        emailInput.classList.remove('error');
-        orderAmountInput.classList.remove('error');
-    }
-
-    // Show the receipt upload loading animation
-    function showLoader() {
-        loader.style.display = 'block';
-        submitReceiptBtn.disabled = true;
-    }
-
-    // Hide the receipt upload loading animation
-    function hideLoader() {
-        loader.style.display = 'none';
-        submitReceiptBtn.disabled = false;
-    }
-
-    // Event Listeners
-    
-    // Handle payment order generation
-    generateOrderBtn.addEventListener('click', function () {
-        resetFormStyles();
+    // Event listeners
+    generateOrderBtn.addEventListener('click', function(e) {
+        e.preventDefault();
         
         if (validateForm()) {
+            updatePaymentInstructions();
+            
+            // Hide order form and show payment instructions
             orderForm.style.display = 'none';
             paymentInstructions.style.display = 'block';
-            updateOrderDetails();
+            successMessage.style.display = 'none';
             
-            // Scroll to top of payment instructions
-            window.scrollTo({
-                top: paymentInstructions.offsetTop - 20,
-                behavior: 'smooth'
-            });
+            // Scroll to payment instructions
+            setTimeout(() => {
+                smoothScrollTo(paymentInstructions);
+            }, 100);
         }
     });
 
-    // Live update of payment instructions when payment method changes
-    paymentMethodSelect.addEventListener('change', function() {
-        if (paymentInstructions.style.display === 'block') {
-            updateOrderDetails();
-        }
-    });
-
-    // Live update of payment amounts when downpayment type changes
-    downpaymentTypeSelect.addEventListener('change', function() {
-        if (paymentInstructions.style.display === 'block') {
-            updateOrderDetails();
-        }
-    });
-
-    // Handle going back to the order form
-    backButton.addEventListener('click', function () {
+    backButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Show order form and hide payment instructions
         orderForm.style.display = 'block';
         paymentInstructions.style.display = 'none';
         successMessage.style.display = 'none';
         
-        // Reset file input
+        // Reset receipt upload
         receiptUpload.value = '';
         receiptError.style.display = 'none';
+        
+        // Scroll to top of form
+        smoothScrollTo(orderForm);
     });
 
-    // Handle receipt submission
-    receiptForm.addEventListener('submit', function (e) {
+    receiptForm.addEventListener('submit', function(e) {
         e.preventDefault();
-
-        if (receiptUpload.files.length === 0) {
-            receiptError.style.display = 'block';
-            return;
+        
+        if (validateReceipt()) {
+            // Disable submit button and show loader
+            submitReceiptBtn.disabled = true;
+            submitReceiptBtn.textContent = 'Submitting...';
+            loader.style.display = 'block';
+            receiptError.style.display = 'none';
+            
+            // Simulate form submission
+            setTimeout(() => {
+                // Hide loader and re-enable button
+                loader.style.display = 'none';
+                submitReceiptBtn.disabled = false;
+                submitReceiptBtn.textContent = 'Submit Receipt';
+                
+                // Hide receipt form and show success message
+                receiptForm.style.display = 'none';
+                successMessage.style.display = 'block';
+                
+                // Scroll to success message
+                setTimeout(() => {
+                    smoothScrollTo(successMessage);
+                }, 100);
+            }, 2000);
         }
-
-        // Hide error message
-        receiptError.style.display = 'none';
-        
-        // Show loading animation
-        showLoader();
-        
-        // Simulate receipt submission with a delay
-        setTimeout(function() {
-            hideLoader();
-            
-            // Show success message
-            successMessage.style.display = 'block';
-            
-            // Hide the form
-            receiptForm.style.display = 'none';
-            
-            // Scroll to success message
-            window.scrollTo({
-                top: successMessage.offsetTop - 20,
-                behavior: 'smooth'
-            });
-        }, 1500);
     });
-    
-    // Input validation on blur
-    fullNameInput.addEventListener('blur', function() {
-        if (fullNameInput.value.trim() === '') {
-            fullNameError.style.display = 'block';
-            fullNameInput.classList.add('error');
-        } else {
+
+    // Real-time validation
+    fullNameInput.addEventListener('input', function() {
+        if (this.classList.contains('error') && this.value.trim().length >= 2) {
+            this.classList.remove('error');
             fullNameError.style.display = 'none';
-            fullNameInput.classList.remove('error');
         }
     });
-    
-    emailInput.addEventListener('blur', function() {
-        if (!isValidEmail(emailInput.value.trim())) {
-            emailError.style.display = 'block';
-            emailInput.classList.add('error');
-        } else {
+
+    emailInput.addEventListener('input', function() {
+        if (this.classList.contains('error') && isValidEmail(this.value.trim())) {
+            this.classList.remove('error');
             emailError.style.display = 'none';
-            emailInput.classList.remove('error');
         }
     });
-    
-    orderAmountInput.addEventListener('blur', function() {
-        const amount = parseFloat(orderAmountInput.value);
-        if (isNaN(amount) || amount < 100) {
-            orderAmountError.style.display = 'block';
-            orderAmountInput.classList.add('error');
-        } else {
-            orderAmountError.style.display = 'none';
-            orderAmountInput.classList.remove('error');
+
+    receiptUpload.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            receiptError.style.display = 'none';
         }
+    });
+
+    // Prevent form submission on Enter key in input fields
+    [fullNameInput, emailInput].forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                generateOrderBtn.click();
+            }
+        });
     });
 });
