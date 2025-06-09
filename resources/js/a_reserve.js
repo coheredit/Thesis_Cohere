@@ -22,68 +22,108 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    if (venueSelect)
+    // Add event listeners and initialize state for "Others" fields
+    if (venueSelect && otherVenueInput) {
         venueSelect.addEventListener("change", () =>
             toggleOtherInput(venueSelect, otherVenueInput, "Others")
         );
-    if (themeMotifSelect)
+        toggleOtherInput(venueSelect, otherVenueInput, "Others");
+    }
+
+    if (themeMotifSelect && otherThemeMotifInput) {
         themeMotifSelect.addEventListener("change", () =>
             toggleOtherInput(themeMotifSelect, otherThemeMotifInput, "Others")
         );
-    if (eventTypeSelect)
+        toggleOtherInput(themeMotifSelect, otherThemeMotifInput, "Others");
+    }
+
+    if (eventTypeSelect && otherEventTypeInput) {
         eventTypeSelect.addEventListener("change", () =>
             toggleOtherInput(eventTypeSelect, otherEventTypeInput, "Others")
         );
+        toggleOtherInput(eventTypeSelect, otherEventTypeInput, "Others");
+    }
 
-    toggleOtherInput(venueSelect, otherVenueInput, "Others");
-    toggleOtherInput(themeMotifSelect, otherThemeMotifInput, "Others");
-    toggleOtherInput(eventTypeSelect, otherEventTypeInput, "Others");
+    // Form validation
+    if (form) {
+        form.addEventListener("submit", function (event) {
+            const name = document.getElementById("name")?.value.trim();
+            const email = document.getElementById("email")?.value.trim();
+            const contact = document.getElementById("contact")?.value.trim();
+            const message = document.getElementById("message")?.value.trim();
+            const date = document.getElementById("date")?.value.trim();
+            const period = document.getElementById("period")?.value.trim();
+            const timeSlot = document.getElementById("time_slot")?.value.trim();
 
-    form.addEventListener("submit", function (event) {
-        const name = document.getElementById("name")?.value.trim();
-        const email = document.getElementById("email")?.value.trim();
-        const contact = document.getElementById("contact")?.value.trim();
-        const message = document.getElementById("message")?.value.trim();
-        const date = document.getElementById("date")?.value.trim();
-        const time =
-            document.getElementById("time")?.value?.trim() ||
-            document.getElementById("time_slot")?.value?.trim();
+            // Check required fields
+            if (!name || !email || !contact || !message || !date || !period) {
+                alert("Please fill in all required fields.");
+                event.preventDefault();
+                return;
+            }
 
-        if (!name || !email || !contact || !message || !date || !time) {
-            alert("Please fill in all required fields.");
-            event.preventDefault();
-            return;
-        }
+            // Check if time slot is required and selected
+            if (period && !timeSlot) {
+                alert("Please select a time slot.");
+                event.preventDefault();
+                return;
+            }
 
-        if (
-            !venueSelect.value ||
-            (venueSelect.value === "Others" && !otherVenueInput.value.trim())
-        ) {
-            alert("Please specify the venue.");
-            event.preventDefault();
-            return;
-        }
+            // Validate venue selection
+            if (!venueSelect.value || (venueSelect.value === "Others" && !otherVenueInput.value.trim())) {
+                alert("Please specify the venue.");
+                event.preventDefault();
+                return;
+            }
 
-        if (
-            !eventTypeSelect.value ||
-            (eventTypeSelect.value === "Others" &&
-                !otherEventTypeInput.value.trim())
-        ) {
-            alert("Please specify the event type.");
-            event.preventDefault();
-            return;
-        }
+            // Validate event type selection
+            if (!eventTypeSelect.value || (eventTypeSelect.value === "Others" && !otherEventTypeInput.value.trim())) {
+                alert("Please specify the event type.");
+                event.preventDefault();
+                return;
+            }
 
-        if (
-            !themeMotifSelect.value ||
-            (themeMotifSelect.value === "Others" &&
-                !otherThemeMotifInput.value.trim())
-        ) {
-            alert("Please specify the theme/motif.");
-            event.preventDefault();
-            return;
-        }
-    });
+            // Validate theme/motif selection
+            if (!themeMotifSelect.value || (themeMotifSelect.value === "Others" && !otherThemeMotifInput.value.trim())) {
+                alert("Please specify the theme/motif.");
+                event.preventDefault();
+                return;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("Please enter a valid email address.");
+                event.preventDefault();
+                return;
+            }
+
+            // Date validation - no past dates
+            const selectedDate = new Date(date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate < today) {
+                alert("Please select a date from today onwards.");
+                event.preventDefault();
+                return;
+            }
+
+            // Check if selected date is available
+            if (dateStatuses[date] === "full" || dateStatuses[date] === "closed") {
+                alert("The selected date is not available. Please choose another date.");
+                event.preventDefault();
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "Submitting...";
+            }
+        });
+    }
 
     // ---------------------------- //
     //       CALENDAR FUNCTION     //
@@ -96,12 +136,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const saveStatusBtn = document.getElementById("saveStatus");
     const closeModalBtn = document.getElementById("closeModal");
     const statusSelect = document.getElementById("statusSelect");
+    const undoStatusBtn = document.getElementById("undoStatus");
 
     let currentDate = new Date();
     let selectedDate = null;
     let dateStatuses = {};
 
     function renderCalendar() {
+        if (!calendar || !monthYear) return;
+
         const month = currentDate.getMonth();
         const year = currentDate.getFullYear();
         monthYear.textContent = new Intl.DateTimeFormat("en-US", {
@@ -114,6 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         calendar.innerHTML = "";
 
+        // Add day headers
         const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         daysOfWeek.forEach((day) => {
             const dayHeader = document.createElement("div");
@@ -122,27 +166,38 @@ document.addEventListener("DOMContentLoaded", function () {
             calendar.appendChild(dayHeader);
         });
 
+        // Add empty cells for days before month starts
         for (let i = 0; i < firstDay; i++) {
             const emptyCell = document.createElement("div");
             emptyCell.classList.add("calendar-day", "empty");
             calendar.appendChild(emptyCell);
         }
 
+        // Add days of the month
         for (let day = 1; day <= lastDate; day++) {
             const dayCell = document.createElement("div");
             dayCell.classList.add("calendar-day");
             dayCell.textContent = day;
+            
+            // Format date as YYYY-M-D to match backend format
             const dateKey = `${year}-${month + 1}-${day}`;
             dayCell.setAttribute("data-date", dateKey);
 
+            // Apply status if it exists
             if (dateStatuses[dateKey]) {
-                dayCell.setAttribute("data-status", dateStatuses[dateKey]);
                 applyStatusStyle(dayCell, dateStatuses[dateKey]);
             }
 
-            dayCell.addEventListener("click", function () {
+            // Add click handler for admin functionality
+            dayCell.addEventListener("click", function (e) {
+                e.preventDefault();
                 selectedDate = dateKey;
-                modal.style.display = "flex";
+                if (statusSelect) {
+                    statusSelect.value = dateStatuses[dateKey] || "";
+                }
+                if (modal) {
+                    modal.style.display = "flex";
+                }
             });
 
             calendar.appendChild(dayCell);
@@ -150,70 +205,115 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function applyStatusStyle(cell, status) {
-        cell.classList.remove("free", "closed", "full");
-        if (status === "free") {
-            cell.style.background = "green";
-            cell.style.color = "white";
-        } else if (status === "closed") {
-            cell.style.background = "red";
-            cell.style.color = "white";
-        } else if (status === "full") {
-            cell.style.background = "yellow";
-            cell.style.color = "black";
+        if (!cell) return;
+        
+        // Reset classes
+        cell.className = "calendar-day";
+        
+        // Apply status-specific styling
+        switch (status) {
+            case "available":
+                cell.classList.add("status-green");
+                break;
+            case "half":
+                cell.classList.add("status-yellow");
+                break;
+            case "nearly":
+                cell.classList.add("status-orange");
+                break;
+            case "full":
+                cell.classList.add("status-red");
+                break;
+            case "closed":
+                cell.classList.add("status-gray");
+                break;
+            default:
+                // No special styling for default state
+                break;
         }
     }
 
-    saveStatusBtn.addEventListener("click", function () {
-        if (selectedDate) {
-            const selectedStatus = statusSelect.value;
-            dateStatuses[selectedDate] = selectedStatus;
-
-            const dayCells = document.querySelectorAll(".calendar-day");
-            dayCells.forEach((cell) => {
-                if (cell.getAttribute("data-date") === selectedDate) {
-                    applyStatusStyle(cell, selectedStatus);
+    // Modal event handlers
+    if (saveStatusBtn) {
+        saveStatusBtn.addEventListener("click", function () {
+            if (selectedDate && statusSelect) {
+                const selectedStatus = statusSelect.value;
+                
+                if (selectedStatus) {
+                    dateStatuses[selectedDate] = selectedStatus;
+                    saveStatusToBackend(selectedDate, selectedStatus);
+                } else {
+                    delete dateStatuses[selectedDate];
+                    deleteStatusFromBackend(selectedDate);
                 }
-            });
 
-            fetch("/admin/availability/toggle", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document
-                        .querySelector('meta[name="csrf-token"]')
-                        .getAttribute("content"),
-                    Accept: "application/json",
-                },
-                body: JSON.stringify({
-                    date: selectedDate,
-                    status: selectedStatus,
-                }),
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    console.log("Toggled:", data);
-                })
-                .catch((err) => {
-                    console.error("Error saving availability:", err);
+                // Update the visual appearance
+                const dayCells = document.querySelectorAll(".calendar-day[data-date]");
+                dayCells.forEach((cell) => {
+                    if (cell.getAttribute("data-date") === selectedDate) {
+                        applyStatusStyle(cell, selectedStatus);
+                    }
                 });
 
-            modal.style.display = "none";
-        }
-    });
+                if (modal) {
+                    modal.style.display = "none";
+                }
+            }
+        });
+    }
 
-    closeModalBtn.addEventListener("click", function () {
-        modal.style.display = "none";
-    });
+    if (undoStatusBtn) {
+        undoStatusBtn.addEventListener("click", function () {
+            if (selectedDate && dateStatuses[selectedDate]) {
+                delete dateStatuses[selectedDate];
+                
+                const dayCells = document.querySelectorAll(".calendar-day[data-date]");
+                dayCells.forEach((cell) => {
+                    if (cell.getAttribute("data-date") === selectedDate) {
+                        applyStatusStyle(cell, null);
+                    }
+                });
 
-    prevMonthBtn.addEventListener("click", function () {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
-    });
+                deleteStatusFromBackend(selectedDate);
 
-    nextMonthBtn.addEventListener("click", function () {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
-    });
+                if (modal) {
+                    modal.style.display = "none";
+                }
+            }
+        });
+    }
+
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener("click", function () {
+            if (modal) {
+                modal.style.display = "none";
+            }
+        });
+    }
+
+    // Close modal when clicking outside
+    if (modal) {
+        modal.addEventListener("click", function (e) {
+            if (e.target === modal) {
+                modal.style.display = "none";
+            }
+        });
+    }
+
+    // Navigation event handlers
+    if (prevMonthBtn) {
+        prevMonthBtn.addEventListener("click", function () {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        });
+    }
+
+    if (nextMonthBtn) {
+        nextMonthBtn.addEventListener("click", function () {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        });
+    }
 
     // ---------------------------- //
     //   AM/PM → Time Slot Filter   //
@@ -228,14 +328,18 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     if (periodSelect && timeSlotSelect && timeSlotWrapper) {
+        // Initially hide time slot selection
         timeSlotWrapper.style.display = "none";
+        timeSlotSelect.disabled = true;
 
         periodSelect.addEventListener("change", function () {
             const selectedPeriod = this.value;
-            timeSlotSelect.innerHTML =
-                '<option value="">Select a time slot</option>';
+            
+            // Clear existing options
+            timeSlotSelect.innerHTML = '<option value="">Select a time slot</option>';
 
             if (timeSlots[selectedPeriod]) {
+                // Add new options for selected period
                 timeSlots[selectedPeriod].forEach((slot) => {
                     const option = document.createElement("option");
                     option.value = slot;
@@ -243,25 +347,186 @@ document.addEventListener("DOMContentLoaded", function () {
                     timeSlotSelect.appendChild(option);
                 });
 
+                // Show and enable time slot selection
                 timeSlotWrapper.style.display = "block";
                 timeSlotSelect.disabled = false;
+                timeSlotSelect.required = true;
             } else {
+                // Hide and disable time slot selection
                 timeSlotWrapper.style.display = "none";
                 timeSlotSelect.disabled = true;
+                timeSlotSelect.required = false;
             }
         });
     }
 
-    fetch("/admin/availability")
-        .then((res) => res.json())
-        .then((dateStatusMap) => {
-            Object.entries(dateStatusMap).forEach(([date, status]) => {
-                dateStatuses[date] = status;
+    // Load availability data from backend
+    function loadAvailabilityData() {
+        fetch("/admin/availability")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((dateStatusMap) => {
+                if (dateStatusMap && typeof dateStatusMap === 'object') {
+                    Object.entries(dateStatusMap).forEach(([date, status]) => {
+                        dateStatuses[date] = status;
+                    });
+                }
+                renderCalendar();
+            })
+            .catch((error) => {
+                console.error("Error loading availability:", error);
+                // Still render calendar even if data loading fails
+                renderCalendar();
             });
-            renderCalendar();
+    }
+
+    // Save status to backend
+    function saveStatusToBackend(date, status) {
+        fetch("/admin/availability", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                              document.querySelector('input[name="_token"]')?.value,
+            },
+            body: JSON.stringify({
+                date: date,
+                status: status,
+            }),
         })
-        .catch((err) => {
-            console.error("Error loading availability:", err);
-            renderCalendar();
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Status saved:", data);
+            showNotification("Status updated successfully", "success");
+        })
+        .catch((error) => {
+            console.error("Error saving status:", error);
+            showNotification("Error updating status", "error");
         });
+    }
+
+    // Delete status from backend
+    function deleteStatusFromBackend(date) {
+        fetch("/admin/availability", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                              document.querySelector('input[name="_token"]')?.value,
+            },
+            body: JSON.stringify({
+                date: date,
+            }),
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Status deleted:", data);
+            showNotification("Status removed successfully", "success");
+        })
+        .catch((error) => {
+            console.error("Error deleting status:", error);
+            showNotification("Error removing status", "error");
+        });
+    }
+
+    // Initialize calendar
+    loadAvailabilityData();
+
+    // ---------------------------- //
+    //      UTILITY FUNCTIONS      //
+    // ---------------------------- //
+
+    // Show notification function
+    function showNotification(message, type = "info") {
+        const notification = document.createElement("div");
+        notification.className = `notification notification-${type}`;
+        notification.textContent = message;
+        
+        // Add to body
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 3000);
+    }
+
+    // Date formatting utility
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        });
+    }
+
+    // Phone number formatting
+    const contactInput = document.getElementById("contact");
+    if (contactInput) {
+        contactInput.addEventListener("input", function(e) {
+            let value = e.target.value.replace(/\D/g, "");
+            if (value.length >= 10) {
+                value = value.substring(0, 10);
+                e.target.value = value.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+            }
+        });
+    }
+
+    // Auto-save form data to localStorage for user convenience
+    const formInputs = document.querySelectorAll('input[type="text"], input[type="email"], textarea, select');
+    formInputs.forEach(input => {
+        // Load saved data
+        const savedValue = localStorage.getItem(`form_${input.id}`);
+        if (savedValue && input.type !== "date") {
+            input.value = savedValue;
+        }
+
+        // Save data on change
+        input.addEventListener("change", function() {
+            localStorage.setItem(`form_${input.id}`, input.value);
+        });
+    });
+
+    // Clear saved form data on successful submission
+    if (form) {
+        form.addEventListener("submit", function() {
+            // Clear saved data after a delay to allow form processing
+            setTimeout(() => {
+                formInputs.forEach(input => {
+                    localStorage.removeItem(`form_${input.id}`);
+                });
+            }, 1000);
+        });
+    }
+
+    // Add keyboard navigation for calendar
+    document.addEventListener("keydown", function(e) {
+        if (modal && modal.style.display === "flex") {
+            if (e.key === "Escape") {
+                modal.style.display = "none";
+            }
+        }
+    });
+
+    // Refresh calendar data periodically (every 5 minutes)
+    setInterval(loadAvailabilityData, 300000);
+
+    console.log("Event management system initialized successfully");
 });

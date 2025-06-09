@@ -2,10 +2,9 @@
 
 @section('title', 'Make Reservation')
 
-@push('scripts')
+@push('styles')
     @vite('resources/css/a_reserve.css')
 @endpush
-
 
 @section('content')
 <div class="container">
@@ -53,7 +52,8 @@
 
             <div class="form-group">
                 <label for="venue">Venue:<span>*</span></label>
-                <select id="venue" name="venue">
+                <select id="venue" name="venue" required>
+                    <option value="" disabled selected>Choose a venue</option>
                     <option value="Villa I">Villa I</option>
                     <option value="Villa II">Villa II</option>
                     <option value="Elizabeth Hall">Elizabeth Hall</option>
@@ -65,7 +65,8 @@
 
             <div class="form-group">
                 <label for="event_type">Event Type:<span>*</span></label>
-                <select id="event_type" name="event_type">
+                <select id="event_type" name="event_type" required>
+                    <option value="" disabled selected>Choose event type</option>
                     <option value="Baptismal Package">Baptismal Package</option>
                     <option value="Birthday Package">Birthday Package</option>
                     <option value="Debut Package">Debut Package</option>
@@ -79,7 +80,8 @@
 
             <div class="form-group">
                 <label for="theme_motif">Theme/Motif:<span>*</span></label>
-                <select id="theme_motif" name="theme_motif">
+                <select id="theme_motif" name="theme_motif" required>
+                    <option value="" disabled selected>Choose theme/motif</option>
                     <option value="Floral">Floral</option>
                     <option value="Rustic">Rustic</option>
                     <option value="Elegant">Elegant</option>
@@ -92,7 +94,7 @@
 
             <div class="form-group">
                 <label for="message">Other Request:<span>*</span></label>
-                <textarea id="message" name="message" required></textarea>
+                <textarea id="message" name="message" required placeholder="Please describe your specific requirements..."></textarea>
             </div>
 
             <div class="form-group">
@@ -103,25 +105,49 @@
 
     <div class="calendar-container">
         <div class="calendar-header">
-            <button id="prevMonth">◀</button>
+            <button type="button" id="prevMonth">◀</button>
             <span id="month-year"></span>
-            <button id="nextMonth">▶</button>
+            <button type="button" id="nextMonth">▶</button>
         </div>
         <div id="calendar"></div>
+
+        <div class="calendar-legend">
+            <div class="legend-item">
+                <div class="legend-box legend-green"></div> Available (1–2 left)
+            </div>
+            <div class="legend-item">
+                <div class="legend-box legend-yellow"></div> Half Full (2/4)
+            </div>
+            <div class="legend-item">
+                <div class="legend-box legend-orange"></div> Nearly Full (3/4)
+            </div>
+            <div class="legend-item">
+                <div class="legend-box legend-red"></div> Full (4/4)
+            </div>
+            <div class="legend-item">
+                <div class="legend-box legend-gray"></div> Closed
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Admin Status Selection Modal -->
-<div id="statusModal" class="modal-overlay">
+<div id="statusModal" class="modal-overlay" style="display: none;">
     <div class="modal-box">
         <h3>Select Status</h3>
         <select id="statusSelect">
-            <option value="free">Free</option>
-            <option value="full">Fully Booked</option>
+            <option value="">No Status</option>
+            <option value="available">Available</option>
+            <option value="half">Half Full</option>
+            <option value="nearly">Nearly Full</option>
+            <option value="full">Full</option>
             <option value="closed">Closed</option>
         </select>
-        <button id="saveStatus">Save</button>
-        <button id="closeModal">Cancel</button>
+        <div class="modal-buttons">
+            <button type="button" id="saveStatus">Save</button>
+            <button type="button" id="closeModal">Cancel</button>
+            <button type="button" id="undoStatus">Undo Status</button>
+        </div>
     </div>
 </div>
 @endsection
