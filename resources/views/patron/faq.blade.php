@@ -8,7 +8,7 @@
 
 @section('content')
 <div class="faq-container">
-    <h1>Frequently Asked Questions</h1>
+    <h2>Frequently Asked Questions</h2>
 
     <div class="faq">
             <button class="faq-question">What's the difference between the Villa I & Villa II? <span class="arrow">&#9660;</span></button>
