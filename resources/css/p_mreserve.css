@@ -236,21 +236,16 @@ body {
   }
 }
 
-/* === Agreement Modal Styles === */
 #agreementModal {
+  display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
   z-index: 9999;
-  display: none; /* Hidden by default */
+  display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
-  box-sizing: border-box;
-  transform: none !important;
-  scale: none !important;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 #agreementModal.show {
@@ -258,6 +253,7 @@ body {
 }
 
 .guidelines-content {
+  position: relative;
   background: #ffffff;
   width: 100%;
   max-width: 600px;
@@ -269,13 +265,16 @@ body {
   font-family: "Playfair Display", serif;
   color: #333;
   line-height: 1.6;
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  /* Remove margin auto and ensure centering through flexbox parent */
-  /* Ensure no scaling inheritance */
-  transform: none !important;
-  scale: none !important;
+  margin: 0 auto;
+}
+
+
+/* Mobile Adjustment */
+@media (max-width: 768px) {
+  .guidelines-content {
+    max-width: 95vw;
+    padding: 20px 25px;
+  }
 }
 
 #agreementContent {
@@ -420,5 +419,19 @@ body {
   .guidelines-content p,
   .guidelines-content li {
     font-size: 14px;
+  }
+}
+
+/* ===== ADDED: Mobile navbar alignment left ===== */
+@media (max-width: 768px) {
+  .navbar {
+    justify-content: flex-start !important;
+    padding-left: 20px;
+  }
+
+  .navbar ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
   }
 }

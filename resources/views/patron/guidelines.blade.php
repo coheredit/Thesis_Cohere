@@ -1,4 +1,4 @@
-@extends('layouts.patron') {{-- Assuming this is your layout file --}}
+@extends('layouts.patron')
 
 @section('title', 'Villa Salud Catering - Guidelines')
 
@@ -93,7 +93,7 @@
     <section>
         <h2>Guidelines for Outside Caterers & Suppliers</h2>
         <ul>
-            <li>No removal or rearranging of Villa Salud’s equipment without permission.</li>
+            <li>No removal or rearranging of Villa Salud's equipment without permission.</li>
             <li>Cooking is not allowed. Food warming only.</li>
             <li>No dishwashing in premises. Clean-up required.</li>
             <li>Sufficient garbage bags must be provided by suppliers.</li>
@@ -111,5 +111,29 @@
         <p>Villa Salud is not liable for performance failures caused by uncontrollable events (e.g., natural disasters, war, governmental regulations). In such cases, Villa Salud reserves the right to provide alternative accommodations or menus as fulfillment of the contract.</p>
     </section>
 </main>
-@endsection
 
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');
+    const navbarMenu = document.querySelector('.navbar ul');
+    
+    if (hamburger && navbarMenu) {
+        hamburger.addEventListener('click', function() {
+            this.classList.toggle('active');
+            navbarMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking on a link (for mobile)
+        const navLinks = document.querySelectorAll('.navbar a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navbarMenu.classList.remove('active');
+            });
+        });
+    }
+});
+</script>
+@endpush
+@endsection
