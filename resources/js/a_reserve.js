@@ -344,24 +344,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const timeSlotSelect = document.getElementById("time_slot");
 
     const timeSlots = {
-        AM: ["9am-1pm", "10am-2pm", "11am-3pm"],
-        PM: ["4pm-8pm", "5pm-9pm", "6pm-10pm"],
+        AM: ["9am–11am", "10am–12pm", "11am–1pm"],
+        PM: ["2pm–4pm", "3pm–5pm", "4pm–6pm"],
     };
 
     if (periodSelect && timeSlotSelect && timeSlotWrapper) {
-        // Initially hide time slot selection
+        // Initially hide and disable time slot
         timeSlotWrapper.style.display = "none";
         timeSlotSelect.disabled = true;
+        timeSlotSelect.required = false;
 
         periodSelect.addEventListener("change", function () {
             const selectedPeriod = this.value;
 
-            // Clear existing options
+            // Reset options
             timeSlotSelect.innerHTML =
                 '<option value="">Select a time slot</option>';
 
             if (timeSlots[selectedPeriod]) {
-                // Add new options for selected period
+                // Populate time slots
                 timeSlots[selectedPeriod].forEach((slot) => {
                     const option = document.createElement("option");
                     option.value = slot;
@@ -369,15 +370,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     timeSlotSelect.appendChild(option);
                 });
 
-                // Show and enable time slot selection
-                timeSlotWrapper.style.display = "block";
+                // Enable and show the time slot dropdown
                 timeSlotSelect.disabled = false;
+                timeSlotWrapper.style.display = "block";
                 timeSlotSelect.required = true;
             } else {
-                // Hide and disable time slot selection
-                timeSlotWrapper.style.display = "none";
-                timeSlotSelect.disabled = true;
-                timeSlotSelect.required = false;
+                // Hide and disable if no valid period
+                timeSlotSelect.disabled = false;
+                timeSlotSelect.required = true;
+                timeSlotWrapper.style.display = "block";
             }
         });
     }

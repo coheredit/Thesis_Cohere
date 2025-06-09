@@ -12,11 +12,9 @@ class Patron extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'name',
         'email',
         'contact_number',
-        // etc...
     ];
 }
 

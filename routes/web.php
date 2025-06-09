@@ -4,8 +4,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Patron\HomeController;
 use App\Http\Controllers\Patron\FeedbackController;
-use App\Http\Controllers\Patron\ReservationController;
 use App\Http\Controllers\Patron\PaymentController;
+
+// Unified
+use App\Http\Controllers\ReservationController;
 
 // Admin Controller Related
 use App\Http\Controllers\Admin\AuthController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\Admin\AdminHomeController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\AvailabilityController;
+
 
 Route::name('patron.')->group(function () {
     // Home page
@@ -64,9 +67,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/availability', [AvailabilityController::class, 'toggle'])->name('availability.toggle');
 
     // Admin creates reservation (inquiry form)
+    Route::get('/reserve', [ReservationController::class, 'create'])->name('reserve.create');
+    Route::post('/reserve', [ReservationController::class, 'store'])->name('reserve.store');
 
-    Route::get('/reserve', [InquiryController::class, 'create'])->name('reserve.create');
-    Route::post('/reserve', [InquiryController::class, 'store'])->name('reserve.store');
+
 
     Route::view('/report', 'admin.a_report')->name('report');
     Route::view('/profile', 'admin.a_profile')->name('profile');

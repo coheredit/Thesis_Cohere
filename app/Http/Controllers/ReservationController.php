@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Patron;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,14 +9,21 @@ use App\Models\Inquiry;
 
 class ReservationController extends Controller
 {
-    public function create()
+    public function create(Request $request)
     {
+        if ($request->is('admin/*')) {
+            return view('admin.a_reserve');
+        }
         return view('patron.p_mreserve');
     }
 
+    
     public function store(Request $request)
     {
-        $request->validate([
+        // dd($request->all());
+
+
+        $validated = $request->validate([
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|max:255',
             'contact_number' => 'required|string|max:20',
@@ -28,26 +35,32 @@ class ReservationController extends Controller
             'message'        => 'required|string',
         ]);
 
-        $patron = Patron::create([
-            'name'           => $request->name,
-            'email'          => $request->email,
-            'contact_number' => $request->contact_number,
-        ]);
+        if (empty($validated['name'])) {
+            return redirect()->back()->withErrors(['name' => 'Name is required.']);
+        }
+
+        $patron = Patron::firstOrCreate(
+            ['email' => $validated['email']],
+            [
+                'name'           => $validated['name'],
+                'contact_number' => $validated['contact_number'],
+            ]
+        );
 
         Inquiry::create([
             'patron_id'         => $patron->id,
-            'event_type'        => $request->event_type,
-            'theme_motif'       => $request->theme_motif,
-            'venue'             => $request->venue,
+            'event_type'        => $validated['event_type'],
+            'theme_motif'       => $validated['theme_motif'],
+            'venue'             => $validated['venue'],
             'other_venue'       => $request->other_venue,
             'other_event_type'  => $request->other_event_type,
             'other_theme_motif' => $request->other_theme_motif,
-            'date'              => $request->date,
-            'time'              => $request->time,
-            'message'           => $request->message,
+            'date'              => $validated['date'],
+            'time'              => $validated['time'],
+            'message'           => $validated['message'],
             'status'            => 'pending',
         ]);
 
-        return redirect()->back()->with('success', 'Your reservation request has been submitted!');
+        return redirect()->back()->with('success', 'Inquiry successfully created!');
     }
 }
