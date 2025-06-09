@@ -18,6 +18,8 @@ class Inquiry extends Model
         'theme_motif',
         'other_theme_motif',
         'venue',
+        'date',
+        'time',
         'other_venue',
         'event_date',
         'event_time',

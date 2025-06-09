@@ -16,7 +16,7 @@
 
             <div class="form-group">
                 <label for="name">Name:<span>*</span></label>
-                <input type="text" id="name" name="name" placeholder="First Name, Last Name" required>
+                <input type="text" id="name" name="name" required>
             </div>
 
             <div class="form-group">
@@ -45,7 +45,7 @@
 
             <div class="form-group" id="timeSlotWrapper" style="display: none;">
                 <label for="time_slot">Select Time Slot:<span>*</span></label>
-                <select id="time_slot" name="time" required disabled>
+                <select id="time_slot" name="time" required>
                     <option value="">Select a time slot</option>
                 </select>
             </div>
