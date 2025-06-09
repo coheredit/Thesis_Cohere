@@ -70,21 +70,33 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Validate venue selection
-            if (!venueSelect.value || (venueSelect.value === "Others" && !otherVenueInput.value.trim())) {
+            if (
+                !venueSelect.value ||
+                (venueSelect.value === "Others" &&
+                    !otherVenueInput.value.trim())
+            ) {
                 alert("Please specify the venue.");
                 event.preventDefault();
                 return;
             }
 
             // Validate event type selection
-            if (!eventTypeSelect.value || (eventTypeSelect.value === "Others" && !otherEventTypeInput.value.trim())) {
+            if (
+                !eventTypeSelect.value ||
+                (eventTypeSelect.value === "Others" &&
+                    !otherEventTypeInput.value.trim())
+            ) {
                 alert("Please specify the event type.");
                 event.preventDefault();
                 return;
             }
 
             // Validate theme/motif selection
-            if (!themeMotifSelect.value || (themeMotifSelect.value === "Others" && !otherThemeMotifInput.value.trim())) {
+            if (
+                !themeMotifSelect.value ||
+                (themeMotifSelect.value === "Others" &&
+                    !otherThemeMotifInput.value.trim())
+            ) {
                 alert("Please specify the theme/motif.");
                 event.preventDefault();
                 return;
@@ -102,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const selectedDate = new Date(date);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            
+
             if (selectedDate < today) {
                 alert("Please select a date from today onwards.");
                 event.preventDefault();
@@ -110,8 +122,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // Check if selected date is available
-            if (dateStatuses[date] === "full" || dateStatuses[date] === "closed") {
-                alert("The selected date is not available. Please choose another date.");
+            if (
+                dateStatuses[date] === "full" ||
+                dateStatuses[date] === "closed"
+            ) {
+                alert(
+                    "The selected date is not available. Please choose another date."
+                );
                 event.preventDefault();
                 return;
             }
@@ -178,7 +195,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const dayCell = document.createElement("div");
             dayCell.classList.add("calendar-day");
             dayCell.textContent = day;
-            
+
             // Format date as YYYY-M-D to match backend format
             const dateKey = `${year}-${month + 1}-${day}`;
             dayCell.setAttribute("data-date", dateKey);
@@ -205,30 +222,30 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function applyStatusStyle(cell, status) {
-        if (!cell) return;
-        
-        // Reset classes
-        cell.className = "calendar-day";
-        
-        // Apply status-specific styling
+        cell.classList.remove("Available", "Half", "Nearly", "Full", "Closed");
+        cell.style.background = "";
+        cell.style.color = "";
+
         switch (status) {
-            case "available":
-                cell.classList.add("status-green");
+            case "Available":
+                cell.style.background = "green";
+                cell.style.color = "white";
                 break;
-            case "half":
-                cell.classList.add("status-yellow");
+            case "Half":
+                cell.style.background = "gold";
+                cell.style.color = "black";
                 break;
-            case "nearly":
-                cell.classList.add("status-orange");
+            case "Nearly":
+                cell.style.background = "orange";
+                cell.style.color = "white";
                 break;
-            case "full":
-                cell.classList.add("status-red");
+            case "Full":
+                cell.style.background = "red";
+                cell.style.color = "white";
                 break;
-            case "closed":
-                cell.classList.add("status-gray");
-                break;
-            default:
-                // No special styling for default state
+            case "Closed":
+                cell.style.background = "gray";
+                cell.style.color = "white";
                 break;
         }
     }
@@ -238,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function () {
         saveStatusBtn.addEventListener("click", function () {
             if (selectedDate && statusSelect) {
                 const selectedStatus = statusSelect.value;
-                
+
                 if (selectedStatus) {
                     dateStatuses[selectedDate] = selectedStatus;
                     saveStatusToBackend(selectedDate, selectedStatus);
@@ -248,7 +265,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 // Update the visual appearance
-                const dayCells = document.querySelectorAll(".calendar-day[data-date]");
+                const dayCells = document.querySelectorAll(
+                    ".calendar-day[data-date]"
+                );
                 dayCells.forEach((cell) => {
                     if (cell.getAttribute("data-date") === selectedDate) {
                         applyStatusStyle(cell, selectedStatus);
@@ -266,8 +285,10 @@ document.addEventListener("DOMContentLoaded", function () {
         undoStatusBtn.addEventListener("click", function () {
             if (selectedDate && dateStatuses[selectedDate]) {
                 delete dateStatuses[selectedDate];
-                
-                const dayCells = document.querySelectorAll(".calendar-day[data-date]");
+
+                const dayCells = document.querySelectorAll(
+                    ".calendar-day[data-date]"
+                );
                 dayCells.forEach((cell) => {
                     if (cell.getAttribute("data-date") === selectedDate) {
                         applyStatusStyle(cell, null);
@@ -334,9 +355,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         periodSelect.addEventListener("change", function () {
             const selectedPeriod = this.value;
-            
+
             // Clear existing options
-            timeSlotSelect.innerHTML = '<option value="">Select a time slot</option>';
+            timeSlotSelect.innerHTML =
+                '<option value="">Select a time slot</option>';
 
             if (timeSlots[selectedPeriod]) {
                 // Add new options for selected period
@@ -370,7 +392,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then((dateStatusMap) => {
-                if (dateStatusMap && typeof dateStatusMap === 'object') {
+                if (dateStatusMap && typeof dateStatusMap === "object") {
                     Object.entries(dateStatusMap).forEach(([date, status]) => {
                         dateStatuses[date] = status;
                     });
@@ -390,28 +412,31 @@ document.addEventListener("DOMContentLoaded", function () {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
-                              document.querySelector('input[name="_token"]')?.value,
+                "X-CSRF-TOKEN":
+                    document
+                        .querySelector('meta[name="csrf-token"]')
+                        ?.getAttribute("content") ||
+                    document.querySelector('input[name="_token"]')?.value,
             },
             body: JSON.stringify({
                 date: date,
                 status: status,
             }),
         })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log("Status saved:", data);
-            showNotification("Status updated successfully", "success");
-        })
-        .catch((error) => {
-            console.error("Error saving status:", error);
-            showNotification("Error updating status", "error");
-        });
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Status saved:", data);
+                showNotification("Status updated successfully", "success");
+            })
+            .catch((error) => {
+                console.error("Error saving status:", error);
+                showNotification("Error updating status", "error");
+            });
     }
 
     // Delete status from backend
@@ -420,27 +445,30 @@ document.addEventListener("DOMContentLoaded", function () {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
-                              document.querySelector('input[name="_token"]')?.value,
+                "X-CSRF-TOKEN":
+                    document
+                        .querySelector('meta[name="csrf-token"]')
+                        ?.getAttribute("content") ||
+                    document.querySelector('input[name="_token"]')?.value,
             },
             body: JSON.stringify({
                 date: date,
             }),
         })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((data) => {
-            console.log("Status deleted:", data);
-            showNotification("Status removed successfully", "success");
-        })
-        .catch((error) => {
-            console.error("Error deleting status:", error);
-            showNotification("Error removing status", "error");
-        });
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((data) => {
+                console.log("Status deleted:", data);
+                showNotification("Status removed successfully", "success");
+            })
+            .catch((error) => {
+                console.error("Error deleting status:", error);
+                showNotification("Error removing status", "error");
+            });
     }
 
     // Initialize calendar
@@ -455,10 +483,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const notification = document.createElement("div");
         notification.className = `notification notification-${type}`;
         notification.textContent = message;
-        
+
         // Add to body
         document.body.appendChild(notification);
-        
+
         // Auto-remove after 3 seconds
         setTimeout(() => {
             if (notification.parentNode) {
@@ -480,18 +508,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // Phone number formatting
     const contactInput = document.getElementById("contact");
     if (contactInput) {
-        contactInput.addEventListener("input", function(e) {
+        contactInput.addEventListener("input", function (e) {
             let value = e.target.value.replace(/\D/g, "");
             if (value.length >= 10) {
                 value = value.substring(0, 10);
-                e.target.value = value.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+                e.target.value = value.replace(
+                    /(\d{3})(\d{3})(\d{4})/,
+                    "($1) $2-$3"
+                );
             }
         });
     }
 
     // Auto-save form data to localStorage for user convenience
-    const formInputs = document.querySelectorAll('input[type="text"], input[type="email"], textarea, select');
-    formInputs.forEach(input => {
+    const formInputs = document.querySelectorAll(
+        'input[type="text"], input[type="email"], textarea, select'
+    );
+    formInputs.forEach((input) => {
         // Load saved data
         const savedValue = localStorage.getItem(`form_${input.id}`);
         if (savedValue && input.type !== "date") {
@@ -499,17 +532,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Save data on change
-        input.addEventListener("change", function() {
+        input.addEventListener("change", function () {
             localStorage.setItem(`form_${input.id}`, input.value);
         });
     });
 
     // Clear saved form data on successful submission
     if (form) {
-        form.addEventListener("submit", function() {
+        form.addEventListener("submit", function () {
             // Clear saved data after a delay to allow form processing
             setTimeout(() => {
-                formInputs.forEach(input => {
+                formInputs.forEach((input) => {
                     localStorage.removeItem(`form_${input.id}`);
                 });
             }, 1000);
@@ -517,7 +550,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Add keyboard navigation for calendar
-    document.addEventListener("keydown", function(e) {
+    document.addEventListener("keydown", function (e) {
         if (modal && modal.style.display === "flex") {
             if (e.key === "Escape") {
                 modal.style.display = "none";

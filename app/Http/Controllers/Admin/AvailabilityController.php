@@ -11,25 +11,19 @@ class AvailabilityController extends Controller
 
     public function index()
     {
-        try {
-            $records = \App\Models\Availability::all()->mapWithKeys(function ($item) {
-                return [$item->date->format('Y-n-j') => $item->status];
-            });
+        $records = \App\Models\Availability::all()->mapWithKeys(function ($item) {
+            return [$item->date->format('Y-n-j') => $item->status];
+        });
 
-            return response()->json($records);
-        } catch (\Throwable $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        return response()->json($records);
     }
 
 
-
-    // Toggle availability for a specific date (via AJAX)
     public function toggle(Request $request)
     {
         $request->validate([
             'date' => 'required|date',
-            'status' => 'required|in:free,full,closed',
+            'status' => 'required|in:Available,Half,Nearly,Full,Closed', 
         ]);
 
         $availability = \App\Models\Availability::updateOrCreate(

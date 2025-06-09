@@ -61,10 +61,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     // Availability for the calendar on admin making inquir/reservation
     Route::get('/availability', [AvailabilityController::class, 'index'])->name('availability.index');
-    Route::post('/availability/toggle', [AvailabilityController::class, 'toggle'])->name('availability.toggle');
+    Route::post('/availability', [AvailabilityController::class, 'toggle'])->name('availability.toggle');
 
+    // Admin creates reservation (inquiry form)
 
-    Route::view('/reserve', 'admin.a_reserve')->name('reserve');
+    Route::get('/reserve', [InquiryController::class, 'create'])->name('reserve.create');
+    Route::post('/reserve', [InquiryController::class, 'store'])->name('reserve.store');
+
     Route::view('/report', 'admin.a_report')->name('report');
     Route::view('/profile', 'admin.a_profile')->name('profile');
 });

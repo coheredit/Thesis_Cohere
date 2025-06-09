@@ -10,7 +10,7 @@
 <div class="container">
     <div class="reservation-container">
         <h2>Let's bring your vision to life—just fill out the form.</h2>
-        <form method="POST" action="{{ route('admin.reserve') }}">
+        <form action="{{ route('admin.reserve.store') }}" method="POST">
             @csrf
             <input type="hidden" name="created_by_type" value="admin">
 
@@ -137,11 +137,12 @@
         <h3>Select Status</h3>
         <select id="statusSelect">
             <option value="">No Status</option>
-            <option value="available">Available</option>
-            <option value="half">Half Full</option>
-            <option value="nearly">Nearly Full</option>
-            <option value="full">Full</option>
-            <option value="closed">Closed</option>
+            <option value="Available">Available</option>
+            <option value="Half">Half Full</option>
+            <option value="Nearly">Nearly Full</option>
+            <option value="Full">Full</option>
+            <option value="Closed">Closed</option>
+
         </select>
         <div class="modal-buttons">
             <button type="button" id="saveStatus">Save</button>
