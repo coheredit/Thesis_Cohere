@@ -13,7 +13,7 @@ class Admin extends Authenticatable
     protected $table = 'admin';
     protected $primaryKey = 'admin_id';
 
-    public $timestamps = true; // ✅ Laravel will use created_at & updated_at
+    public $timestamps = true;
 
     protected $fillable = [
         'email',
@@ -21,5 +21,6 @@ class Admin extends Authenticatable
         'l_name',
         'phone',
         'password',
+        'profile_picture', 
     ];
 }
