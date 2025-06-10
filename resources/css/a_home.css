@@ -6,7 +6,6 @@ body {
   zoom: 90%;
 }
 
-/* === Header === */
 .header-image {
   width: 100%;
   height: auto;
@@ -25,7 +24,6 @@ body {
   justify-content: center;
   background: #fff;
   padding: 15px 0;
-  border-bottom: 2px solid #ccc;
 }
 
 .navbar ul {
