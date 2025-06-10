@@ -51,13 +51,12 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        $admin = Admin::where('email', $credentials['email'])->first();
+        if (Auth::guard('admin')->attempt($credentials)) {
 
-        if ($admin && Hash::check($credentials['password'], $admin->password)) {
-            Auth::login($admin); // optionally use guard here
             return redirect()->route('admin.home');
         }
 
-        return redirect()->back()->with('error', 'Invalid email or password.');
+        // Login failed
+        return back()->withErrors(['email' => 'Invalid credentials.']);
     }
 }

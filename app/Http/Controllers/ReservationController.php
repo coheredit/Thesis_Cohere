@@ -20,7 +20,7 @@ class ReservationController extends Controller
     
     public function store(Request $request)
     {
-        // dd($request->all());
+         // dd($request->all());
 
 
         $validated = $request->validate([
@@ -47,8 +47,10 @@ class ReservationController extends Controller
             ]
         );
 
+        // dd($patron);
+
         Inquiry::create([
-            'patron_id'         => $patron->id,
+            'patron_id'         => $patron->patron_id,
             'event_type'        => $validated['event_type'],
             'theme_motif'       => $validated['theme_motif'],
             'venue'             => $validated['venue'],

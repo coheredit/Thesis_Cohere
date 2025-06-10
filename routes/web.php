@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\AdminHomeController;
 use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\AvailabilityController;
+use App\Http\Controllers\Admin\AdminActivityController;
+
 
 
 Route::name('patron.')->group(function () {
@@ -39,14 +41,13 @@ Route::name('patron.')->group(function () {
     Route::view('/guidelines', 'patron.guidelines')->name('guidelines');
 });
 
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(function () {
     // Signup
     Route::get('/signup', [AuthController::class, 'showSignupForm'])->name('signup');
     Route::post('/signup', [AuthController::class, 'signup'])->name('signup.submit');
 
     // Login
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
 
     // Admin Homepage
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
@@ -70,8 +71,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/reserve', [ReservationController::class, 'create'])->name('reserve.create');
     Route::post('/reserve', [ReservationController::class, 'store'])->name('reserve.store');
 
-
+    //Activitiy Log for Admin Profile
+    Route::get('/activities', [AdminActivityController::class, 'index'])->name('activities');
 
     Route::view('/report', 'admin.a_report')->name('report');
     Route::view('/profile', 'admin.a_profile')->name('profile');
 });
+
+// Universal for login 
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submit');
