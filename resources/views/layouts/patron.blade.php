@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title', 'Villa Salud Patron')</title>
 
+        <link rel="icon" type="image/png" href="{{ asset('images/vs_logo.png') }}" />
+
     @vite([]) {{-- Add this to initialize Vite --}}
     @stack('styles') {{-- Page-specific styles --}}
 </head>
