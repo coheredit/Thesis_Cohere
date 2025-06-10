@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <di class="container">
         <div class="left-section">
             <h1>Hello, Admin! Welcome to Villa Salud System</h1>
             <p>Your Event, Your Way - Log In to Start!</p>
@@ -21,11 +21,17 @@
                     </div>
                 @endif
 
+                @if(session('success'))
+                    <div class="success-message" style="color: #155724; background: #d4edda; border: 1px solid #c3e6cb; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
                 <form id="login-form" method="POST" action="{{ route('admin.login.submit') }}">
                     @csrf
 
                     <label>Email Address:</label>
-                    <input type="email" name="email" required>
+                    <input type="email" name="email" value="{{ old('email') }}" required>
 
                     <label>Password:</label>
                     <input type="password" id="password" name="password" required>
@@ -43,7 +49,7 @@
                 </p>
             </div>
         </div>
-        <<div class="right-section" style="background: url('{{ asset('images/background_picture.jpeg') }}') no-repeat center center / cover;"></div>
+            <div class="right-section" style="background-image: url('/images/background_picture.jpeg'); background-repeat: no-repeat; background-position: center center; background-size: cover;"></div>
     </div>
     @vite('resources/js/login.js')
 

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;
+use App\Models\ActivityLog;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -25,7 +27,7 @@ class AuthController extends Controller
             'phone' => 'required|digits:11',
             'password' => 'required|min:6',
             'confirm_password' => 'required|same:password',
-            'profile_picture' => 'required|in:default.png,boy.png,boy1.png,boy2.png,girl.png,girl1.png,girl2.png', // ✅ Added validation
+            'profile_picture' => 'required|in:default.png,boy.png,boy1.png,boy2.png,girl.png,girl1.png,girl2.png',
         ]);
 
         if ($validator->fails()) {
@@ -38,7 +40,7 @@ class AuthController extends Controller
             'l_name' => $request->l_name,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'profile_picture' => $request->profile_picture, // ✅ Added this
+            'profile_picture' => $request->profile_picture,
         ]);
 
         return redirect()->route('admin.login')->with('success', 'Account created successfully. Please log in.');
@@ -54,15 +56,57 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('admin')->attempt($credentials)) {
+            $admin = Auth::guard('admin')->user();
+            
+            // Store login time in session for logout duration calculation
+            session(['admin_login_time' => now()]);
 
-            return redirect()->route('admin.home');
+            // Log the login activity
+            ActivityLog::create([
+                'admin_id' => $admin->admin_id,
+                'activity_type' => 'login',
+                'description' => "Admin '{$admin->f_name} {$admin->l_name}' logged in successfully",
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
+            return redirect()->intended('/admin/home');
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials.']);
+        return back()->withErrors([
+            'email' => 'Invalid login credentials.',
+        ]);
     }
 
     public function logout(Request $request)
     {
+        if (Auth::guard('admin')->check()) {
+            $admin = Auth::guard('admin')->user();
+            
+            // Calculate session duration
+            $loginTime = session('admin_login_time');
+            $sessionDuration = '00:00:00'; // Default if no login time found
+            
+            if ($loginTime) {
+                $duration = Carbon::parse($loginTime)->diff(now());
+                $sessionDuration = sprintf(
+                    '%02d:%02d:%02d',
+                    $duration->h + ($duration->days * 24), // Include days in hours
+                    $duration->i,
+                    $duration->s
+                );
+            }
+
+            // Log the logout activity
+            ActivityLog::create([
+                'admin_id' => $admin->admin_id,
+                'activity_type' => 'logout',
+                'description' => "Admin '{$admin->f_name} {$admin->l_name}' logged out. Session duration: {$sessionDuration}",
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+        }
+
         Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
