@@ -10,20 +10,44 @@
 </head>
 <body>
 
-    {{-- Header image from the correct design --}}
     <header class="header-image">
         <img src="{{ asset('images/background_picture.jpeg') }}" alt="Villa Salud Header" class="header-banner">
     </header>
 
-    {{-- Navbar from the correct design with route-aware active class --}}
     <nav class="navbar">
-        <ul>
-            <li><a href="{{ route('admin.home') }}" class="{{ request()->is('admin/home') ? 'active' : '' }}">Home</a></li>
-            <li><a href="{{ route('admin.inquiry') }}" class="{{ request()->is('admin/inquiry') ? 'active' : '' }}">Inquiries</a></li>
-            <li><a href="{{ route('admin.reserve.create') }}" class="{{ request()->is('admin/reserve') ? 'active' : '' }}">Reservations</a></li>
-            <li><a href="{{ route('admin.report') }}" class="{{ request()->is('admin/report') ? 'active' : '' }}">Reports</a></li>
-            <li><a href="{{ route('admin.profile') }}" class="{{ request()->is('admin/profile') ? 'active' : '' }}">Admin Profile</a></li>
+        <ul class="navbar">
+            <li>
+                <a href="{{ route('admin.home') }}"
+                    class="{{ request()->is('admin/home') ? 'active' : '' }}">
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.inquiry') }}"
+                    class="{{ request()->is('admin/inquiry') ? 'active' : '' }}">
+                    Inquiries
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.reserve.create') }}"
+                    class="{{ request()->is('admin/reserve') ? 'active' : '' }}">
+                    Reservations
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.report') }}"
+                    class="{{ request()->is('admin/report') ? 'active' : '' }}">
+                    Reports
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.profile') }}"
+                    class="{{ request()->is('admin/profile') ? 'active' : '' }}">
+                    Admin Profile
+                </a>
+            </li>
         </ul>
+
     </nav>
 
     <main class="admin-content">

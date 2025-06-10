@@ -24,14 +24,11 @@ body {
   justify-content: center;
   background: #fff;
   padding: 15px 0;
-  margin-bottom: 0; /* Remove any default margin */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow for separation */
 }
 
 .navbar ul {
   list-style: none;
   padding: 0;
-  margin: 0; /* Ensure no margin on ul */
   display: flex;
   gap: 30px;
 }
@@ -54,7 +51,6 @@ body {
   color: #007b3d;
   border-bottom: 2px solid #007b3d;
 }
-
 /* === Loading Overlay === */
 .loading-overlay {
   position: fixed;

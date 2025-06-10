@@ -2,11 +2,10 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Playfair Display", serif;
-  background: #fdfaf4; /* Soft beige */
+  background: #fdfaf4;
   zoom: 90%;
 }
 
-/* === Header === */
 .header-image {
   width: 100%;
   height: auto;
@@ -18,13 +17,13 @@ body {
   object-fit: cover;
   display: block;
 }
+
 /* === Navbar === */
 .navbar {
   display: flex;
   justify-content: center;
   background: #fff;
   padding: 15px 0;
-  border-bottom: 2px solid #ccc;
 }
 
 .navbar ul {
