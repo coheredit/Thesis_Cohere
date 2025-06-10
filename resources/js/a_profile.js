@@ -1,3 +1,5 @@
+console.log("a_profile.js loaded ✅");
+
 // Admin Profile JavaScript with Enhanced History System
 document.addEventListener("DOMContentLoaded", function () {
     // Get modal elements
@@ -16,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const clearHistoryBtn = document.getElementById("clear-history-btn");
     const loadMoreBtn = document.getElementById("load-more-btn");
 
-    // Get close buttons
+    // Get close buttons (these may not exist in HTML, so we'll handle gracefully)
     const closeModal = document.getElementById("close-modal");
     const closePasswordModal = document.getElementById("close-password-modal");
     const cancelEdit = document.getElementById("cancel-edit");
@@ -24,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const confirmCancel = document.getElementById("confirm-cancel");
     const confirmOk = document.getElementById("confirm-ok");
 
-    // Get forms
+    // Get forms (these may not exist in HTML, so we'll handle gracefully)
     const editForm = document.getElementById("edit-form");
     const passwordForm = document.getElementById("password-form");
 
@@ -35,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const adminUsername = document.getElementById("admin-username");
     const profilePic = document.getElementById("profile-pic");
 
-    // Form input elements
+    // Form input elements (these may not exist in HTML, so we'll handle gracefully)
     const editName = document.getElementById("edit-name");
     const editEmail = document.getElementById("edit-email");
     const editPhone = document.getElementById("edit-phone");
@@ -47,9 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const historyFilter = document.getElementById("history-filter");
     const totalActivitiesCount = document.getElementById("total-activities");
     const todayActivitiesCount = document.getElementById("today-activities");
-    const thisWeekActivitiesCount = document.getElementById(
-        "this-week-activities"
-    );
+    const thisWeekActivitiesCount = document.getElementById("this-week-activities");
 
     // History system variables
     let adminHistory = [];
@@ -64,9 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // History Management Functions
     async function initializeHistory() {
         try {
-            const res = await fetch(
-                `/admin/activities?filter=${currentFilter}`
-            );
+            const res = await fetch(`/admin/activities?filter=${currentFilter}`);
             const data = await res.json();
 
             if (Array.isArray(data)) {
@@ -84,15 +82,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 displayHistory();
                 updateHistoryStats();
             } else {
-                console.error(
-                    "Error fetching admin history:",
-                    data.error || data
-                );
+                console.error("Error fetching admin history:", data.error || data);
             }
         } catch (error) {
             console.error("Failed to fetch admin history", error);
         }
     }
+
     function mapActivityType(activityType) {
         if (!activityType) return "system";
         const type = activityType.toLowerCase();
@@ -126,9 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function generateId() {
-        return (
-            "hist_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9)
-        );
+        return "hist_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
     }
 
     function getHistoryIcon(type) {
@@ -143,10 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function displayHistory() {
         const filteredHistory = filterHistory();
-        const historyToShow = filteredHistory.slice(
-            0,
-            displayedHistoryCount + ITEMS_PER_PAGE
-        );
+        const historyToShow = filteredHistory.slice(0, displayedHistoryCount + ITEMS_PER_PAGE);
 
         historyList.innerHTML = "";
 
@@ -208,9 +199,9 @@ document.addEventListener("DOMContentLoaded", function () {
             return entryDate >= weekAgo;
         }).length;
 
-        totalActivitiesCount.textContent = total;
-        todayActivitiesCount.textContent = today;
-        thisWeekActivitiesCount.textContent = thisWeek;
+        if (totalActivitiesCount) totalActivitiesCount.textContent = total;
+        if (todayActivitiesCount) todayActivitiesCount.textContent = today;
+        if (thisWeekActivitiesCount) thisWeekActivitiesCount.textContent = thisWeek;
     }
 
     function clearHistory() {
@@ -223,342 +214,307 @@ document.addEventListener("DOMContentLoaded", function () {
                 displayHistory();
                 updateHistoryStats();
                 showSuccessModal("History cleared successfully!");
-                addToHistory(
-                    "system",
-                    "History cleared",
-                    "All admin history entries were deleted"
-                );
+                addToHistory("system", "History cleared", "All admin history entries were deleted");
             }
         );
     }
 
+    // FIXED LOGOUT FUNCTION
+    console.log("logoutBtn:", logoutBtn); // Debug log
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            console.log("Logout button clicked!"); // Debug log
+            
+            showConfirmModal(
+                "Confirm Logout",
+                "Are you sure you want to logout?",
+                () => {
+                    console.log("Logout confirmed!"); // Debug log
+                    
+                    // Add to history before logout
+                    addToHistory("login", "Admin logout", "Admin logged out of the system");
+                    
+                    // Find the form and submit it
+                    const form = logoutBtn.closest("form");
+                    if (form) {
+                        console.log("Form found, submitting..."); // Debug log
+                        form.submit();
+                    } else {
+                        console.error("Logout form not found!");
+                        // Fallback: redirect to logout route
+                        window.location.href = '/admin/logout';
+                    }
+                }
+            );
+        });
+    } else {
+        console.warn("logout-btn element not found in DOM");
+    }
+
     // Event Listeners
-    historyFilter.addEventListener("change", function () {
-        currentFilter = this.value;
-        initializeHistory(); // re-fetch from server
-    });
+    if (historyFilter) {
+        historyFilter.addEventListener("change", function () {
+            currentFilter = this.value;
+            initializeHistory(); // re-fetch from server
+        });
+    }
 
-    clearHistoryBtn.addEventListener("click", clearHistory);
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener("click", clearHistory);
+    }
 
-    loadMoreBtn.addEventListener("click", function () {
-        displayHistory();
-    });
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener("click", function () {
+            displayHistory();
+        });
+    }
 
     // Profile Picture Change
-    changePicBtn.addEventListener("click", function () {
-        profilePicInput.click();
-    });
+    if (changePicBtn && profilePicInput) {
+        changePicBtn.addEventListener("click", function () {
+            profilePicInput.click();
+        });
 
-    profilePicInput.addEventListener("change", function (e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                profilePic.src = e.target.result;
-                addToHistory(
-                    "profile",
-                    "Profile picture updated",
-                    "Changed admin profile picture"
-                );
-                showSuccessModal("Profile picture updated successfully!");
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+        profilePicInput.addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (profilePic) {
+                        profilePic.src = e.target.result;
+                        addToHistory("profile", "Profile picture updated", "Changed admin profile picture");
+                        showSuccessModal("Profile picture updated successfully!");
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 
     // Edit Profile Button Click
-    editBtn.addEventListener("click", function () {
-        // Pre-fill form with current data
-        editName.value = adminName.textContent;
-        editEmail.value = adminEmail.textContent;
-        editPhone.value = adminPhone.textContent;
-        editUsername.value = adminUsername.textContent;
+    if (editBtn && editModal) {
+        editBtn.addEventListener("click", function () {
+            // Pre-fill form with current data
+            if (editName && adminName) editName.value = adminName.textContent;
+            if (editEmail && adminEmail) editEmail.value = adminEmail.textContent;
+            if (editPhone && adminPhone) editPhone.value = adminPhone.textContent;
+            if (editUsername && adminUsername) editUsername.value = adminUsername.textContent;
 
-        editModal.style.display = "block";
-        addToHistory(
-            "system",
-            "Edit profile form opened",
-            "Started editing admin profile information"
-        );
-    });
+            editModal.style.display = "block";
+            addToHistory("system", "Edit profile form opened", "Started editing admin profile information");
+        });
+    }
 
     // Change Password Link Click
-    changePasswordLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        passwordModal.style.display = "block";
-        addToHistory(
-            "security",
-            "Password change initiated",
-            "Opened password change form"
-        );
-    });
+    if (changePasswordLink && passwordModal) {
+        changePasswordLink.addEventListener("click", function (e) {
+            e.preventDefault();
+            passwordModal.style.display = "block";
+            addToHistory("security", "Password change initiated", "Opened password change form");
+        });
+    }
 
-    // Close Modal Functions
-    closeModal.addEventListener("click", function () {
-        editModal.style.display = "none";
-    });
+    // Close Modal Functions - Only add listeners if elements exist
+    if (closeModal && editModal) {
+        closeModal.addEventListener("click", function () {
+            editModal.style.display = "none";
+        });
+    }
 
-    closePasswordModal.addEventListener("click", function () {
-        passwordModal.style.display = "none";
-    });
+    if (closePasswordModal && passwordModal) {
+        closePasswordModal.addEventListener("click", function () {
+            passwordModal.style.display = "none";
+        });
+    }
 
-    cancelEdit.addEventListener("click", function () {
-        editModal.style.display = "none";
-        addToHistory(
-            "system",
-            "Profile edit cancelled",
-            "Cancelled profile editing without saving"
-        );
-    });
+    if (cancelEdit && editModal) {
+        cancelEdit.addEventListener("click", function () {
+            editModal.style.display = "none";
+            addToHistory("system", "Profile edit cancelled", "Cancelled profile editing without saving");
+        });
+    }
 
-    cancelPassword.addEventListener("click", function () {
-        passwordModal.style.display = "none";
-        addToHistory(
-            "security",
-            "Password change cancelled",
-            "Cancelled password change without saving"
-        );
-    });
+    if (cancelPassword && passwordModal) {
+        cancelPassword.addEventListener("click", function () {
+            passwordModal.style.display = "none";
+            addToHistory("security", "Password change cancelled", "Cancelled password change without saving");
+        });
+    }
 
-    successOkBtn.addEventListener("click", function () {
-        successModal.style.display = "none";
-    });
+    if (successOkBtn && successModal) {
+        successOkBtn.addEventListener("click", function () {
+            successModal.style.display = "none";
+        });
+    }
 
-    confirmCancel.addEventListener("click", function () {
-        confirmModal.style.display = "none";
-        confirmCallback = null;
-    });
+    if (confirmCancel && confirmModal) {
+        confirmCancel.addEventListener("click", function () {
+            confirmModal.style.display = "none";
+            confirmCallback = null;
+        });
+    }
 
-    confirmOk.addEventListener("click", function () {
-        if (confirmCallback) {
-            confirmCallback();
-        }
-        confirmModal.style.display = "none";
-        confirmCallback = null;
-    });
+    if (confirmOk && confirmModal) {
+        confirmOk.addEventListener("click", function () {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+            confirmModal.style.display = "none";
+            confirmCallback = null;
+        });
+    }
 
     // Close modal when clicking outside
     window.addEventListener("click", function (event) {
-        if (event.target === editModal) {
+        if (editModal && event.target === editModal) {
             editModal.style.display = "none";
         }
-        if (event.target === passwordModal) {
+        if (passwordModal && event.target === passwordModal) {
             passwordModal.style.display = "none";
         }
-        if (event.target === successModal) {
+        if (successModal && event.target === successModal) {
             successModal.style.display = "none";
         }
-        if (event.target === confirmModal) {
+        if (confirmModal && event.target === confirmModal) {
             confirmModal.style.display = "none";
             confirmCallback = null;
         }
     });
 
     // Edit Profile Form Submit
-    editForm.addEventListener("submit", function (e) {
-        e.preventDefault();
+    if (editForm) {
+        editForm.addEventListener("submit", function (e) {
+            e.preventDefault();
 
-        // Store old values for comparison
-        const oldName = adminName.textContent;
-        const oldEmail = adminEmail.textContent;
-        const oldPhone = adminPhone.textContent;
-        const oldUsername = adminUsername.textContent;
+            // Store old values for comparison
+            const oldName = adminName ? adminName.textContent : "";
+            const oldEmail = adminEmail ? adminEmail.textContent : "";
+            const oldPhone = adminPhone ? adminPhone.textContent : "";
+            const oldUsername = adminUsername ? adminUsername.textContent : "";
 
-        // Update profile information
-        adminName.textContent = editName.value;
-        adminEmail.textContent = editEmail.value;
-        adminPhone.textContent = editPhone.value;
-        adminUsername.textContent = editUsername.value;
+            // Update profile information
+            if (adminName && editName) adminName.textContent = editName.value;
+            if (adminEmail && editEmail) adminEmail.textContent = editEmail.value;
+            if (adminPhone && editPhone) adminPhone.textContent = editPhone.value;
+            if (adminUsername && editUsername) adminUsername.textContent = editUsername.value;
 
-        // Close modal
-        editModal.style.display = "none";
+            // Close modal
+            if (editModal) editModal.style.display = "none";
 
-        // Track specific changes
-        let changes = [];
-        let changeDetails = [];
+            // Track specific changes
+            let changes = [];
+            let changeDetails = [];
 
-        if (oldName !== editName.value) {
-            changes.push("name");
-            changeDetails.push(`Name: "${oldName}" → "${editName.value}"`);
-        }
-        if (oldEmail !== editEmail.value) {
-            changes.push("email");
-            changeDetails.push(`Email: "${oldEmail}" → "${editEmail.value}"`);
-        }
-        if (oldPhone !== editPhone.value) {
-            changes.push("phone");
-            changeDetails.push(`Phone: "${oldPhone}" → "${editPhone.value}"`);
-        }
-        if (oldUsername !== editUsername.value) {
-            changes.push("username");
-            changeDetails.push(
-                `Username: "${oldUsername}" → "${editUsername.value}"`
-            );
-        }
-
-        // Add specific activity
-        if (changes.length > 0) {
-            const changeText = `Profile updated: ${changes.join(", ")}`;
-            const detailText = changeDetails.join("; ");
-            addToHistory("profile", changeText, detailText);
-        } else {
-            addToHistory(
-                "profile",
-                "Profile form submitted",
-                "No changes were made to profile information"
-            );
-        }
-
-        // Show success modal
-        showSuccessModal("Profile updated successfully!");
-    });
-
-    // Change Password Form Submit
-    passwordForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const currentPassword =
-            document.getElementById("current-password").value;
-        const newPassword = document.getElementById("new-password").value;
-        const confirmPassword =
-            document.getElementById("confirm-password").value;
-
-        // Basic validation
-        if (newPassword !== confirmPassword) {
-            showErrorMessage("New passwords do not match!", passwordModal);
-            addToHistory(
-                "security",
-                "Password change failed",
-                "Password confirmation mismatch"
-            );
-            return;
-        }
-
-        if (newPassword.length < 6) {
-            showErrorMessage(
-                "Password must be at least 6 characters long!",
-                passwordModal
-            );
-            addToHistory(
-                "security",
-                "Password change failed",
-                "Password too short (minimum 6 characters)"
-            );
-            return;
-        }
-
-        if (currentPassword === "") {
-            showErrorMessage(
-                "Please enter your current password!",
-                passwordModal
-            );
-            addToHistory(
-                "security",
-                "Password change failed",
-                "Current password not provided"
-            );
-            return;
-        }
-
-        // Close modal and clear form
-        passwordModal.style.display = "none";
-        passwordForm.reset();
-
-        // Add activity
-        addToHistory(
-            "security",
-            "Password changed successfully",
-            "Admin account password updated"
-        );
-
-        // Show success modal
-        showSuccessModal("Password changed successfully!");
-    });
-
-    // Enhanced Logout Button Click with proper functionality
-    logoutBtn.addEventListener("click", function () {
-        const form = logoutBtn.closest("form");
-        if (form) form.submit();
-        showConfirmModal(
-            "Confirm Logout",
-            "Are you sure you want to logout? You will be redirected to the login page.",
-            () => {
-                addToHistory(
-                    "login",
-                    "Admin logged out",
-                    "Logged out from admin dashboard"
-                );
-
-                // Show logout success message
-                showLogoutModal();
-
-                // Clear any stored session data (if you're using any)
-                clearSessionData();
-
-                // Redirect to login page after 2 seconds
-                setTimeout(() => {       
-                }, 2000);
+            if (editName && oldName !== editName.value) {
+                changes.push("name");
+                changeDetails.push(`Name: "${oldName}" → "${editName.value}"`);
             }
-        );
-    });
+            if (editEmail && oldEmail !== editEmail.value) {
+                changes.push("email");
+                changeDetails.push(`Email: "${oldEmail}" → "${editEmail.value}"`);
+            }
+            if (editPhone && oldPhone !== editPhone.value) {
+                changes.push("phone");
+                changeDetails.push(`Phone: "${oldPhone}" → "${editPhone.value}"`);
+            }
+            if (editUsername && oldUsername !== editUsername.value) {
+                changes.push("username");
+                changeDetails.push(`Username: "${oldUsername}" → "${editUsername.value}"`);
+            }
 
-    // Function to show logout modal with countdown
-    function showLogoutModal() {
-        const successMessageText = document.getElementById(
-            "success-message-text"
-        );
-        let countdown = 2;
-
-        successMessageText.textContent = `Logging out... Redirecting to login page in ${countdown} seconds`;
-        successModal.style.display = "block";
-
-        const countdownInterval = setInterval(() => {
-            countdown--;
-            if (countdown > 0) {
-                successMessageText.textContent = `Logging out... Redirecting to login page in ${countdown} seconds`;
+            // Add specific activity
+            if (changes.length > 0) {
+                const changeText = `Profile updated: ${changes.join(", ")}`;
+                const detailText = changeDetails.join("; ");
+                addToHistory("profile", changeText, detailText);
             } else {
-                successMessageText.textContent = "Redirecting now...";
-                clearInterval(countdownInterval);
+                addToHistory("profile", "Profile form submitted", "No changes were made to profile information");
             }
-        }, 1000);
+
+            // Show success modal
+            showSuccessModal("Profile updated successfully!");
+        });
     }
 
-    // Function to clear session data
-    function clearSessionData() {
-        // Clear any session-related data you might have stored
-        // Since we can't use localStorage in this environment, this would be where you'd clear it
-        // Example: localStorage.removeItem('adminSession');
-        // Example: sessionStorage.clear();
+    // Change Password Form Submit
+    if (passwordForm) {
+        passwordForm.addEventListener("submit", function (e) {
+            e.preventDefault();
 
-        // For now, we'll just log the action
-        console.log("Session data cleared");
+            const currentPassword = document.getElementById("current-password");
+            const newPassword = document.getElementById("new-password");
+            const confirmPassword = document.getElementById("confirm-password");
 
-        // If you're using cookies, you could clear them here:
-        // document.cookie = "adminToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                console.error("Password form elements not found");
+                return;
+            }
+
+            // Basic validation
+            if (newPassword.value !== confirmPassword.value) {
+                showErrorMessage("New passwords do not match!", passwordModal);
+                addToHistory("security", "Password change failed", "Password confirmation mismatch");
+                return;
+            }
+
+            if (newPassword.value.length < 6) {
+                showErrorMessage("Password must be at least 6 characters long!", passwordModal);
+                addToHistory("security", "Password change failed", "Password too short (minimum 6 characters)");
+                return;
+            }
+
+            if (currentPassword.value === "") {
+                showErrorMessage("Please enter your current password!", passwordModal);
+                addToHistory("security", "Password change failed", "Current password not provided");
+                return;
+            }
+
+            // Close modal and clear form
+            if (passwordModal) passwordModal.style.display = "none";
+            passwordForm.reset();
+
+            // Add activity
+            addToHistory("security", "Password changed successfully", "Admin account password updated");
+
+            // Show success modal
+            showSuccessModal("Password changed successfully!");
+        });
     }
 
     // Helper function to show success modal
     function showSuccessModal(message) {
-        const successMessageText = document.getElementById(
-            "success-message-text"
-        );
-        successMessageText.textContent = message;
-        successModal.style.display = "block";
+        const successMessageText = document.getElementById("success-message-text");
+        if (successMessageText) {
+            successMessageText.textContent = message;
+        }
+        if (successModal) {
+            successModal.style.display = "block";
+        }
     }
 
     // Helper function to show confirm modal
     function showConfirmModal(title, message, callback) {
+        if (!confirmModal) {
+            console.error("Confirm modal not found");
+            return;
+        }
+
         const confirmTitle = confirmModal.querySelector("h3");
         const confirmMessage = document.getElementById("confirm-message");
 
-        confirmTitle.textContent = title;
-        confirmMessage.textContent = message;
+        if (confirmTitle) confirmTitle.textContent = title;
+        if (confirmMessage) confirmMessage.textContent = message;
+        
         confirmCallback = callback;
         confirmModal.style.display = "block";
     }
 
     // Helper function to show error message
     function showErrorMessage(message, modal) {
+        if (!modal) return;
+
         // Remove existing error messages
         const existingError = modal.querySelector(".error-message");
         if (existingError) {
@@ -569,43 +525,55 @@ document.addEventListener("DOMContentLoaded", function () {
         const errorDiv = document.createElement("div");
         errorDiv.className = "error-message";
         errorDiv.textContent = message;
-        errorDiv.style.display = "block";
+        errorDiv.style.cssText = `
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: block;
+        `;
 
         // Insert in modal
         const modalContent = modal.querySelector(".modal-content");
         const firstChild = modalContent.querySelector("h3");
-        modalContent.insertBefore(errorDiv, firstChild.nextSibling);
+        if (modalContent && firstChild) {
+            modalContent.insertBefore(errorDiv, firstChild.nextSibling);
+        }
 
         // Remove message after 5 seconds
         setTimeout(function () {
-            errorDiv.remove();
+            if (errorDiv.parentNode) {
+                errorDiv.remove();
+            }
         }, 5000);
     }
 
     // Phone number formatting - Fixed to allow editing of all digits
     const phoneInput = document.getElementById("edit-phone");
-    phoneInput.addEventListener("input", function () {
-        let value = this.value.replace(/\D/g, ""); // Remove non-digits
+    if (phoneInput) {
+        phoneInput.addEventListener("input", function () {
+            let value = this.value.replace(/\D/g, ""); // Remove non-digits
 
-        // Limit to 11 digits (like 09123456789)
-        if (value.length > 11) {
-            value = value.substring(0, 11);
-        }
+            // Limit to 11 digits (like 09123456789)
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
 
-        // Format based on length
-        if (value.length >= 4 && value.length <= 7) {
-            value = value.replace(/(\d{4})(\d{0,3})/, "$1-$2");
-        } else if (value.length > 7) {
-            value = value.replace(/(\d{4})(\d{3})(\d{0,4})/, "$1-$2-$3");
-        }
+            // Format based on length
+            if (value.length >= 4 && value.length <= 7) {
+                value = value.replace(/(\d{4})(\d{0,3})/, "$1-$2");
+            } else if (value.length > 7) {
+                value = value.replace(/(\d{4})(\d{3})(\d{0,4})/, "$1-$2-$3");
+            }
 
-        this.value = value;
-    });
+            this.value = value;
+        });
+    }
 
     // Form validation for real-time feedback
-    const inputs = document.querySelectorAll(
-        'input[type="text"], input[type="email"], input[type="password"]'
-    );
+    const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
     inputs.forEach((input) => {
         input.addEventListener("blur", function () {
             validateInput(this);
@@ -623,36 +591,21 @@ document.addEventListener("DOMContentLoaded", function () {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(value)) {
                 input.style.borderColor = "#dc3545";
-                addToHistory(
-                    "system",
-                    "Validation error",
-                    `Invalid email format entered: ${value}`
-                );
+                addToHistory("system", "Validation error", `Invalid email format entered: ${value}`);
             }
         }
 
         if (input.name === "phone" && value !== "") {
             const phoneRegex = /^\d{4}-\d{3}-\d{4}$/;
-            if (
-                !phoneRegex.test(value) &&
-                value.replace(/\D/g, "").length > 0
-            ) {
+            if (!phoneRegex.test(value) && value.replace(/\D/g, "").length > 0) {
                 input.style.borderColor = "#dc3545";
-                addToHistory(
-                    "system",
-                    "Validation error",
-                    `Invalid phone format entered: ${value}`
-                );
+                addToHistory("system", "Validation error", `Invalid phone format entered: ${value}`);
             }
         }
 
         if (input.type === "password" && value !== "" && value.length < 6) {
             input.style.borderColor = "#dc3545";
-            addToHistory(
-                "security",
-                "Validation error",
-                "Password too short during input"
-            );
+            addToHistory("security", "Validation error", "Password too short during input");
         }
     }
 
@@ -670,17 +623,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (diffMins < 1) {
                 entry.relativeTime = "Just now";
             } else if (diffMins < 60) {
-                entry.relativeTime = `${diffMins} min${
-                    diffMins > 1 ? "s" : ""
-                } ago`;
+                entry.relativeTime = `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
             } else if (diffHours < 24) {
-                entry.relativeTime = `${diffHours} hour${
-                    diffHours > 1 ? "s" : ""
-                } ago`;
+                entry.relativeTime = `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
             } else {
-                entry.relativeTime = `${diffDays} day${
-                    diffDays > 1 ? "s" : ""
-                } ago`;
+                entry.relativeTime = `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
             }
         });
 
@@ -699,24 +646,16 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         const dataStr = JSON.stringify(historyData, null, 2);
-        const dataUri =
-            "data:application/json;charset=utf-8," +
-            encodeURIComponent(dataStr);
+        const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
 
-        const exportFileDefaultName = `admin_history_${
-            new Date().toISOString().split("T")[0]
-        }.json`;
+        const exportFileDefaultName = `admin_history_${new Date().toISOString().split("T")[0]}.json`;
 
         const linkElement = document.createElement("a");
         linkElement.setAttribute("href", dataUri);
         linkElement.setAttribute("download", exportFileDefaultName);
         linkElement.click();
 
-        addToHistory(
-            "system",
-            "History exported",
-            `Exported ${adminHistory.length} history entries to JSON file`
-        );
+        addToHistory("system", "History exported", `Exported ${adminHistory.length} history entries to JSON file`);
     }
 
     // Add export button dynamically (optional)
@@ -741,7 +680,5 @@ document.addEventListener("DOMContentLoaded", function () {
         historyControls.appendChild(exportBtn);
     }
 
-    console.log(
-        "Admin Profile with Enhanced History System loaded successfully!"
-    );
+    console.log("Admin Profile with Enhanced History System loaded successfully!");
 });
