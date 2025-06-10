@@ -66,6 +66,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     // Inquiry
     Route::get('/inquiry', [InquiryController::class, 'index'])->name('inquiry');
     Route::post('/inquiries/{id}/update-status', [InquiryController::class, 'updateStatusAjax']);
+    Route::post('/inquiry', [InquiryController::class, 'store'])->name('inquiry.store');
+
 
     // Availability for the calendar on admin making inquiry/reservation
     Route::get('/availability', [AvailabilityController::class, 'index'])->name('availability.index');
