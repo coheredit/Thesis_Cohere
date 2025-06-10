@@ -64,7 +64,7 @@
                     <li>Upload a screenshot of your payment below.</li>
                 </ul>
                 <div class="qr-code-container">
-                    <img src="{{ asset('images/gcash_qr.jpg') }}" alt="GCash QR Code">
+                    <img src="{{ asset('images/gcash.jpg') }}" alt="GCash QR Code">
                 </div>
             </div>
 
