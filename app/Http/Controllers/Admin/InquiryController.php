@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Inquiry;
 use App\Models\Patron;
+use Illuminate\Support\Facades\Auth;
+
 
 class InquiryController extends Controller
 {
@@ -64,6 +66,7 @@ class InquiryController extends Controller
 
     public function store(Request $request)
     {
+
         $request->validate([
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|max:255',
@@ -76,6 +79,7 @@ class InquiryController extends Controller
             'message'        => 'nullable|string',
         ]);
 
+        // Always create or find Patron based on form input
         $patron = Patron::firstOrCreate(
             ['email' => $request->email],
             [
@@ -85,21 +89,22 @@ class InquiryController extends Controller
         );
 
         Inquiry::create([
-            'patron_id'     => $patron->id,
-            'date'          => $request->date,
-            'time'          => $request->time,
-            'venue'         => $request->venue,
-            'event_type'    => $request->event_type,
-            'theme_motif'   => $request->theme_motif,
-            'message'       => $request->message,
-            'status'        => 'Pending',
+            'patron_id'         => $patron->id,
+            'admin_id'          => auth('admin')->id(),
+            'created_by_type'   => 'admin',  // ✅ set enum field
+            'date'              => $request->date,
+            'time'              => $request->time,
+            'venue'             => $request->venue,
+            'event_type'        => $request->event_type,
+            'theme_motif'       => $request->theme_motif,
+            'other_event_type'  => $request->other_event_type,
+            'other_theme_motif' => $request->other_theme_motif,
+            'other_venue'       => $request->other_venue,
+            'message'           => $request->message,
+            'status'            => 'Pending',
         ]);
 
-        return redirect()->back()->with('success', 'Inquiry successfully created!');
-    }
 
-    public function create()
-    {
-        return view('admin.a_reserve');
+        return redirect()->back()->with('success', 'Inquiry successfully created!');
     }
 }

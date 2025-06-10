@@ -12,6 +12,8 @@ class Inquiry extends Model
 
     protected $fillable = [
         'patron_id',
+        'admin_id', 
+        'created_by_type', 
         'tracking_code',
         'event_type',
         'other_event_type',
