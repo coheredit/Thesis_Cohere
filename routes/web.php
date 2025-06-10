@@ -17,8 +17,7 @@ use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\AvailabilityController;
 use App\Http\Controllers\Admin\AdminActivityController;
 
-
-
+// Patron Routes
 Route::name('patron.')->group(function () {
     // Home page
     Route::get('/home', [HomeController::class, 'index'])->name('p_home');
@@ -41,14 +40,19 @@ Route::name('patron.')->group(function () {
     Route::view('/guidelines', 'patron.guidelines')->name('guidelines');
 });
 
-Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(function () {
+// Admin Authentication Routes (NO MIDDLEWARE - accessible to non-authenticated users)
+Route::prefix('admin')->name('admin.')->group(function () {
     // Signup
     Route::get('/signup', [AuthController::class, 'showSignupForm'])->name('signup');
     Route::post('/signup', [AuthController::class, 'signup'])->name('signup.submit');
-
+    
     // Login
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+});
 
+// Protected Admin Routes (WITH MIDDLEWARE - requires authentication)
+Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(function () {
     // Admin Homepage
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
 
@@ -63,7 +67,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::get('/inquiry', [InquiryController::class, 'index'])->name('inquiry');
     Route::post('/inquiries/{id}/update-status', [InquiryController::class, 'updateStatusAjax']);
 
-    // Availability for the calendar on admin making inquir/reservation
+    // Availability for the calendar on admin making inquiry/reservation
     Route::get('/availability', [AvailabilityController::class, 'index'])->name('availability.index');
     Route::post('/availability', [AvailabilityController::class, 'toggle'])->name('availability.toggle');
 
@@ -71,16 +75,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::get('/reserve', [ReservationController::class, 'create'])->name('reserve.create');
     Route::post('/reserve', [ReservationController::class, 'store'])->name('reserve.store');
 
-    //Activitiy Log for Admin Profile
+    // Activity Log for Admin Profile
     Route::get('/activities', [AdminActivityController::class, 'index'])->name('activities');
 
     Route::view('/report', 'admin.a_report')->name('report');
     Route::view('/profile', 'admin.a_profile')->name('profile');
 });
 
-// For Login 
-Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submit');
-
-// For Logout
+// Logout Route (accessible to authenticated users)
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
