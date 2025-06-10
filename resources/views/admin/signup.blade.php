@@ -33,71 +33,23 @@
                     @csrf
 
                     <label>Email Address:</label>
-                    <input type="email" name="email" id="email" required><br>
+                    <input type="email" name="email" id="email" required placeholder="e.g. johndoe@gmail.com"><br>
 
                     <label>First Name:</label>
-                    <input type="text" name="f_name" id="first_name" required><br>
+                    <input type="text" name="f_name" id="first_name" required placeholder="e.g John"><br>
 
                     <label>Last Name:</label>
-                    <input type="text" name="l_name" id="last_name" required><br>
+                    <input type="text" name="l_name" id="last_name" required placeholder="e.g. Doe"><br>
 
                     <label>Contact Number:</label>
-                    <input type="text" id="phone" name="phone" required><br>
+                    <input type="text" id="phone" name="phone" required ><br>
 
                     <label>Password:</label>
                     <input type="password" id="password" name="password" required><br>
 
                     <label>Confirm Password:</label>
                     <input type="password" id="confirm_password" name="confirm_password" required><br>
-
-                    <!-- Profile Picture Selection -->
-                    <div class="profile-picture-section">
-                        <label>Choose Profile Picture:</label>
-                        <div class="avatar-options">
-                            <label class="avatar-option selected" for="default">
-                                <input type="radio" name="profile_picture" value="default.png" id="default" checked>
-                                <img src="{{ asset('images/default.png') }}" alt="Default Avatar">
-                                <span>Default</span>
-                            </label>
-                            
-                            <label class="avatar-option" for="boy">
-                                <input type="radio" name="profile_picture" value="boy.png" id="boy">
-                                <img src="{{ asset('images/boy.png') }}" alt="Boy Avatar">
-                                <span>Boy</span>
-                            </label>
-                            
-                            <label class="avatar-option" for="boy1">
-                                <input type="radio" name="profile_picture" value="boy1.png" id="boy1">
-                                <img src="{{ asset('images/boy1.png') }}" alt="Boy Avatar 1">
-                                <span>Boy 1</span>
-                            </label>
-                            
-                            <label class="avatar-option" for="boy2">
-                                <input type="radio" name="profile_picture" value="boy2.png" id="boy2">
-                                <img src="{{ asset('images/boy2.png') }}" alt="Boy Avatar 2">
-                                <span>Boy 2</span>
-                            </label>
-                            
-                            <label class="avatar-option" for="girl">
-                                <input type="radio" name="profile_picture" value="girl.png" id="girl">
-                                <img src="{{ asset('images/girl.png') }}" alt="Girl Avatar">
-                                <span>Girl</span>
-                            </label>
-                            
-                            <label class="avatar-option" for="girl1">
-                                <input type="radio" name="profile_picture" value="girl1.png" id="girl1">
-                                <img src="{{ asset('images/girl1.png') }}" alt="Girl Avatar 1">
-                                <span>Girl 1</span>
-                            </label>
-                            
-                            <label class="avatar-option" for="girl2">
-                                <input type="radio" name="profile_picture" value="girl2.png" id="girl2">
-                                <img src="{{ asset('images/girl2.png') }}" alt="Girl Avatar 2">
-                                <span>Girl 2</span>
-                            </label>
-                        </div>
-                    </div>
-
+                    
                     <button type="submit">Sign Up</button>
                 </form>
 
