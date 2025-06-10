@@ -477,12 +477,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Enhanced Logout Button Click with proper functionality
     logoutBtn.addEventListener("click", function () {
-        // Show confirmation dialog
+        const form = logoutBtn.closest("form");
+        if (form) form.submit();
         showConfirmModal(
             "Confirm Logout",
             "Are you sure you want to logout? You will be redirected to the login page.",
             () => {
-                // Add logout activity
                 addToHistory(
                     "login",
                     "Admin logged out",
@@ -496,9 +496,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 clearSessionData();
 
                 // Redirect to login page after 2 seconds
-                setTimeout(() => {
-                    // Change this path to your actual login page
-                    window.location.href = "../pages/login.php"; // or '../index.html' or wherever your login page is
+                setTimeout(() => {       
                 }, 2000);
             }
         );

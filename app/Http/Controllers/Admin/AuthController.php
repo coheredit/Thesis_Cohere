@@ -56,7 +56,15 @@ class AuthController extends Controller
             return redirect()->route('admin.home');
         }
 
-        // Login failed
         return back()->withErrors(['email' => 'Invalid credentials.']);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('admin')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('admin.login');
     }
 }

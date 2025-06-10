@@ -78,6 +78,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::view('/profile', 'admin.a_profile')->name('profile');
 });
 
-// Universal for login 
+// For Login 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submit');
+
+// For Logout
+Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');

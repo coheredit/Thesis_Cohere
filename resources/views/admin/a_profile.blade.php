@@ -9,9 +9,9 @@
 @section('content')
 @php
 $user = Auth::guard('admin')->user() ?? (object)[
-    'name' => 'Admin User',
-    'email' => 'admin@villasalud.com',
-    'phone' => 'N/A'
+'name' => 'Admin User',
+'email' => 'admin@villasalud.com',
+'phone' => 'N/A'
 ];
 @endphp
 
@@ -35,9 +35,9 @@ $user = Auth::guard('admin')->user() ?? (object)[
     </div>
     <div class="buttons">
       <button class="edit-btn" id="edit-profile-btn">Edit Profile</button>
-      <form method="POST" action="#">
+      <form method="POST" action="{{ route('admin.logout') }}">
         @csrf
-        <button class="logout-btn" onclick="return confirm('Are you sure you want to logout?')">Logout</button>
+        <button type="submit" class="logout-btn" onclick="return confirm('Are you sure you want to logout?')">Logout</button>
       </form>
     </div>
   </div>
