@@ -25,6 +25,7 @@ body {
   align-items: center;
   height: 100vh;
   background: #fdfaf4;
+  zoom: 80%;
 }
 
 .container {
@@ -74,6 +75,7 @@ input {
   margin-top: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
 button {

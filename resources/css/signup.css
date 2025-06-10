@@ -38,6 +38,11 @@ h1 {
   background: white;
 }
 
+.signup-box input {
+  width: 100%;
+  box-sizing: border-box; /* prevents padding from shrinking the field */
+}
+
 h2 {
   font-size: 22px;
   text-align: center;
