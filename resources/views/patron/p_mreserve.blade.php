@@ -117,7 +117,6 @@
 
             <form method="POST" action="{{ route('patron.p_mreserve.submit') }}">
                 @csrf
-                <input type="hidden" name="created_by_type" value="patron">
 
                 <div class="form-group">
                     <label for="name">Name:<span>*</span></label>
