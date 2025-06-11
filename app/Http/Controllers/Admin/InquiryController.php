@@ -8,32 +8,20 @@ use App\Models\Inquiry;
 use App\Models\Patron;
 use Illuminate\Support\Facades\Auth;
 
-
 class InquiryController extends Controller
 {
-    /**
-     * Display a listing of the inquiries.
-     */
     public function index()
     {
-        // Fetch all inquiries with related patron info
         $inquiries = Inquiry::with('patron')->latest()->get();
-
         return view('admin.a_inquiry', compact('inquiries'));
     }
 
-    /**
-     * Show the specific inquiry details (optional).
-     */
     public function show($id)
     {
         $inquiry = Inquiry::with('patron')->findOrFail($id);
         return view('admin.inquiry_show', compact('inquiry'));
     }
 
-    /**
-     * (Optional) Change inquiry status or convert to reservation.
-     */
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -66,7 +54,6 @@ class InquiryController extends Controller
 
     public function store(Request $request)
     {
-
         $request->validate([
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|max:255',
@@ -79,7 +66,6 @@ class InquiryController extends Controller
             'message'        => 'nullable|string',
         ]);
 
-        // Always create or find Patron based on form input
         $patron = Patron::firstOrCreate(
             ['email' => $request->email],
             [
@@ -88,22 +74,29 @@ class InquiryController extends Controller
             ]
         );
 
+        $eventType     = $request->input('event_type');
+        $themeMotif    = $request->input('theme_motif');
+        $venue         = $request->input('venue');
+
+        $isEventOther  = strtolower(trim($eventType)) === 'others';
+        $isThemeOther  = strtolower(trim($themeMotif)) === 'others';
+        $isVenueOther  = strtolower(trim($venue)) === 'others';
+
         Inquiry::create([
             'patron_id'         => $patron->id,
             'admin_id'          => auth('admin')->id(),
-            'created_by_type'   => 'admin',  // ✅ set enum field
+            'created_by_type'   => 'admin',
             'date'              => $request->date,
             'time'              => $request->time,
-            'venue'             => $request->venue,
-            'event_type'        => $request->event_type,
-            'theme_motif'       => $request->theme_motif,
-            'other_event_type'  => $request->other_event_type,
-            'other_theme_motif' => $request->other_theme_motif,
-            'other_venue'       => $request->other_venue,
+            'venue'             => $isVenueOther ? 'Others' : $venue,        // Fixed: 'Others' not 'Other'
+            'event_type'        => $isEventOther ? 'Others' : $eventType,    // Fixed: 'Others' not 'Other'
+            'theme_motif'       => $isThemeOther ? 'Others' : $themeMotif,   // Fixed: 'Others' not 'Other'
+            'other_event_type'  => $isEventOther ? $request->input('other_event_type') : null,
+            'other_theme_motif' => $isThemeOther ? $request->input('other_theme_motif') : null,
+            'other_venue'       => $isVenueOther ? $request->input('other_venue') : null,
             'message'           => $request->message,
             'status'            => 'Pending',
         ]);
-
 
         return redirect()->back()->with('success', 'Inquiry successfully created!');
     }

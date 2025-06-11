@@ -3,17 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use App\Models\ActivityLog;
+use App\Models\Admin;
 
 class Inquiry extends Model
 {
     protected $table = 'inquiry';
 
-    protected $primaryKey = 'inquiry_id'; 
+    protected $primaryKey = 'inquiry_id';
 
     protected $fillable = [
         'patron_id',
-        'admin_id', 
-        'created_by_type', 
+        'admin_id',
+        'created_by_type',
         'tracking_code',
         'event_type',
         'other_event_type',
@@ -33,9 +37,28 @@ class Inquiry extends Model
     {
         parent::boot();
 
+        // Auto-generate tracking code
         static::creating(function ($inquiry) {
             if (empty($inquiry->tracking_code)) {
                 $inquiry->tracking_code = 'VS-' . strtoupper(substr(uniqid(), -6));
+            }
+        });
+
+        // Activity log after creation
+        static::created(function ($inquiry) {
+            if ($inquiry->created_by_type === 'admin' && $inquiry->admin_id) {
+                $admin = Admin::find($inquiry->admin_id);
+
+                if ($admin) {
+                    $adminFullName = $admin->f_name . ' ' . $admin->l_name;
+
+                    ActivityLog::create([
+                        'admin_id'      => $admin->admin_id,
+                        'activity_type' => 'Created Inquiry',
+                        'description'   => "Admin {$adminFullName} created inquiry #{$inquiry->inquiry_id}",
+                        'inquiry_id'    => $inquiry->inquiry_id,
+                    ]);
+                }
             }
         });
     }

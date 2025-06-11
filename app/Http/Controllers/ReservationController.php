@@ -17,12 +17,8 @@ class ReservationController extends Controller
         return view('patron.p_mreserve');
     }
 
-    
     public function store(Request $request)
     {
-         // dd($request->all());
-
-
         $validated = $request->validate([
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|max:255',
@@ -35,10 +31,6 @@ class ReservationController extends Controller
             'message'        => 'required|string',
         ]);
 
-        if (empty($validated['name'])) {
-            return redirect()->back()->withErrors(['name' => 'Name is required.']);
-        }
-
         $patron = Patron::firstOrCreate(
             ['email' => $validated['email']],
             [
@@ -47,20 +39,26 @@ class ReservationController extends Controller
             ]
         );
 
-        // dd($patron);
+        $eventType     = $validated['event_type'];
+        $themeMotif    = $validated['theme_motif'];
+        $venue         = $validated['venue'];
+
+        $isEventOther  = strtolower(trim($eventType)) === 'others';
+        $isThemeOther  = strtolower(trim($themeMotif)) === 'others';
+        $isVenueOther  = strtolower(trim($venue)) === 'others';
 
         Inquiry::create([
             'patron_id'         => $patron->patron_id,
-            'event_type'        => $validated['event_type'],
-            'theme_motif'       => $validated['theme_motif'],
-            'venue'             => $validated['venue'],
-            'other_venue'       => $request->other_venue,
-            'other_event_type'  => $request->other_event_type,
-            'other_theme_motif' => $request->other_theme_motif,
+            'event_type'        => $isEventOther ? 'Others' : $eventType,    // Fixed: 'Others' not 'Other'
+            'theme_motif'       => $isThemeOther ? 'Others' : $themeMotif,   // Fixed: 'Others' not 'Other'
+            'venue'             => $isVenueOther ? 'Others' : $venue,        // Fixed: 'Others' not 'Other'
+            'other_event_type'  => $isEventOther ? $request->input('other_event_type') : null,
+            'other_theme_motif' => $isThemeOther ? $request->input('other_theme_motif') : null,
+            'other_venue'       => $isVenueOther ? $request->input('other_venue') : null,
             'date'              => $validated['date'],
             'time'              => $validated['time'],
             'message'           => $validated['message'],
-            'status'            => 'pending',
+            'status'            => 'Pending',  // Also fixed capitalization to match enum
         ]);
 
         return redirect()->back()->with('success', 'Inquiry successfully created!');
