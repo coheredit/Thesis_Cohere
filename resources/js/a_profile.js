@@ -109,6 +109,13 @@ document.addEventListener("DOMContentLoaded", function () {
         return "system";
     }
 
+    function formatTypeForBackend(type, action) {
+        if (type === "login") return action.includes("logout") ? "Logout" : "Login";
+        if (type === "profile") return "Profile Change";
+        if (type === "security") return "Security";
+        return "System Action";
+    }
+
     function addToHistory(type, action, details = "") {
         const historyEntry = {
             id: generateId(),
@@ -122,17 +129,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
         adminHistory.unshift(historyEntry);
 
-        // Keep only last 100 entries to prevent memory issues
         if (adminHistory.length > 100) {
             adminHistory = adminHistory.slice(0, 100);
         }
 
         displayHistory();
         updateHistoryStats();
+
+        // Persist to backend
+        fetch("/admin/activities/store", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+            },
+            body: JSON.stringify({
+                activity_type: formatTypeForBackend(type, action),
+                description: details,
+            }),
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            if (!data.success) {
+                console.error("Failed to store activity log", data);
+            }
+        })
+        .catch((err) => {
+            console.error("Error sending activity log to server", err);
+        });
     }
 
-    function generateId() {
-        return "hist_" + Date.now() + "_" + Math.random().toString(36).substr(2, 9);
+    function filterHistory() {
+        if (currentFilter === "all") {
+            return adminHistory;
+        }
+        return adminHistory.filter((entry) => entry.type === currentFilter);
     }
 
     function getHistoryIcon(type) {
@@ -145,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return icons[type] || "📝";
     }
 
-    function displayHistory() {
+function displayHistory() {
         const filteredHistory = filterHistory();
         const historyToShow = filteredHistory.slice(0, displayedHistoryCount + ITEMS_PER_PAGE);
 
@@ -179,7 +210,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         displayedHistoryCount = historyToShow.length;
 
-        // Show/hide load more button
         if (filteredHistory.length > displayedHistoryCount) {
             loadMoreBtn.style.display = "block";
         } else {
@@ -187,14 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function filterHistory() {
-        if (currentFilter === "all") {
-            return adminHistory;
-        }
-        return adminHistory.filter((entry) => entry.type === currentFilter);
-    }
-
-    function updateHistoryStats() {
+function updateHistoryStats() {
         const total = adminHistory.length;
         const today = adminHistory.filter((entry) => {
             const entryDate = new Date(entry.timestamp).toDateString();
