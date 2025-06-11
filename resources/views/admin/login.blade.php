@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Villa Salud Catering</title>
      @vite('resources/css/login.css')
+        <link rel="icon" type="image/png" href="{{ asset('images/vs_logo.png') }}" />
 </head>
 
 <body>
