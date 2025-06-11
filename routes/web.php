@@ -8,6 +8,7 @@ use App\Http\Controllers\Patron\PaymentController;
 
 // Unified
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\Patron\CalendarController;
 
 // Admin Controller Related
 use App\Http\Controllers\Admin\AuthController;
@@ -86,3 +87,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
 
 // Logout Route (accessible to authenticated users)
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
+
+// For Calendar Routes 
+Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);

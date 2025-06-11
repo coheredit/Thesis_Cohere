@@ -1,164 +1,199 @@
+// resources/js/p_mreserve.js
+
+import './bootstrap';
+
 document.addEventListener("DOMContentLoaded", function () {
     const venueSelect = document.getElementById("venue");
-    const otherVenueInput = document.getElementById("other_venue");
+    const otherVenueInput = document.getElementById("otherVenue") || document.getElementById("other_venue");
 
     const themeMotifSelect = document.getElementById("theme_motif");
-    const otherThemeMotifInput = document.getElementById("other_theme_motif");
+    const otherThemeMotifInput = document.getElementById("otherThemeMotif") || document.getElementById("other_theme_motif");
 
     const eventTypeSelect = document.getElementById("event_type");
-    const otherEventTypeInput = document.getElementById("other_event_type");
+    const otherEventTypeInput = document.getElementById("otherEventType") || document.getElementById("other_event_type");
 
     const form = document.querySelector("form");
+    const dateInput = document.getElementById("date");
 
-    // Agreement Modal Elements
-    const agreementModal = document.getElementById("agreementModal");
-    const agreementContent = document.getElementById("agreementContent");
-    const agreeButton = document.getElementById("agreeButton");
+    const periodSelect = document.getElementById("period");
+    const timeSlotWrapper = document.getElementById("timeSlotWrapper");
+    const timeSlotSelect = document.getElementById("time_slot");
 
-    // Show agreement modal immediately on load
-    if (agreementModal) {
-        // Use setTimeout to ensure DOM is fully rendered
-        setTimeout(() => {
-            agreementModal.style.display = "flex";
-            agreementModal.classList.add("show");
+    const timeSlots = {
+        AM: ["9am–11am", "10am–12pm", "11am–1pm"],
+        PM: ["2pm–4pm", "3pm–5pm", "4pm–6pm"]
+    };
 
-            // Disable form interaction
-            if (form) {
-                form.classList.add("form-disabled");
-            }
+    const dateStatuses = {};
 
-            // Disable scroll on body
-            document.body.style.overflow = "hidden";
-        }, 100);
-    }
-
-    // Toggle display of "Other" fields
-    function toggleOtherInput(selectEl, inputEl, otherValue = "Others") {
+    function toggleOtherInput(selectEl, inputEl) {
         if (!selectEl || !inputEl) return;
-        if (selectEl.value === otherValue) {
-            inputEl.style.display = "block";
-            inputEl.required = true;
-        } else {
-            inputEl.style.display = "none";
-            inputEl.required = false;
-            inputEl.value = "";
-        }
+        inputEl.style.display = selectEl.value === "Others" ? "block" : "none";
+        inputEl.required = selectEl.value === "Others";
+        if (selectEl.value !== "Others") inputEl.value = "";
     }
 
-    venueSelect?.addEventListener("change", () =>
-        toggleOtherInput(venueSelect, otherVenueInput)
-    );
-    themeMotifSelect?.addEventListener("change", () =>
-        toggleOtherInput(themeMotifSelect, otherThemeMotifInput)
-    );
-    eventTypeSelect?.addEventListener("change", () =>
-        toggleOtherInput(eventTypeSelect, otherEventTypeInput)
-    );
+    [[venueSelect, otherVenueInput], [themeMotifSelect, otherThemeMotifInput], [eventTypeSelect, otherEventTypeInput]].forEach(([select, input]) => {
+        select?.addEventListener("change", () => toggleOtherInput(select, input));
+        toggleOtherInput(select, input);
+    });
 
-    // On page load
-    toggleOtherInput(venueSelect, otherVenueInput);
-    toggleOtherInput(themeMotifSelect, otherThemeMotifInput);
-    toggleOtherInput(eventTypeSelect, otherEventTypeInput);
-
-    // Form validation
-    form?.addEventListener("submit", function (e) {
-        const requiredFields = ["name", "email", "contact_number", "date", "time", "message"];
-        let hasEmpty = requiredFields.some(
-            (id) => !document.getElementById(id)?.value.trim()
-        );
-
-        if (hasEmpty) {
-            alert("Please fill in all required fields.");
-            e.preventDefault();
-            return;
-        }
-
-        if (
-            eventTypeSelect.value === "Others" &&
-            !otherEventTypeInput.value.trim()
-        ) {
-            alert("Please specify the event type.");
-            e.preventDefault();
-            return;
-        }
-
-        if (
-            themeMotifSelect.value === "Others" &&
-            !otherThemeMotifInput.value.trim()
-        ) {
-            alert("Please specify the theme/motif.");
-            e.preventDefault();
-            return;
-        }
-
-        if (
-            venueSelect.value === "Others" &&
-            !otherVenueInput.value.trim()
-        ) {
-            alert("Please specify the venue.");
-            e.preventDefault();
-            return;
+    periodSelect?.addEventListener("change", function () {
+        const selectedPeriod = this.value;
+        timeSlotSelect.innerHTML = '<option value="">Select a time slot</option>';
+        if (timeSlots[selectedPeriod]) {
+            timeSlots[selectedPeriod].forEach(slot => {
+                const option = document.createElement("option");
+                option.value = slot;
+                option.textContent = slot;
+                timeSlotSelect.appendChild(option);
+            });
+            timeSlotWrapper.style.display = "block";
+            timeSlotSelect.disabled = false;
+        } else {
+            timeSlotWrapper.style.display = "none";
+            timeSlotSelect.disabled = true;
         }
     });
 
-    // Agreement logic
+    // ✅ Agreement Modal Logic
+    const agreementModal = document.getElementById("agreementModal");
+    const agreementContent = document.getElementById("agreementContent");
+    const agreeButton = document.getElementById("agreeButton");
     let hasScrolledToBottom = false;
 
-    // Check if content is scrollable, if not, enable button immediately
-    if (agreementContent) {
-        // Check after a short delay to ensure content is rendered
+    if (agreementModal && agreementContent && agreeButton) {
+        setTimeout(() => {
+            agreementModal.style.display = "flex";
+            agreementModal.classList.add("show");
+            form?.classList.add("form-disabled");
+            document.body.style.overflow = "hidden";
+        }, 100);
+
         setTimeout(() => {
             const { scrollHeight, clientHeight } = agreementContent;
             if (scrollHeight <= clientHeight + 10) {
-                // Content fits without scrolling
                 hasScrolledToBottom = true;
-                if (agreeButton) agreeButton.disabled = false;
+                agreeButton.disabled = false;
             }
-        }, 200);
+        }, 300);
 
         agreementContent.addEventListener("scroll", () => {
             const { scrollTop, scrollHeight, clientHeight } = agreementContent;
             if (scrollTop + clientHeight >= scrollHeight - 10) {
                 hasScrolledToBottom = true;
-                if (agreeButton) agreeButton.disabled = false;
+                agreeButton.disabled = false;
+            }
+        });
+
+        agreeButton.addEventListener("click", () => {
+            if (hasScrolledToBottom) {
+                agreementModal.classList.remove("show");
+                setTimeout(() => agreementModal.style.display = "none", 300);
+                form?.classList.remove("form-disabled");
+                document.body.style.overflow = "auto";
             }
         });
     }
 
-    agreeButton?.addEventListener("click", () => {
-        if (hasScrolledToBottom) {
-            // Hide modal
-            agreementModal.classList.remove("show");
-            
-            // Use setTimeout to ensure smooth transition
-            setTimeout(() => {
-                agreementModal.style.display = "none";
-            }, 300);
+    // ✅ Calendar Rendering
+    const calendar = document.getElementById("calendar");
+    const monthYear = document.getElementById("month-year");
+    const prevMonthBtn = document.getElementById("prevMonth");
+    const nextMonthBtn = document.getElementById("nextMonth");
 
-            // Enable form
-            if (form) {
-                form.classList.remove("form-disabled");
-                form.classList.add("form-enabled");
+    let currentDate = new Date();
+
+    function renderCalendar() {
+        const month = currentDate.getMonth();
+        const year = currentDate.getFullYear();
+
+        if (!calendar || !monthYear) return;
+
+        monthYear.textContent = new Intl.DateTimeFormat("en-US", {
+            month: "long",
+            year: "numeric"
+        }).format(currentDate);
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+
+        calendar.innerHTML = "";
+
+        ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach(day => {
+            const dayHeader = document.createElement("div");
+            dayHeader.classList.add("calendar-day", "day-header");
+            dayHeader.textContent = day;
+            calendar.appendChild(dayHeader);
+        });
+
+        for (let i = 0; i < firstDay; i++) {
+            const emptyCell = document.createElement("div");
+            emptyCell.classList.add("calendar-day", "empty");
+            calendar.appendChild(emptyCell);
+        }
+
+        for (let day = 1; day <= lastDate; day++) {
+            const paddedMonth = String(month + 1).padStart(2, '0');
+            const paddedDay = String(day).padStart(2, '0');
+            const dateKey = `${year}-${paddedMonth}-${paddedDay}`;
+
+            const cell = document.createElement("div");
+            cell.classList.add("calendar-day");
+            cell.textContent = day;
+            cell.setAttribute("data-date", dateKey);
+
+            if (dateStatuses[dateKey]) {
+                applyStatusStyle(cell, dateStatuses[dateKey]);
             }
 
-            // Enable scroll
-            document.body.style.overflow = "auto";
+            calendar.appendChild(cell);
         }
-    });
-
-    // Prevent modal from closing when clicking inside the content
-    if (agreementContent) {
-        agreementContent.addEventListener("click", (e) => {
-            e.stopPropagation();
-        });
     }
 
-    // Optional: Close modal when clicking outside (uncomment if desired)
-    /*
-    agreementModal?.addEventListener("click", (e) => {
-        if (e.target === agreementModal && hasScrolledToBottom) {
-            agreeButton.click();
+    function applyStatusStyle(cell, status) {
+        cell.classList.remove("Available", "Half", "Nearly", "Full", "Closed");
+        switch (status) {
+            case "Available": cell.classList.add("Available"); break;
+            case "Half": cell.classList.add("Half"); break;
+            case "Nearly": cell.classList.add("Nearly"); break;
+            case "Full": cell.classList.add("Full"); break;
+            case "Closed": cell.classList.add("Closed"); break;
+        }
+    }
+
+    prevMonthBtn?.addEventListener("click", () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    });
+
+    nextMonthBtn?.addEventListener("click", () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    });
+
+    function loadAvailabilityData() {
+        fetch("/calendar/availability")
+            .then(res => res.json())
+            .then(data => {
+                Object.entries(data).forEach(([date, status]) => {
+                    dateStatuses[date] = status;
+                });
+                renderCalendar();
+            })
+            .catch(err => {
+                console.error("Failed to load availability:", err);
+                renderCalendar();
+            });
+    }
+
+    loadAvailabilityData();
+
+    dateInput?.addEventListener("change", () => {
+        const selected = dateInput.value;
+        if (dateStatuses[selected] === "Full" || dateStatuses[selected] === "Closed") {
+            alert("This date is not available. Please choose another.");
+            dateInput.value = "";
         }
     });
-    */
 });

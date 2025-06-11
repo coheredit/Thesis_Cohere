@@ -109,7 +109,7 @@
 <div class="page-wrapper">
     <div class="container">
         <div class="reservation-container">
-            <h2>Manual Reservation Form</h2>
+            <h2>Let's bring your vision to life—just fill out the form.</h2>
 
             @if(session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>

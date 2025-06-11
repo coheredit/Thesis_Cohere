@@ -216,6 +216,32 @@ body {
   color: white;
 }
 
+.calendar-day.Available {
+  background-color: #4caf50; /* green */
+  color: white;
+}
+
+.calendar-day.Half {
+  background-color: #ffc107; /* yellow */
+  color: black;
+}
+
+.calendar-day.Nearly {
+  background-color: #ff9800; /* orange */
+  color: white;
+}
+
+.calendar-day.Full {
+  background-color: #e53935; /* red */
+  color: white;
+}
+
+.calendar-day.Closed {
+  background-color: #9e9e9e; /* gray */
+  color: white;
+}
+
+
 /* === Responsive === */
 @media (max-width: 900px) {
   .container {
