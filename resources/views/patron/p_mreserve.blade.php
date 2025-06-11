@@ -117,11 +117,11 @@
 
             <form method="POST" action="{{ route('patron.p_mreserve.submit') }}">
                 @csrf
+                <input type="hidden" name="created_by_type" value="patron">
 
-                {{-- Name --}}
                 <div class="form-group">
                     <label for="name">Name:<span>*</span></label>
-                    <input type="text" id="name" name="name" placeholder="First Name, Last Name" required>
+                    <input type="text" id="name" name="name" required>
                 </div>
 
                 <div class="form-group">
@@ -130,8 +130,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="contact_number">Contact Number:<span>*</span></label>
-                    <input type="tel" id="contact_number" name="contact_number" required>
+                    <label for="contact">Contact Number:<span>*</span></label>
+                    <input type="tel" id="contact" name="contact_number" required>
                 </div>
 
                 <div class="form-group">
@@ -140,27 +140,38 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="time">Time:<span>*</span></label>
-                    <input type="time" id="time" name="time" required>
+                    <label for="period">Select Period:<span>*</span></label>
+                    <select id="period" name="period" required>
+                        <option value="" selected disabled>Choose AM or PM</option>
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="timeSlotWrapper" style="display: none;">
+                    <label for="time_slot">Select Time Slot:<span>*</span></label>
+                    <select id="time_slot" name="time" required>
+                        <option value="">Select a time slot</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label for="venue">Venue:<span>*</span></label>
                     <select id="venue" name="venue" required>
-                        <option value="">Select a venue</option>
+                        <option value="" disabled selected>Choose a venue</option>
                         <option value="Villa I">Villa I</option>
                         <option value="Villa II">Villa II</option>
                         <option value="Elizabeth Hall">Elizabeth Hall</option>
                         <option value="Private Pool">Private Pool</option>
                         <option value="Others">Others</option>
                     </select>
-                    <input type="text" id="other_venue" name="other_venue" style="display: none;" placeholder="Please specify">
+                    <input type="text" id="otherVenue" name="other_venue" style="display: none;" placeholder="Please specify">
                 </div>
 
                 <div class="form-group">
                     <label for="event_type">Event Type:<span>*</span></label>
                     <select id="event_type" name="event_type" required>
-                        <option value="">Select event type</option>
+                        <option value="" disabled selected>Choose event type</option>
                         <option value="Baptismal Package">Baptismal Package</option>
                         <option value="Birthday Package">Birthday Package</option>
                         <option value="Debut Package">Debut Package</option>
@@ -169,13 +180,13 @@
                         <option value="Standard Package">Standard Package</option>
                         <option value="Others">Others</option>
                     </select>
-                    <input type="text" id="other_event_type" name="other_event_type" style="display: none;" placeholder="Please specify">
+                    <input type="text" id="otherEventType" name="other_event_type" style="display: none;" placeholder="Please specify">
                 </div>
 
                 <div class="form-group">
                     <label for="theme_motif">Theme/Motif:<span>*</span></label>
                     <select id="theme_motif" name="theme_motif" required>
-                        <option value="">Select theme/motif</option>
+                        <option value="" disabled selected>Choose theme/motif</option>
                         <option value="Floral">Floral</option>
                         <option value="Rustic">Rustic</option>
                         <option value="Elegant">Elegant</option>
@@ -183,12 +194,12 @@
                         <option value="Modern">Modern</option>
                         <option value="Others">Others</option>
                     </select>
-                    <input type="text" id="other_theme_motif" name="other_theme_motif" style="display: none;" placeholder="Please specify">
+                    <input type="text" id="otherThemeMotif" name="other_theme_motif" style="display: none;" placeholder="Please specify">
                 </div>
 
                 <div class="form-group">
                     <label for="message">Other Request:<span>*</span></label>
-                    <textarea id="message" name="message" placeholder="Please provide details about your event, number of guests, special requirements, etc." required></textarea>
+                    <textarea id="message" name="message" required placeholder="Please describe your specific requirements..."></textarea>
                 </div>
 
                 <div class="form-group">
@@ -196,7 +207,7 @@
                 </div>
             </form>
         </div>
-        
+
         <div class="calendar-container">
             <div class="calendar-header">
                 <button id="prevMonth">◀</button>
