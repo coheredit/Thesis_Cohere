@@ -179,11 +179,11 @@ body {
 
 /* === Metrics Overview - Force Single Row === */
 .metrics-overview {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin: 32px 0;
-  /* Remove any responsive behavior that would stack them */
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
 }
 
 .metric-card {
