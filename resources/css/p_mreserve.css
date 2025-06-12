@@ -461,3 +461,32 @@ body {
     gap: 15px;
   }
 }
+
+/* ===== Appended: Date Reminder Legend Styles ===== */
+.calendar-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.calendar-legend p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.legend-box.Available { background-color: #4caf50; }
+.legend-box.Half      { background-color: #ffc107; }
+.legend-box.Nearly    { background-color: #ff9800; }
+.legend-box.Full      { background-color: #e53935; }
+.legend-box.Closed    { background-color: #9e9e9e; }

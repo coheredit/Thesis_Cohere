@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@yield('title', 'Villa Salud Patron')</title>
 
-        <link rel="icon" type="image/png" href="{{ asset('images/vs_logo.png') }}" />
+    <link rel="icon" type="image/png" href="{{ asset('images/vs_logo.png') }}" />
 
     @vite([]) {{-- Add this to initialize Vite --}}
     @stack('styles') {{-- Page-specific styles --}}
@@ -45,8 +45,13 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('patron.faq') }}"
-                    class="{{ request()->routeIs('patron.faq') ? 'active' : '' }}">
+                <a href="{{ route('patron.guidelines') }}"
+                    class="{{ request()->routeIs('patron.guidelines') ? 'active' : '' }}">
+                    Guidelines
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('patron.faq') }}" class="{{ request()->routeIs('patron.faq') ? 'active' : '' }}">
                     FAQs
                 </a>
             </li>
@@ -54,12 +59,6 @@
                 <a href="{{ route('patron.feedback') }}"
                     class="{{ request()->routeIs('patron.feedback') ? 'active' : '' }}">
                     Feedback
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('patron.guidelines') }}"
-                    class="{{ request()->routeIs('patron.guidelines') ? 'active' : '' }}">
-                    Guidelines
                 </a>
             </li>
         </ul>
