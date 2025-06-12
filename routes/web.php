@@ -65,6 +65,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     // Admin Homepage
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
 
+    Route::view('/reserve_logs', 'admin.reserve_logs')->name('reserve_logs');
+
+
     // Packages on Admin homepage
     Route::get('/packages', [PackageController::class, 'index']);
     Route::post('/packages', [PackageController::class, 'store']);
