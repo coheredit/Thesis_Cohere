@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\InquiryController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\AvailabilityController;
 use App\Http\Controllers\Admin\AdminActivityController;
+use App\Http\Controllers\Admin\AdminProfileController;
 
 // Patron Routes
 Route::name('patron.')->group(function () {
@@ -87,9 +88,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
 
     // Activity Log for Admin Profile
     Route::get('/activities', [AdminActivityController::class, 'index'])->name('activities');
+    Route::post('activities/store', [AdminActivityController::class, 'store'])->name('activities.store');
+
+    // Profile editing and saving 
+    Route::view('/profile', 'admin.a_profile')->name('profile');
+    Route::post('profile/update', [AdminProfileController::class, 'update'])->name('profile.update');
 
     Route::view('/report', 'admin.a_report')->name('report');
-    Route::view('/profile', 'admin.a_profile')->name('profile');
 });
 
 // Logout Route (accessible to authenticated users)

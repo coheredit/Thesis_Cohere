@@ -1,5 +1,13 @@
 console.log("a_profile.js loaded ✅");
 
+function generateId(length = 12) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let id = '';
+    for (let i = 0; i < length; i++) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return id;
+}
 // Admin Profile JavaScript with Enhanced History System
 document.addEventListener("DOMContentLoaded", function () {
     // Get modal elements
@@ -50,7 +58,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const historyFilter = document.getElementById("history-filter");
     const totalActivitiesCount = document.getElementById("total-activities");
     const todayActivitiesCount = document.getElementById("today-activities");
-    const thisWeekActivitiesCount = document.getElementById("this-week-activities");
+    const thisWeekActivitiesCount = document.getElementById(
+        "this-week-activities"
+    );
 
     // History system variables
     let adminHistory = [];
@@ -60,13 +70,13 @@ document.addEventListener("DOMContentLoaded", function () {
     let confirmCallback = null;
 
     const availableProfilePictures = [
-    { id: 'boy.png', name: 'Default Admin', src: '/images/boy.png' },
-    { id: 'boy1.png', name: 'Professional', src: '/images/boy1.png' },
-    { id: 'boy2.png', name: 'Casual', src: '/images/boy2.png' },
-    { id: 'girl.png', name: 'Formal', src: '/images/girl.png' },
-    { id: 'girl1.png', name: 'Modern', src: '/images/girl1.png' },
-    { id: 'girl2.png', name: 'Classic', src: '/images/gril2.png' }
-];
+        { id: "boy.png", name: "Default Admin", src: "/images/boy.png" },
+        { id: "boy1.png", name: "Professional", src: "/images/boy1.png" },
+        { id: "boy2.png", name: "Casual", src: "/images/boy2.png" },
+        { id: "girl.png", name: "Formal", src: "/images/girl.png" },
+        { id: "girl1.png", name: "Modern", src: "/images/girl1.png" },
+        { id: "girl2.png", name: "Classic", src: "/images/gril2.png" },
+    ];
 
     // Initialize history system
     initializeHistory();
@@ -74,7 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // History Management Functions
     async function initializeHistory() {
         try {
-            const res = await fetch(`/admin/activities?filter=${currentFilter}`);
+            const res = await fetch(
+                `/admin/activities?filter=${currentFilter}`
+            );
             const data = await res.json();
 
             if (Array.isArray(data)) {
@@ -92,7 +104,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 displayHistory();
                 updateHistoryStats();
             } else {
-                console.error("Error fetching admin history:", data.error || data);
+                console.error(
+                    "Error fetching admin history:",
+                    data.error || data
+                );
             }
         } catch (error) {
             console.error("Failed to fetch admin history", error);
@@ -110,7 +125,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function formatTypeForBackend(type, action) {
-        if (type === "login") return action.includes("logout") ? "Logout" : "Login";
+        if (type === "login")
+            return action.includes("logout") ? "Logout" : "Login";
         if (type === "profile") return "Profile Change";
         if (type === "security") return "Security";
         return "System Action";
@@ -141,22 +157,24 @@ document.addEventListener("DOMContentLoaded", function () {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                "X-CSRF-TOKEN": document
+                    .querySelector('meta[name="csrf-token"]')
+                    .getAttribute("content"),
             },
             body: JSON.stringify({
                 activity_type: formatTypeForBackend(type, action),
                 description: details,
             }),
         })
-        .then((res) => res.json())
-        .then((data) => {
-            if (!data.success) {
-                console.error("Failed to store activity log", data);
-            }
-        })
-        .catch((err) => {
-            console.error("Error sending activity log to server", err);
-        });
+            .then((res) => res.json())
+            .then((data) => {
+                if (!data.success) {
+                    console.error("Failed to store activity log", data);
+                }
+            })
+            .catch((err) => {
+                console.error("Error sending activity log to server", err);
+            });
     }
 
     function filterHistory() {
@@ -176,9 +194,12 @@ document.addEventListener("DOMContentLoaded", function () {
         return icons[type] || "📝";
     }
 
-function displayHistory() {
+    function displayHistory() {
         const filteredHistory = filterHistory();
-        const historyToShow = filteredHistory.slice(0, displayedHistoryCount + ITEMS_PER_PAGE);
+        const historyToShow = filteredHistory.slice(
+            0,
+            displayedHistoryCount + ITEMS_PER_PAGE
+        );
 
         historyList.innerHTML = "";
 
@@ -217,7 +238,7 @@ function displayHistory() {
         }
     }
 
-function updateHistoryStats() {
+    function updateHistoryStats() {
         const total = adminHistory.length;
         const today = adminHistory.filter((entry) => {
             const entryDate = new Date(entry.timestamp).toDateString();
@@ -234,7 +255,8 @@ function updateHistoryStats() {
 
         if (totalActivitiesCount) totalActivitiesCount.textContent = total;
         if (todayActivitiesCount) todayActivitiesCount.textContent = today;
-        if (thisWeekActivitiesCount) thisWeekActivitiesCount.textContent = thisWeek;
+        if (thisWeekActivitiesCount)
+            thisWeekActivitiesCount.textContent = thisWeek;
     }
 
     function clearHistory() {
@@ -247,7 +269,11 @@ function updateHistoryStats() {
                 displayHistory();
                 updateHistoryStats();
                 showSuccessModal("History cleared successfully!");
-                addToHistory("system", "History cleared", "All admin history entries were deleted");
+                addToHistory(
+                    "system",
+                    "History cleared",
+                    "All admin history entries were deleted"
+                );
             }
         );
     }
@@ -273,12 +299,16 @@ function updateHistoryStats() {
                     </div>
                     <div class="modal-body">
                         <div class="image-grid" id="image-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; padding: 20px 0;">
-                            ${availableProfilePictures.map(img => `
+                            ${availableProfilePictures
+                                .map(
+                                    (img) => `
                                 <div class="image-option" data-src="${img.src}" style="text-align: center; cursor: pointer; padding: 10px; border: 2px solid transparent; border-radius: 8px; transition: all 0.3s ease;">
                                     <img src="${img.src}" alt="${img.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; margin-bottom: 8px;">
                                     <p style="margin: 0; font-size: 14px; color: #666;">${img.name}</p>
                                 </div>
-                            `).join('')}
+                            `
+                                )
+                                .join("")}
                         </div>
                     </div>
                 </div>
@@ -286,7 +316,7 @@ function updateHistoryStats() {
         `;
 
         // Insert modal into document
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        document.body.insertAdjacentHTML("beforeend", modalHTML);
 
         // Get the newly created modal elements
         const newImageModal = document.getElementById("image-selection-modal");
@@ -309,43 +339,51 @@ function updateHistoryStats() {
         }
 
         // Add click listeners to image options
-        const imageOptions = imageGrid.querySelectorAll('.image-option');
+        const imageOptions = imageGrid.querySelectorAll(".image-option");
         console.log(`Found ${imageOptions.length} image options`);
-        
+
         imageOptions.forEach((option, index) => {
-            option.addEventListener('click', function() {
-                const selectedSrc = this.getAttribute('data-src');
-                const selectedName = this.querySelector('p').textContent;
-                
-                console.log(`Image ${index + 1} selected: ${selectedName} (${selectedSrc})`);
-                
+            option.addEventListener("click", function () {
+                const selectedSrc = this.getAttribute("data-src");
+                const selectedName = this.querySelector("p").textContent;
+
+                console.log(
+                    `Image ${
+                        index + 1
+                    } selected: ${selectedName} (${selectedSrc})`
+                );
+
                 // Update profile picture
                 if (profilePic) {
                     profilePic.src = selectedSrc;
-                    addToHistory("profile", "Profile picture updated", `Changed to: ${selectedName}`);
+                    addToHistory(
+                        "profile",
+                        "Profile picture updated",
+                        `Changed to: ${selectedName}`
+                    );
                     showSuccessModal("Profile picture updated successfully!");
                 } else {
                     console.error("Profile picture element not found");
                 }
-                
+
                 // Close modal
                 newImageModal.style.display = "none";
             });
 
             // Add hover effects
-            option.addEventListener('mouseenter', function() {
-                this.style.borderColor = '#007bff';
-                this.style.backgroundColor = '#f8f9fa';
+            option.addEventListener("mouseenter", function () {
+                this.style.borderColor = "#007bff";
+                this.style.backgroundColor = "#f8f9fa";
             });
 
-            option.addEventListener('mouseleave', function() {
-                this.style.borderColor = 'transparent';
-                this.style.backgroundColor = 'transparent';
+            option.addEventListener("mouseleave", function () {
+                this.style.borderColor = "transparent";
+                this.style.backgroundColor = "transparent";
             });
         });
 
         // Close modal when clicking outside
-        newImageModal.addEventListener('click', function(event) {
+        newImageModal.addEventListener("click", function (event) {
             if (event.target === newImageModal) {
                 console.log("Modal background clicked, closing modal");
                 newImageModal.style.display = "none";
@@ -362,16 +400,20 @@ function updateHistoryStats() {
         logoutBtn.addEventListener("click", function (e) {
             e.preventDefault();
             console.log("Logout button clicked!"); // Debug log
-            
+
             showConfirmModal(
                 "Confirm Logout",
                 "Are you sure you want to logout?",
                 () => {
                     console.log("Logout confirmed!"); // Debug log
-                    
+
                     // Add to history before logout
-                    addToHistory("login", "Admin logout", "Admin logged out of the system");
-                    
+                    addToHistory(
+                        "login",
+                        "Admin logout",
+                        "Admin logged out of the system"
+                    );
+
                     // Find the form and submit it
                     const form = logoutBtn.closest("form");
                     if (form) {
@@ -380,7 +422,7 @@ function updateHistoryStats() {
                     } else {
                         console.error("Logout form not found!");
                         // Fallback: redirect to logout route
-                        window.location.href = '/admin/logout';
+                        window.location.href = "/admin/logout";
                     }
                 }
             );
@@ -410,18 +452,22 @@ function updateHistoryStats() {
     // FIXED Profile Picture Change - Now opens image selection modal
     if (changePicBtn) {
         console.log("Change picture button found, adding event listener");
-        
+
         changePicBtn.addEventListener("click", function (e) {
             e.preventDefault();
             console.log("Change picture button clicked!");
-            
+
             // Create the modal (it will check if it already exists)
             const imageModal = createImageSelectionModal();
-            
+
             if (imageModal) {
                 console.log("Showing image selection modal");
                 imageModal.style.display = "block";
-                addToHistory("system", "Profile picture selection opened", "Opened image selection modal");
+                addToHistory(
+                    "system",
+                    "Profile picture selection opened",
+                    "Opened image selection modal"
+                );
             } else {
                 console.error("Failed to create or find image selection modal");
             }
@@ -439,8 +485,14 @@ function updateHistoryStats() {
                 reader.onload = function (e) {
                     if (profilePic) {
                         profilePic.src = e.target.result;
-                        addToHistory("profile", "Profile picture updated", "Changed admin profile picture via file upload");
-                        showSuccessModal("Profile picture updated successfully!");
+                        addToHistory(
+                            "profile",
+                            "Profile picture updated",
+                            "Changed admin profile picture via file upload"
+                        );
+                        showSuccessModal(
+                            "Profile picture updated successfully!"
+                        );
                     }
                 };
                 reader.readAsDataURL(file);
@@ -453,12 +505,19 @@ function updateHistoryStats() {
         editBtn.addEventListener("click", function () {
             // Pre-fill form with current data
             if (editName && adminName) editName.value = adminName.textContent;
-            if (editEmail && adminEmail) editEmail.value = adminEmail.textContent;
-            if (editPhone && adminPhone) editPhone.value = adminPhone.textContent;
-            if (editUsername && adminUsername) editUsername.value = adminUsername.textContent;
+            if (editEmail && adminEmail)
+                editEmail.value = adminEmail.textContent;
+            if (editPhone && adminPhone)
+                editPhone.value = adminPhone.textContent;
+            if (editUsername && adminUsername)
+                editUsername.value = adminUsername.textContent;
 
             editModal.style.display = "block";
-            addToHistory("system", "Edit profile form opened", "Started editing admin profile information");
+            addToHistory(
+                "system",
+                "Edit profile form opened",
+                "Started editing admin profile information"
+            );
         });
     }
 
@@ -467,7 +526,11 @@ function updateHistoryStats() {
         changePasswordLink.addEventListener("click", function (e) {
             e.preventDefault();
             passwordModal.style.display = "block";
-            addToHistory("security", "Password change initiated", "Opened password change form");
+            addToHistory(
+                "security",
+                "Password change initiated",
+                "Opened password change form"
+            );
         });
     }
 
@@ -487,14 +550,22 @@ function updateHistoryStats() {
     if (cancelEdit && editModal) {
         cancelEdit.addEventListener("click", function () {
             editModal.style.display = "none";
-            addToHistory("system", "Profile edit cancelled", "Cancelled profile editing without saving");
+            addToHistory(
+                "system",
+                "Profile edit cancelled",
+                "Cancelled profile editing without saving"
+            );
         });
     }
 
     if (cancelPassword && passwordModal) {
         cancelPassword.addEventListener("click", function () {
             passwordModal.style.display = "none";
-            addToHistory("security", "Password change cancelled", "Cancelled password change without saving");
+            addToHistory(
+                "security",
+                "Password change cancelled",
+                "Cancelled password change without saving"
+            );
         });
     }
 
@@ -536,7 +607,7 @@ function updateHistoryStats() {
             confirmModal.style.display = "none";
             confirmCallback = null;
         }
-        
+
         // Handle dynamically created image selection modal
         const imageModal = document.getElementById("image-selection-modal");
         if (imageModal && event.target === imageModal) {
@@ -557,9 +628,12 @@ function updateHistoryStats() {
 
             // Update profile information
             if (adminName && editName) adminName.textContent = editName.value;
-            if (adminEmail && editEmail) adminEmail.textContent = editEmail.value;
-            if (adminPhone && editPhone) adminPhone.textContent = editPhone.value;
-            if (adminUsername && editUsername) adminUsername.textContent = editUsername.value;
+            if (adminEmail && editEmail)
+                adminEmail.textContent = editEmail.value;
+            if (adminPhone && editPhone)
+                adminPhone.textContent = editPhone.value;
+            if (adminUsername && editUsername)
+                adminUsername.textContent = editUsername.value;
 
             // Close modal
             if (editModal) editModal.style.display = "none";
@@ -574,15 +648,21 @@ function updateHistoryStats() {
             }
             if (editEmail && oldEmail !== editEmail.value) {
                 changes.push("email");
-                changeDetails.push(`Email: "${oldEmail}" → "${editEmail.value}"`);
+                changeDetails.push(
+                    `Email: "${oldEmail}" → "${editEmail.value}"`
+                );
             }
             if (editPhone && oldPhone !== editPhone.value) {
                 changes.push("phone");
-                changeDetails.push(`Phone: "${oldPhone}" → "${editPhone.value}"`);
+                changeDetails.push(
+                    `Phone: "${oldPhone}" → "${editPhone.value}"`
+                );
             }
             if (editUsername && oldUsername !== editUsername.value) {
                 changes.push("username");
-                changeDetails.push(`Username: "${oldUsername}" → "${editUsername.value}"`);
+                changeDetails.push(
+                    `Username: "${oldUsername}" → "${editUsername.value}"`
+                );
             }
 
             // Add specific activity
@@ -591,11 +671,47 @@ function updateHistoryStats() {
                 const detailText = changeDetails.join("; ");
                 addToHistory("profile", changeText, detailText);
             } else {
-                addToHistory("profile", "Profile form submitted", "No changes were made to profile information");
+                addToHistory(
+                    "profile",
+                    "Profile form submitted",
+                    "No changes were made to profile information"
+                );
             }
 
-            // Show success modal
-            showSuccessModal("Profile updated successfully!");
+            // Send to backend
+            fetch("/admin/profile/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+                body: JSON.stringify({
+                    name: editName.value,
+                    email: editEmail.value,
+                    phone: editPhone.value,
+                    username: editUsername.value,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        showSuccessModal(data.message);
+                    } else {
+                        showErrorMessage(
+                            data.message || "Update failed",
+                            editModal
+                        );
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error updating profile:", error);
+                    showErrorMessage(
+                        "An error occurred while updating profile.",
+                        editModal
+                    );
+                });
         });
     }
 
@@ -616,19 +732,37 @@ function updateHistoryStats() {
             // Basic validation
             if (newPassword.value !== confirmPassword.value) {
                 showErrorMessage("New passwords do not match!", passwordModal);
-                addToHistory("security", "Password change failed", "Password confirmation mismatch");
+                addToHistory(
+                    "security",
+                    "Password change failed",
+                    "Password confirmation mismatch"
+                );
                 return;
             }
 
             if (newPassword.value.length < 6) {
-                showErrorMessage("Password must be at least 6 characters long!", passwordModal);
-                addToHistory("security", "Password change failed", "Password too short (minimum 6 characters)");
+                showErrorMessage(
+                    "Password must be at least 6 characters long!",
+                    passwordModal
+                );
+                addToHistory(
+                    "security",
+                    "Password change failed",
+                    "Password too short (minimum 6 characters)"
+                );
                 return;
             }
 
             if (currentPassword.value === "") {
-                showErrorMessage("Please enter your current password!", passwordModal);
-                addToHistory("security", "Password change failed", "Current password not provided");
+                showErrorMessage(
+                    "Please enter your current password!",
+                    passwordModal
+                );
+                addToHistory(
+                    "security",
+                    "Password change failed",
+                    "Current password not provided"
+                );
                 return;
             }
 
@@ -637,7 +771,11 @@ function updateHistoryStats() {
             passwordForm.reset();
 
             // Add activity
-            addToHistory("security", "Password changed successfully", "Admin account password updated");
+            addToHistory(
+                "security",
+                "Password changed successfully",
+                "Admin account password updated"
+            );
 
             // Show success modal
             showSuccessModal("Password changed successfully!");
@@ -646,7 +784,9 @@ function updateHistoryStats() {
 
     // Helper function to show success modal
     function showSuccessModal(message) {
-        const successMessageText = document.getElementById("success-message-text");
+        const successMessageText = document.getElementById(
+            "success-message-text"
+        );
         if (successMessageText) {
             successMessageText.textContent = message;
         }
@@ -667,7 +807,7 @@ function updateHistoryStats() {
 
         if (confirmTitle) confirmTitle.textContent = title;
         if (confirmMessage) confirmMessage.textContent = message;
-        
+
         confirmCallback = callback;
         confirmModal.style.display = "block";
     }
@@ -734,7 +874,9 @@ function updateHistoryStats() {
     }
 
     // Form validation for real-time feedback
-    const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"]');
+    const inputs = document.querySelectorAll(
+        'input[type="text"], input[type="email"], input[type="password"]'
+    );
     inputs.forEach((input) => {
         input.addEventListener("blur", function () {
             validateInput(this);
@@ -752,21 +894,36 @@ function updateHistoryStats() {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(value)) {
                 input.style.borderColor = "#dc3545";
-                addToHistory("system", "Validation error", `Invalid email format entered: ${value}`);
+                addToHistory(
+                    "system",
+                    "Validation error",
+                    `Invalid email format entered: ${value}`
+                );
             }
         }
 
         if (input.name === "phone" && value !== "") {
             const phoneRegex = /^\d{4}-\d{3}-\d{4}$/;
-            if (!phoneRegex.test(value) && value.replace(/\D/g, "").length > 0) {
+            if (
+                !phoneRegex.test(value) &&
+                value.replace(/\D/g, "").length > 0
+            ) {
                 input.style.borderColor = "#dc3545";
-                addToHistory("system", "Validation error", `Invalid phone format entered: ${value}`);
+                addToHistory(
+                    "system",
+                    "Validation error",
+                    `Invalid phone format entered: ${value}`
+                );
             }
         }
 
         if (input.type === "password" && value !== "" && value.length < 6) {
             input.style.borderColor = "#dc3545";
-            addToHistory("security", "Validation error", "Password too short during input");
+            addToHistory(
+                "security",
+                "Validation error",
+                "Password too short during input"
+            );
         }
     }
 
@@ -784,11 +941,17 @@ function updateHistoryStats() {
             if (diffMins < 1) {
                 entry.relativeTime = "Just now";
             } else if (diffMins < 60) {
-                entry.relativeTime = `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+                entry.relativeTime = `${diffMins} min${
+                    diffMins > 1 ? "s" : ""
+                } ago`;
             } else if (diffHours < 24) {
-                entry.relativeTime = `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+                entry.relativeTime = `${diffHours} hour${
+                    diffHours > 1 ? "s" : ""
+                } ago`;
             } else {
-                entry.relativeTime = `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+                entry.relativeTime = `${diffDays} day${
+                    diffDays > 1 ? "s" : ""
+                } ago`;
             }
         });
 
@@ -807,16 +970,24 @@ function updateHistoryStats() {
         };
 
         const dataStr = JSON.stringify(historyData, null, 2);
-        const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+        const dataUri =
+            "data:application/json;charset=utf-8," +
+            encodeURIComponent(dataStr);
 
-        const exportFileDefaultName = `admin_history_${new Date().toISOString().split("T")[0]}.json`;
+        const exportFileDefaultName = `admin_history_${
+            new Date().toISOString().split("T")[0]
+        }.json`;
 
         const linkElement = document.createElement("a");
         linkElement.setAttribute("href", dataUri);
         linkElement.setAttribute("download", exportFileDefaultName);
         linkElement.click();
 
-        addToHistory("system", "History exported", `Exported ${adminHistory.length} history entries to JSON file`);
+        addToHistory(
+            "system",
+            "History exported",
+            `Exported ${adminHistory.length} history entries to JSON file`
+        );
     }
 
     // Add export button dynamically (optional)
@@ -841,5 +1012,7 @@ function updateHistoryStats() {
         historyControls.appendChild(exportBtn);
     }
 
-    console.log("Admin Profile with Enhanced History System loaded successfully!");
+    console.log(
+        "Admin Profile with Enhanced History System loaded successfully!"
+    );
 });

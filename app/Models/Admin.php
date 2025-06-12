@@ -23,4 +23,27 @@ class Admin extends Authenticatable
         'password',
         'profile_picture', 
     ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    // Add accessor for full name
+    public function getNameAttribute()
+    {
+        return trim($this->f_name . ' ' . $this->l_name);
+    }
+
+    // Add accessor for username (derived from email)
+    public function getUsernameAttribute()
+    {
+        return explode('@', $this->email)[0];
+    }
+
+    // Override getAuthIdentifierName to use admin_id
+    public function getAuthIdentifierName()
+    {
+        return 'admin_id';
+    }
 }

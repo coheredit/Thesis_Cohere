@@ -7,12 +7,13 @@ use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 
+
 class AdminActivityController extends Controller
 {
     public function index(Request $request)
     {
         try {
-            $adminId = Auth::guard('admin')->id();  // ✅ use only this
+            $adminId = Auth::guard('admin')->id();  
             if (!$adminId) {
                 return response()->json(['error' => 'Admin not authenticated'], 401);
             }
@@ -30,7 +31,6 @@ class AdminActivityController extends Controller
                 case 'system':
                     $query->where('activity_type', 'System Action');
                     break;
-                    // 'all' does not apply a filter
             }
 
             $activities = $query->latest()->get();
@@ -43,5 +43,27 @@ class AdminActivityController extends Controller
                 'trace' => $e->getTraceAsString()
             ], 500);
         }
+    }
+
+    public function store(Request $request)
+    {
+        $adminId = Auth::guard('admin')->id();
+
+        if (!$adminId) {
+            return response()->json(['success' => false, 'message' => 'Not authenticated'], 401);
+        }
+
+        $validated = $request->validate([
+            'activity_type' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+        ]);
+
+        ActivityLog::create([
+            'admin_id' => $adminId,
+            'activity_type' => $validated['activity_type'],
+            'description' => $validated['description'] ?? '',
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Activity logged']);
     }
 }

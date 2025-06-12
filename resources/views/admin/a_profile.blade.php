@@ -23,13 +23,13 @@ $user = Auth::guard('admin')->user() ?? (object)[
         <button class="change-pic-btn" id="change-pic-btn">📷</button>
         <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
       </div>
-      <h2 id="admin-name">{{ $user->name }}</h2>
+      <h2 id="admin-name">{{ $user->name ?? ($user->f_name . ' ' . $user->l_name) }}</h2>
       <p>System Administrator</p>
     </div>
     <div class="profile-info">
       <h3>Profile Information</h3>
       <p><strong>Email:</strong> <span id="admin-email">{{ $user->email }}</span></p>
-      <p><strong>Phone:</strong> <span id="admin-phone">{{ $user->phone }}</span></p>
+      <p><strong>Phone:</strong> <span id="admin-phone">{{ $user->phone ?? 'N/A' }}</span></p>
       <p><strong>Username:</strong> <span id="admin-username">{{ explode('@', $user->email)[0] }}</span></p>
       <p><strong>Password:</strong> •••••••• <a href="#" class="change-password" id="change-password-link">Change</a></p>
     </div>
@@ -94,8 +94,9 @@ $user = Auth::guard('admin')->user() ?? (object)[
     </div>
     <div class="modal-body">
       <form id="edit-form">
+        @csrf
         <div class="form-group">
-          <label for="edit-name">Name:</label>
+          <label for="edit-name">Full Name:</label>
           <input type="text" id="edit-name" name="name" required>
         </div>
         <div class="form-group">
@@ -108,7 +109,8 @@ $user = Auth::guard('admin')->user() ?? (object)[
         </div>
         <div class="form-group">
           <label for="edit-username">Username:</label>
-          <input type="text" id="edit-username" name="username" required>
+          <input type="text" id="edit-username" name="username" readonly style="background-color: #f5f5f5;">
+          <small style="color: #666; font-size: 12px;">Username is automatically generated from email</small>
         </div>
         <div class="modal-buttons">
           <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -128,6 +130,7 @@ $user = Auth::guard('admin')->user() ?? (object)[
     </div>
     <div class="modal-body">
       <form id="password-form">
+        @csrf
         <div class="form-group">
           <label for="current-password">Current Password:</label>
           <input type="password" id="current-password" name="current_password" required>
@@ -167,7 +170,6 @@ $user = Auth::guard('admin')->user() ?? (object)[
     </div>
   </div>
 </div>
-
 
 {{-- Success Modal --}}
 <div id="success-modal" class="modal" style="display: none;">

@@ -11,13 +11,13 @@ class ActivityLog extends Model
     use HasFactory;
     
     protected $primaryKey = 'log_id';
-    public $incrementing = false; // Changed from true to false
-    protected $keyType = 'string'; // Added this line
+    public $incrementing = false; 
+    protected $keyType = 'string'; 
     
     protected $table = 'activity_log';
 
     protected $fillable = [
-        'log_id', // Added this to fillable
+        'log_id', 
         'admin_id',
         'activity_type',
         'description',
