@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Inquiry;
 use App\Models\Patron;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class InquiryController extends Controller
 {
@@ -28,7 +30,7 @@ class InquiryController extends Controller
             'status' => 'required|string|in:pending,approved,rejected',
         ]);
 
-        $inquiry = Inquiry::findOrFail($id);
+        $inquiry = Inquiry::with('patron')->find($id);
         $inquiry->status = $request->input('status');
         $inquiry->save();
 
@@ -41,16 +43,50 @@ class InquiryController extends Controller
             'status' => 'required|string|in:Pending,In Progress,Completed,Cancelled',
         ]);
 
-        $inquiry = Inquiry::find($id);
+        $inquiry = Inquiry::with('patron')->find($id);
         if (!$inquiry) {
             return response()->json(['success' => false, 'message' => 'Inquiry not found.'], 404);
         }
 
-        $inquiry->status = $request->input('status');
+        $newStatus = $request->input('status');
+        $inquiry->status = $newStatus;
         $inquiry->save();
+
+        // ✅ If marked as Completed, convert to reservation
+        if ($newStatus === 'Completed') {
+            $existing = \App\Models\Reservation::where('inquiry_id', $inquiry->inquiry_id)->first();
+
+            if (!$existing) {
+                // 🔍 Log the inquiry data for inspection
+                Log::info('Attempting to create reservation from inquiry:', $inquiry->toArray());
+
+                try {
+                    \App\Models\Reservation::create([
+                        'inquiry_id'         => $inquiry->inquiry_id,
+                        'patron_id'          => $inquiry->patron_id,
+                        'date'               => $inquiry->date,
+                        'time'               => $inquiry->time,
+                        'venue'              => $inquiry->venue,
+                        'event_type'         => $inquiry->event_type,
+                        'theme_motif'        => $inquiry->theme_motif,
+                        'message'            => $inquiry->message,
+                        'status'             => 'Active'
+                    ]);
+                } catch (\Exception $e) {
+                    // ❌ Log the exception with full message
+                    Log::error('Failed to create reservation: ' . $e->getMessage());
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Reservation creation failed: ' . $e->getMessage()
+                    ], 500);
+                }
+            }
+        }
+
 
         return response()->json(['success' => true]);
     }
+
 
     public function store(Request $request)
     {

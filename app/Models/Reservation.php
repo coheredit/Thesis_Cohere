@@ -8,10 +8,17 @@ class Reservation extends Model
 {
     protected $table = 'reservation';
 
-    public $timestamps = false; // Assuming you’re using time_created/time_updated
+    public $timestamps = false; 
 
     protected $fillable = [
         'inquiry_id',
-        // add other fields you want to allow mass assignment
+        'patron_id',
+        'date',
+        'time',
+        'venue',
+        'event_type',
+        'theme_motif',
+        'message',
+        'status'
     ];
 }
