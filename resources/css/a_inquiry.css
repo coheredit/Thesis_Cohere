@@ -56,19 +56,27 @@ body {
 #content {
   position: relative;
   width: 80%;
-  margin: 80px auto 20px auto;
-  padding: 24px;
+  margin: 20px auto;
+  padding: 10px;
 }
 
 /* === Internal Content Navigation Bar === */
 nav {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  background: white;
+  justify-content: center;
+  background: transparent;
   padding: 15px;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 20px;
+  border: none;
+  margin-bottom: 40px;
+}
+
+nav h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #007b3d;
+  text-align: center;
 }
 
 nav i {
@@ -78,13 +86,20 @@ nav i {
 
 /* === Heading Title === */
 .head-title {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 .head-title h1 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
+  color: #007b3d;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.head-title p {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
 }
 
 /* === Table Styling === */
@@ -95,6 +110,17 @@ nav i {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   overflow-x: auto;
+}
+
+.table-data .head {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.table-data .head h3 {
+  font-size: 20px;
+  color: #333;
+  margin: 0;
 }
 
 .table-data table {
@@ -242,6 +268,14 @@ select:focus {
     min-width: 80px;
     font-size: 12px;
   }
+  
+  .head-title h1 {
+    font-size: 24px;
+  }
+  
+  nav h2 {
+    font-size: 22px;
+  }
 }
 
 /* === Table scroll styling === */
@@ -322,8 +356,4 @@ td button {
   border: 1px solid #ddd;
   color: #333;
   vertical-align: middle;
-}
-
-.inquiry-table tbody tr:hover {
-  background: #f4f4f4;
 }
