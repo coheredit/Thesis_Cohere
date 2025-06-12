@@ -54,10 +54,11 @@ class InquiryController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        // Validate all fields
+        $validated = $request->validate([
             'name'           => 'required|string|max:255',
             'email'          => 'required|email|max:255',
-            'contact_number' => 'required|string|max:20',
+            'contact_number' => 'required|string|max:30',
             'date'           => 'required|date',
             'time'           => 'required|string',
             'venue'          => 'required|string|max:255',
@@ -66,38 +67,45 @@ class InquiryController extends Controller
             'message'        => 'nullable|string',
         ]);
 
-        $patron = Patron::firstOrCreate(
-            ['email' => $request->email],
-            [
-                'name'           => $request->name,
-                'contact_number' => $request->contact_number,
-            ]
-        );
+        try {
+            // Create or update the patron
+            $patron = Patron::updateOrCreate(
+                ['email' => $validated['email']],
+                [
+                    'name'           => $validated['name'],
+                    'contact_number' => $validated['contact_number'],
+                ]
+            );
 
-        $eventType     = $request->input('event_type');
-        $themeMotif    = $request->input('theme_motif');
-        $venue         = $request->input('venue');
+            if (!$patron || !$patron->patron_id) {
+                return redirect()->back()->with('error', 'Failed to create or find patron.');
+            }
 
-        $isEventOther  = strtolower(trim($eventType)) === 'others';
-        $isThemeOther  = strtolower(trim($themeMotif)) === 'others';
-        $isVenueOther  = strtolower(trim($venue)) === 'others';
+            // Handle "Others" values
+            $isEventOther = strtolower(trim($validated['event_type'])) === 'others';
+            $isThemeOther = strtolower(trim($validated['theme_motif'])) === 'others';
+            $isVenueOther = strtolower(trim($validated['venue'])) === 'others';
 
-        Inquiry::create([
-            'patron_id'         => $patron->id,
-            'admin_id'          => auth('admin')->id(),
-            'created_by_type'   => 'admin',
-            'date'              => $request->date,
-            'time'              => $request->time,
-            'venue'             => $isVenueOther ? 'Others' : $venue,        // Fixed: 'Others' not 'Other'
-            'event_type'        => $isEventOther ? 'Others' : $eventType,    // Fixed: 'Others' not 'Other'
-            'theme_motif'       => $isThemeOther ? 'Others' : $themeMotif,   // Fixed: 'Others' not 'Other'
-            'other_event_type'  => $isEventOther ? $request->input('other_event_type') : null,
-            'other_theme_motif' => $isThemeOther ? $request->input('other_theme_motif') : null,
-            'other_venue'       => $isVenueOther ? $request->input('other_venue') : null,
-            'message'           => $request->message,
-            'status'            => 'Pending',
-        ]);
+            // Create the inquiry
+            Inquiry::create([
+                'patron_id'         => $patron->patron_id, // make sure this is correct
+                'admin_id'          => auth('admin')->id(),
+                'created_by_type'   => 'admin',
+                'date'              => $validated['date'],
+                'time'              => $validated['time'],
+                'venue'             => $isVenueOther ? 'Others' : $validated['venue'],
+                'event_type'        => $isEventOther ? 'Others' : $validated['event_type'],
+                'theme_motif'       => $isThemeOther ? 'Others' : $validated['theme_motif'],
+                'other_event_type'  => $isEventOther ? $request->input('other_event_type') : null,
+                'other_theme_motif' => $isThemeOther ? $request->input('other_theme_motif') : null,
+                'other_venue'       => $isVenueOther ? $request->input('other_venue') : null,
+                'message'           => $validated['message'],
+                'status'            => 'Pending',
+            ]);
 
-        return redirect()->back()->with('success', 'Inquiry successfully created!');
+            return redirect()->back()->with('success', 'Inquiry successfully created!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to store inquiry. Error: ' . $e->getMessage());
+        }
     }
 }
