@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
 
 class AdminProfileController extends Controller
 {
@@ -18,7 +19,7 @@ class AdminProfileController extends Controller
 
             if (!$admin) {
                 return response()->json([
-                    'success' => false, 
+                    'success' => false,
                     'message' => 'Not authenticated'
                 ], 401);
             }
@@ -27,10 +28,9 @@ class AdminProfileController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|max:255|unique:admin,email,' . $admin->admin_id . ',admin_id',
                 'phone' => 'nullable|string|max:20',
-                'username' => 'nullable|string|max:255', 
+                'username' => 'nullable|string|max:255',
             ]);
 
-           
             if (isset($validated['name'])) {
                 $nameParts = explode(' ', $validated['name'], 2);
                 $admin->f_name = $nameParts[0];
@@ -38,7 +38,7 @@ class AdminProfileController extends Controller
             }
 
             $admin->email = $validated['email'];
-            
+
             if (isset($validated['phone'])) {
                 $admin->phone = $validated['phone'];
             }
@@ -46,8 +46,63 @@ class AdminProfileController extends Controller
             $admin->save();
 
             return response()->json([
-                'success' => true, 
+                'success' => true,
                 'message' => 'Profile updated successfully'
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Admin profile update error: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while updating the profile. Please try again.'
+            ], 500);
+        }
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            // Get the authenticated admin
+            /** @var \App\Models\Admin $admin */
+            $admin = Auth::guard('admin')->user();
+
+            if (!$admin) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Not authenticated'
+                ], 401);
+            }
+
+            // Validate the request
+            $validated = $request->validate([
+                'current_password' => 'required|string',
+                'new_password' => 'required|string|min:6',
+                'new_password_confirmation' => 'required|string|same:new_password',
+            ]);
+
+            // Check if current password is correct
+            if (!Hash::check($validated['current_password'], $admin->password)) {
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Current password is incorrect.'
+                ], 422);
+            }
+
+            // Update password
+            $admin->password = Hash::make($validated['new_password']);
+            $admin->save();
+
+            Log::info('Password changed successfully for admin: ' . $admin->email);
+
+            return response()->json([
+                'success' => true, 
+                'message' => 'Password updated successfully.'
             ]);
 
         } catch (ValidationException $e) {
@@ -57,11 +112,11 @@ class AdminProfileController extends Controller
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            Log::error('Admin profile update error: ' . $e->getMessage());
+            Log::error('Password change error: ' . $e->getMessage());
             
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred while updating the profile. Please try again.'
+                'message' => 'An error occurred while changing password. Please try again.'
             ], 500);
         }
     }

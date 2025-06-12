@@ -94,6 +94,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::view('/profile', 'admin.a_profile')->name('profile');
     Route::post('profile/update', [AdminProfileController::class, 'update'])->name('profile.update');
 
+    // For change password
+    Route::post('profile/change-password', [AdminProfileController::class, 'changePassword'])->name('password.change');
+
+
     Route::view('/report', 'admin.a_report')->name('report');
 });
 

@@ -1,8 +1,9 @@
 console.log("a_profile.js loaded ✅");
 
 function generateId(length = 12) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let id = '';
+    const chars =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let id = "";
     for (let i = 0; i < length; i++) {
         id += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -715,7 +716,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Change Password Form Submit
+    // Change Password Form Submit - FIXED VERSION
     if (passwordForm) {
         passwordForm.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -766,19 +767,89 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // Close modal and clear form
-            if (passwordModal) passwordModal.style.display = "none";
-            passwordForm.reset();
-
-            // Add activity
-            addToHistory(
-                "security",
-                "Password changed successfully",
-                "Admin account password updated"
+            // Show loading state (optional)
+            const submitBtn = passwordForm.querySelector(
+                'button[type="submit"]'
             );
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = "Changing...";
+            submitBtn.disabled = true;
 
-            // Show success modal
-            showSuccessModal("Password changed successfully!");
+            // Send request to backend - FIXED URL
+            fetch("/admin/profile/change-password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+                body: JSON.stringify({
+                    current_password: currentPassword.value,
+                    new_password: newPassword.value,
+                    new_password_confirmation: confirmPassword.value,
+                }),
+            })
+                .then((response) => {
+                    // Reset button state
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.success) {
+                        // Close modal and clear form
+                        if (passwordModal) passwordModal.style.display = "none";
+                        passwordForm.reset();
+
+                        showSuccessModal(data.message);
+                        addToHistory(
+                            "security",
+                            "Password changed successfully",
+                            "Admin account password updated"
+                        );
+                    } else {
+                        // Handle validation errors
+                        if (data.errors) {
+                            let errorMessage = "";
+                            Object.values(data.errors).forEach((errors) => {
+                                errorMessage += errors.join(", ") + " ";
+                            });
+                            showErrorMessage(
+                                errorMessage.trim(),
+                                passwordModal
+                            );
+                        } else {
+                            showErrorMessage(
+                                data.message || "Password change failed.",
+                                passwordModal
+                            );
+                        }
+
+                        addToHistory(
+                            "security",
+                            "Password change failed",
+                            data.message || "Unknown error"
+                        );
+                    }
+                })
+                .catch((err) => {
+                    // Reset button state
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+
+                    console.error("Password update error", err);
+                    showErrorMessage(
+                        "An error occurred while updating password.",
+                        passwordModal
+                    );
+                    addToHistory(
+                        "security",
+                        "Password change error",
+                        "Network or server error occurred"
+                    );
+                });
         });
     }
 
@@ -836,14 +907,17 @@ document.addEventListener("DOMContentLoaded", function () {
             display: block;
         `;
 
-        // Insert in modal
         const modalContent = modal.querySelector(".modal-content");
-        const firstChild = modalContent.querySelector("h3");
-        if (modalContent && firstChild) {
-            modalContent.insertBefore(errorDiv, firstChild.nextSibling);
+        const header = modalContent.querySelector("h3");
+
+        if (modalContent) {
+            if (header) {
+                header.insertAdjacentElement("afterend", errorDiv);
+            } else {
+                modalContent.appendChild(errorDiv);
+            }
         }
 
-        // Remove message after 5 seconds
         setTimeout(function () {
             if (errorDiv.parentNode) {
                 errorDiv.remove();
