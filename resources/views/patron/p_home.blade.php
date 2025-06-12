@@ -16,7 +16,8 @@
     <div class="packages">
         @foreach ($packages as $package)
             <div class="package-card">
-                <img src="{{ asset('storage/' . $package->image_path) }}" alt="{{ $package->name }}">
+                <img src="{{ asset($package->image_path) }}" alt="{{ $package->name }}">
+
                 <h3>{{ $package->name }}</h3>
                 <p>{{ $package->description }}</p>
                 <strong>₱{{ number_format($package->price, 2) }}</strong>
