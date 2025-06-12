@@ -15,10 +15,10 @@
 {{-- Package Cards --}}
 <section class="packages-grid" id="packagesContainer">
     @foreach([
-        ['name' => 'Baptism Package', 'img' => 'baptism_package.jpg'],
-        ['name' => 'Debut Package', 'img' => 'debut_package.jpg'],
-        ['name' => 'Wedding Package', 'img' => 'wedding_package.jpg'],
-        ['name' => 'Kiddie Package', 'img' => 'kiddie_package.jpg'],
+    ['name' => 'Baptism Package', 'img' => 'baptism_package.jpg'],
+    ['name' => 'Debut Package', 'img' => 'debut_package.jpg'],
+    ['name' => 'Wedding Package', 'img' => 'wedding_package.jpg'],
+    ['name' => 'Kiddie Package', 'img' => 'kiddie_package.jpg'],
     ] as $pkg)
     <div class="package-card" data-package="{{ $pkg['name'] }}">
         <img src="{{ asset('images/' . $pkg['img']) }}" alt="{{ $pkg['name'] }}">
@@ -133,23 +133,41 @@
                 <h5 class="modal-title" id="addPackageModalLabel">Add New Package</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-          <form id="addPackageForm" enctype="multipart/form-data">
+            <form id="addPackageForm" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Package Name</label>
-                        <input type="text" id="newPackageName" class="form-control" required>
+                        <input type="text" name="name" id="newPackageName" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea id="newPackageDescription" class="form-control" rows="3"></textarea>
+                        <textarea name="description" id="newPackageDescription" class="form-control" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Price</label>
-                        <input type="number" id="newPackagePrice" class="form-control" step="0.01" required>
+                        <input type="number" name="price" id="newPackagePrice" class="form-control" step="0.01" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Package Image</label>
-                        <input type="file" id="newPackageImage" class="form-control" accept="image/*">
+                        <input type="file" name="image" id="newPackageImage" class="form-control" accept="image/*" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Package Image 2 (Optional)</label>
+                        <input type="file" name="image2" id="newPackageImage2" class="form-control" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Package Image 3 (Optional)</label>
+                        <input type="file" name="image3" id="newPackageImage3" class="form-control" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Package Inclusions</label>
+                        <div id="inclusionsContainer">
+                            <div class="input-group mb-2">
+                                <input type="text" name="inclusions[]" class="form-control" placeholder="Enter inclusion">
+                                <button type="button" class="btn btn-outline-danger remove-inclusion" style="display: none;">Remove</button>
+                            </div>
+                        </div>
+                        <button type="button" id="addInclusion" class="btn btn-outline-success btn-sm">+ Add Inclusion</button>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -185,9 +203,9 @@
 @endsection
 
 @push('scripts')
-    @vite('resources/js/a_homepage.js')
+@vite('resources/js/a_homepage.js')
 @endpush
 
 @push('styles')
-    @vite('resources/css/a_home.css')
+@vite('resources/css/a_home.css')
 @endpush

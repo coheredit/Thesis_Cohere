@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Package;
+use Illuminate\Support\Facades\Storage;
 
 class PackageController extends Controller
 {
@@ -16,40 +17,105 @@ class PackageController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric',
-            'image' => 'required|image|max:2048', // 2MB max
+            'price' => 'required|numeric|min:0',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'inclusions' => 'nullable|array',
+            'inclusions.*' => 'string',
         ]);
 
-        // Store uploaded image
         $imagePath = $request->file('image')->store('packages', 'public');
+        $image2Path = $request->file('image2')?->store('packages', 'public');
+        $image3Path = $request->file('image3')?->store('packages', 'public');
 
         $package = Package::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'images' => ["/storage/$imagePath"], // store as JSON array
+            'image_path' => "/storage/$imagePath",
+            'image_2_path' => $image2Path ? "/storage/$image2Path" : null,
+            'image_3_path' => $image3Path ? "/storage/$image3Path" : null,
+            'inclusions' => $request->inclusions ?? [],
         ]);
 
+        return response()->json($package, 201);
+    }
+
+    public function show(Package $package)
+    {
         return response()->json($package);
     }
 
-
     public function update(Request $request, Package $package)
     {
-        $package->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'images' => $request->images,
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image2' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image3' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'inclusions' => 'nullable|array',
+            'inclusions.*' => 'string',
         ]);
+
+        $data = $request->only(['name', 'description', 'price', 'inclusions']);
+        $data['inclusions'] = $data['inclusions'] ?? [];
+
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($package->image_path) {
+                $oldPath = str_replace('/storage/', '', $package->image_path);
+                Storage::disk('public')->delete($oldPath);
+            }
+            $imagePath = $request->file('image')->store('packages', 'public');
+            $data['image_path'] = "/storage/$imagePath";
+        }
+
+        if ($request->hasFile('image2')) {
+            // Delete old image
+            if ($package->image_2_path) {
+                $oldPath = str_replace('/storage/', '', $package->image_2_path);
+                Storage::disk('public')->delete($oldPath);
+            }
+            $image2Path = $request->file('image2')->store('packages', 'public');
+            $data['image_2_path'] = "/storage/$image2Path";
+        }
+
+        if ($request->hasFile('image3')) {
+            // Delete old image
+            if ($package->image_3_path) {
+                $oldPath = str_replace('/storage/', '', $package->image_3_path);
+                Storage::disk('public')->delete($oldPath);
+            }
+            $image3Path = $request->file('image3')->store('packages', 'public');
+            $data['image_3_path'] = "/storage/$image3Path";
+        }
+
+        $package->update($data);
 
         return response()->json($package);
     }
 
     public function destroy(Package $package)
     {
+        // Delete associated images
+        if ($package->image_path) {
+            $imagePath = str_replace('/storage/', '', $package->image_path);
+            Storage::disk('public')->delete($imagePath);
+        }
+        if ($package->image_2_path) {
+            $imagePath = str_replace('/storage/', '', $package->image_2_path);
+            Storage::disk('public')->delete($imagePath);
+        }
+        if ($package->image_3_path) {
+            $imagePath = str_replace('/storage/', '', $package->image_3_path);
+            Storage::disk('public')->delete($imagePath);
+        }
+
         $package->delete();
 
         return response()->json(['message' => 'Package deleted successfully']);

@@ -50,6 +50,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Login
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+
+    // Packages
+    Route::get('/packages', [PackageController::class, 'index']);
+    Route::post('/packages', [PackageController::class, 'store']);
+    Route::get('/packages/{package}', [PackageController::class, 'show']);
+    Route::put('/packages/{package}', [PackageController::class, 'update']);
+    Route::delete('/packages/{package}', [PackageController::class, 'destroy']);
 });
 
 // Protected Admin Routes (WITH MIDDLEWARE - requires authentication)
