@@ -9,16 +9,10 @@
 @section('content')
     <div class="inquiry-content">
         <section id="content">
-            <nav>
-                <h2>View Inquiries</h2>
-            </nav>
-
             <main>
                 <div class="head-title">
-                    <div class="left">
-                        <h1>Customer Inquiries</h1>
-                        <p>View and manage customer inquiries.</p>
-                    </div>
+                    <h1>View Inquiries</h1>
+                    <p>View and manage customer inquiries.</p>
                 </div>
 
                 <div class="table-data">
