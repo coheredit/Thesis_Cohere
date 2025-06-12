@@ -78,9 +78,9 @@
     <!-- Chart Panels -->
     <div class="chart-grid">
         @foreach ([
-        ['id' => 'inquiry-sparkline', 'title' => 'Inquiries Trend', 'desc' => 'Track inquiry patterns over time', 'stats' => [['Peak Day', 'inquiry-peak-day'], ['Average Daily', 'inquiry-avg-daily']], 'filter' => 'inquiry-filter'],
+        ['id' => 'inquiryChart', 'title' => 'Inquiries Trend', 'desc' => 'Track inquiry patterns over time', 'stats' => [['Peak', 'inquiry-peak-day'], ['Average Daily', 'inquiry-avg-daily']], 'filter' => 'inquiry-filter'],
         ['id' => 'reservation-chart', 'title' => 'Reservation Analytics', 'desc' => 'Monitor booking performance', 'stats' => [['Best Month', 'reservation-best-month'], ['Growth Rate', 'reservation-growth']], 'filter' => 'reservation-filter'],
-        ['id' => 'theme-barchart', 'title' => 'Theme Popularity', 'desc' => 'Most requested themes and packages', 'stats' => [['Most Popular', 'most-popular-theme'], ['Total Themes', 'total-themes']], 'filter' => 'theme-filter'],
+        ['id' => 'themeChart', 'title' => 'Theme Popularity', 'desc' => 'Most requested themes and packages', 'stats' => [['Most Popular', 'most-popular-theme'], ['Total Themes', 'total-themes']], 'filter' => 'theme-filter'],
         ['id' => 'inquiry-type-chart', 'title' => 'Inquiry Categories', 'desc' => 'Breakdown by inquiry type', 'stats' => [['Top Category', 'top-inquiry-category'], ['Response Rate', 'inquiry-response-rate']], 'filter' => 'inquiry-type-chart-filter'],
         ] as $chart)
         <div class="chart-panel">

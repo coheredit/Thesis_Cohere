@@ -47,7 +47,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Signup
     Route::get('/signup', [AuthController::class, 'showSignupForm'])->name('signup');
     Route::post('/signup', [AuthController::class, 'signup'])->name('signup.submit');
-    
+
     // Login
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
@@ -95,9 +95,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
 
     // For change password
     Route::post('profile/change-password', [AdminProfileController::class, 'changePassword'])->name('password.change');
-    
+
     // All activities of Admin in the reports tab
     Route::get('/dashboard-activities', [AdminActivityController::class, 'allActivities'])->name('activities.all');
+
+    // Inquiry Data on Report Tab
+    Route::get('/inquiry-data', [AdminHomeController::class, 'getInquiryData'])->name('inquiry.data');
+
+    // Reservation Data on Report Tab
+    Route::get('/reservation-data', [AdminHomeController::class, 'getReservationData'])->name('reservation.data');
+
+    // Theme Data on Report Tab
+    Route::get('/theme-data', [AdminHomeController::class, 'getThemeData'])->name('theme.data');
+
+    // Inquiry Category on Report Tab
+    Route::get('/event-type-data', [AdminHomeController::class, 'getEventTypeData'])->name('event-type.data');
 
 
     Route::view('/report', 'admin.a_report')->name('report');
