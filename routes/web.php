@@ -65,9 +65,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     // Admin Homepage
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
 
-    Route::view('/reserve_logs', 'admin.reserve_logs')->name('reserve_logs');
-
-
     // Packages on Admin homepage
     Route::get('/packages', [PackageController::class, 'index']);
     Route::post('/packages', [PackageController::class, 'store']);
@@ -79,7 +76,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::get('/inquiry', [InquiryController::class, 'index'])->name('inquiry');
     Route::post('/inquiries/{id}/update-status', [InquiryController::class, 'updateStatusAjax']);
     Route::post('/inquiry', [InquiryController::class, 'store'])->name('inquiry.store');
-
 
     // Availability for the calendar on admin making inquiry/reservation
     Route::get('/availability', [AvailabilityController::class, 'index'])->name('availability.index');
@@ -99,9 +95,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
 
     // For change password
     Route::post('profile/change-password', [AdminProfileController::class, 'changePassword'])->name('password.change');
+    
+    // All activities of Admin in the reports tab
+    Route::get('/dashboard-activities', [AdminActivityController::class, 'allActivities'])->name('activities.all');
 
 
     Route::view('/report', 'admin.a_report')->name('report');
+    Route::view('/reserve_logs', 'admin.reserve_logs')->name('reserve_logs');
 });
 
 // Logout Route (accessible to authenticated users)

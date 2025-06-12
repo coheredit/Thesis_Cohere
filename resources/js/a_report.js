@@ -406,7 +406,7 @@ class DashboardManager {
 
     async loadActivityLog() {
         try {
-            const response = await fetch('get_activity_log.php');
+            const response = await fetch('/admin/dashboard-activities');
             const data = await response.json();
             
             if (data.error) {

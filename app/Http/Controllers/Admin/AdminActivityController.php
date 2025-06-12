@@ -13,7 +13,7 @@ class AdminActivityController extends Controller
     public function index(Request $request)
     {
         try {
-            $adminId = Auth::guard('admin')->id();  
+            $adminId = Auth::guard('admin')->id();
             if (!$adminId) {
                 return response()->json(['error' => 'Admin not authenticated'], 401);
             }
@@ -65,5 +65,30 @@ class AdminActivityController extends Controller
         ]);
 
         return response()->json(['success' => true, 'message' => 'Activity logged']);
+    }
+
+    public function allActivities()
+    {
+        try {
+            $activities = ActivityLog::with('admin')
+                ->latest()
+                ->take(50)
+                ->get()
+                ->map(function ($log) {
+                    return [
+                        'description' => $log->description,
+                        'type' => $log->activity_type,
+                        'timestamp' => $log->created_at->toIso8601String(),
+                        'admin_name' => optional($log->admin)->name ?? 'Unknown',
+                    ];
+                });
+
+            return response()->json(['activities' => $activities]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch activity log.',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }
