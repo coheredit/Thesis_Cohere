@@ -26,10 +26,12 @@
     <!-- Dashboard Header -->
     <div class="dashboard-header">
         <div class="header-content">
-            <div class="header-text">
+            
+            <div class="header-left">
                 <h1>Report Dashboard</h1>
             </div>
-            <div class="header-actions">
+
+            <div class="refresh-container">
                 <button class="refresh-btn" onclick="refreshDashboard()">
                     <i class='bx bx-refresh'></i>
                     Refresh Data
@@ -38,6 +40,7 @@
                     <span>Last updated: <span id="last-updated-time">--</span></span>
                 </div>
             </div>
+
             <!-- Key Metrics Overview - Forced to Single Row -->
             <div class="metrics-overview">
                 <div class="metric-card primary">

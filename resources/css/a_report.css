@@ -126,11 +126,10 @@ body {
 }
 
 .header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    flex-wrap: wrap;
 }
 
 .header-text h1 {
@@ -180,10 +179,9 @@ body {
 /* === Metrics Overview - Force Single Row === */
 .metrics-overview {
     display: flex;
-    justify-content: center;
-    gap: 2rem;
     flex-wrap: wrap;
-    margin-bottom: 2rem;
+    gap: 1.5rem;
+    align-items: center;
 }
 
 .metric-card {
@@ -619,4 +617,23 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #005a2d;
+}
+
+.header-left {
+    flex-shrink: 0;
+    margin-right: auto;
+}
+
+.refresh-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding-top: 6px;
+}
+
+.refresh-container .last-updated {
+    font-size: 13px;
+    color: #f3f4f6;
+    opacity: 0.85;
 }
