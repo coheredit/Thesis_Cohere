@@ -121,3 +121,6 @@ Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.log
 
 // For Calendar Routes 
 Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);
+
+// Landing Page
+Route::view('/', 'home');
