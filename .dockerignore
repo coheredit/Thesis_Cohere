@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+vendor
+
+# Environment & config files
+.env
+.env.*  # optional: covers .env.local, .env.testing, etc.
+
+# Logs & debug output
+*.log
+npm-debug.log
+yarn-error.log
+
+# IDE/editor settings
+.DS_Store
+.idea
+.vscode
+
+# Git
+.git
+.gitignore
