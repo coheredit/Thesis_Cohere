@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\AvailabilityController;
 use App\Http\Controllers\Admin\AdminActivityController;
 use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\Admin\ReservationController as AdminReservationController;
 
 // Patron Routes
 Route::name('patron.')->group(function () {
@@ -89,7 +90,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     Route::get('/activities', [AdminActivityController::class, 'index'])->name('activities');
     Route::post('activities/store', [AdminActivityController::class, 'store'])->name('activities.store');
 
-    // Profile editing and saving 
+    // Profile editing and saving
     Route::view('/profile', 'admin.a_profile')->name('profile');
     Route::post('profile/update', [AdminProfileController::class, 'update'])->name('profile.update');
 
@@ -111,15 +112,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
     // Inquiry Category on Report Tab
     Route::get('/event-type-data', [AdminHomeController::class, 'getEventTypeData'])->name('event-type.data');
 
+    // Reserve Logs - FIXED ROUTES
+    Route::get('/reserve_logs', [AdminReservationController::class, 'showReservationLogs'])->name('reserve_logs');
 
+    // API routes for reservation management (for AJAX calls)
+    Route::get('/reservations/{id}', [AdminReservationController::class, 'getReservation'])->name('reservations.show');
+    Route::delete('/reservations/{id}', [AdminReservationController::class, 'deleteReservation'])->name('reservations.delete');
+
+    // Report page
     Route::view('/report', 'admin.a_report')->name('report');
-    Route::view('/reserve_logs', 'admin.reserve_logs')->name('reserve_logs');
 });
 
 // Logout Route (accessible to authenticated users)
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
-// For Calendar Routes 
+// For Calendar Routes
 Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);
 
 // Landing Page

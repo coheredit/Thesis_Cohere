@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Reservation extends Model
 {
     protected $table = 'reservation';
-
-    public $timestamps = false; 
+    protected $primaryKey = 'reserve_id';
+    public $timestamps = false;
 
     protected $fillable = [
         'inquiry_id',
@@ -19,6 +19,11 @@ class Reservation extends Model
         'event_type',
         'theme_motif',
         'message',
-        'status'
+        'status',
     ];
+
+    public function patron()
+    {
+        return $this->belongsTo(\App\Models\Patron::class, 'patron_id', 'patron_id');
+    }
 }

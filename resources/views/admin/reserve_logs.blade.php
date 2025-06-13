@@ -3,7 +3,7 @@
 @section('title', 'Reservation Logs')
 
 @push('styles')
-    @vite('resources/css/reserve_logs.css')
+@vite('resources/css/reserve_logs.css')
 @endpush
 
 @section('content')
@@ -12,7 +12,7 @@
         <h1>Reservation Logs</h1>
         <p>Manage and track all reservation requests</p>
     </div>
-    
+
     <div class="table-container">
         <div class="table-wrapper">
             <table class="reservation-table">
@@ -32,88 +32,54 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Sample data - replace with your dynamic data -->
+                    @forelse($reservations as $reservation)
                     <tr>
-                        <td>John Doe</td>
-                        <td>john.doe@email.com</td>
-                        <td>2024-07-15</td>
-                        <td>2:00 PM - 6:00 PM</td>
-                        <td>Birthday celebration for my daughter...</td>
-                        <td>Main Hall</td>
-                        <td>Birthday Party</td>
-                        <td>Princess Theme</td>
+                        <td>{{ $reservation->patron->name ?? 'N/A' }}</td>
+                        <td>{{ $reservation->patron->email ?? '-' }}</td>
+                        <td>{{ $reservation->date ?? '-' }}</td>
+                        <td>{{ $reservation->time ?? '-' }}</td>
+                        <td>{{ \Illuminate\Support\Str::limit($reservation->message, 50) ?? '-' }}</td>
+                        <td>{{ $reservation->venue ?? '-' }}</td>
+                        <td>{{ $reservation->event_type ?? '-' }}</td>
+                        <td>{{ $reservation->theme_motif ?? '-' }}</td>
                         <td>
                             <a href="#" class="receipt-link">View Receipt</a>
                         </td>
                         <td>
-                            <select class="status-dropdown" data-id="1">
-                                <option value="active" selected>Active</option>
-                                <option value="canceled">Canceled</option>
-                                <option value="completed">Completed</option>
+                            <select class="status-dropdown" data-id="{{ $reservation->id }}">
+                                <option value="active" {{ $reservation->status === 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="canceled" {{ $reservation->status === 'canceled' ? 'selected' : '' }}>Canceled</option>
+                                <option value="completed" {{ $reservation->status === 'completed' ? 'selected' : '' }}>Completed</option>
                             </select>
                         </td>
+
                         <td>
                             <div class="action-buttons">
-                                <button class="btn-view" onclick="viewReservation(1)">View</button>
-                                <button class="btn-delete" onclick="deleteReservation(1)">Delete</button>
+                                <button class="btn-view" data-reservation-id="{{ $reservation->reserve_id }}" onclick="viewReservation(this.dataset.reservationId)">View</button>
+                                <button class="btn-delete" data-reservation-id="{{ $reservation->reserve_id }}" onclick="deleteReservation(this.dataset.reservationId)">Delete</button>
                             </div>
                         </td>
                     </tr>
+                    @empty
                     <tr>
-                        <td>Jane Smith</td>
-                        <td>jane.smith@email.com</td>
-                        <td>2024-07-20</td>
-                        <td>10:00 AM - 2:00 PM</td>
-                        <td>Corporate meeting for quarterly review...</td>
-                        <td>Conference Room</td>
-                        <td>Corporate Event</td>
-                        <td>Professional</td>
-                        <td>
-                            <a href="#" class="receipt-link">View Receipt</a>
-                        </td>
-                        <td>
-                            <select class="status-dropdown" data-id="2">
-                                <option value="active">Active</option>
-                                <option value="canceled">Canceled</option>
-                                <option value="completed" selected>Completed</option>
-                            </select>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-view" onclick="viewReservation(2)">View</button>
-                                <button class="btn-delete" onclick="deleteReservation(2)">Delete</button>
-                            </div>
-                        </td>
+                        <td colspan="11" class="text-center">No reservations found.</td>
                     </tr>
-                    <tr>
-                        <td>Mike Johnson</td>
-                        <td>mike.johnson@email.com</td>
-                        <td>2024-07-25</td>
-                        <td>6:00 PM - 11:00 PM</td>
-                        <td>Wedding reception celebration...</td>
-                        <td>Garden</td>
-                        <td>Wedding</td>
-                        <td>Rustic Garden</td>
-                        <td>
-                            <a href="#" class="receipt-link">View Receipt</a>
-                        </td>
-                        <td>
-                            <select class="status-dropdown" data-id="3">
-                                <option value="active">Active</option>
-                                <option value="canceled" selected>Canceled</option>
-                                <option value="completed">Completed</option>
-                            </select>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn-view" onclick="viewReservation(3)">View</button>
-                                <button class="btn-delete" onclick="deleteReservation(3)">Delete</button>
-                            </div>
-                        </td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+
+        <!-- View Modal -->
+        <div id="viewModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Reservation Details</h2>
+                <div id="modalBody">
+                    Loading...
+                </div>
+            </div>
+        </div>
+
 
         <div class="pagination">
             <button class="btn-pagination" id="prevBtn">Previous</button>
@@ -122,8 +88,5 @@
         </div>
     </div>
 </div>
+@vite('resources/js/reserve_logs.js')
 @endsection
-
-@push('scripts')
-    @vite('resources/js/reserve_logs.js')
-@endpush
