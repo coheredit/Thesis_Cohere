@@ -10,7 +10,7 @@ use App\Models\Admin;
 
 class Inquiry extends Model
 {
-    protected $table = 'inquiry';
+    protected $table = 'inquiries';
 
     protected $primaryKey = 'inquiry_id';
 
@@ -27,8 +27,8 @@ class Inquiry extends Model
         'date',
         'time',
         'other_venue',
-        'event_date',
-        'event_time',
+        // 'event_date',
+        // 'event_time',
         'message',
         'status',
     ];

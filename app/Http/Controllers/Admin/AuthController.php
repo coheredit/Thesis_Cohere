@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Admin;
 use App\Models\ActivityLog;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -56,6 +57,8 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('admin')->attempt($credentials)) {
+            Log::info('nag true');
+            
             $admin = Auth::guard('admin')->user();
 
             // Store login time in session for logout duration calculation
@@ -69,6 +72,9 @@ class AuthController extends Controller
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
+
+            // Log::info($request); //dito wala akong na re-receive na request
+
 
             return redirect()->intended('/admin/home');
         }

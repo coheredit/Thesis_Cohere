@@ -53,20 +53,29 @@
 
                                         <td>
                                             <select class="status-dropdown" data-index="{{ $index }}">
-                                                <option value="" {{ $inquiry->status == null ? 'selected hidden' : 'hidden' }}>Set
+                                                <option value=""
+                                                    {{ $inquiry->status == null ? 'selected hidden' : 'hidden' }}>Set
                                                     Status</option>
-                                                <option value="Pending" {{ $inquiry->status === 'Pending' ? 'selected' : '' }}>
+                                                <option value="Pending"
+                                                    {{ $inquiry->status === 'Pending' ? 'selected' : '' }}>
                                                     Pending</option>
-                                                <option value="In Progress" {{ $inquiry->status === 'In Progress' ? 'selected' : '' }}>In Progress</option>
-                                                <option value="Completed" {{ $inquiry->status === 'Completed' ? 'selected' : '' }}>Completed</option>
-                                                <option value="Cancelled" {{ $inquiry->status === 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                                <option value="In Progress"
+                                                    {{ $inquiry->status === 'In Progress' ? 'selected' : '' }}>In Progress
+                                                </option>
+                                                <option value="Completed"
+                                                    {{ $inquiry->status === 'Completed' ? 'selected' : '' }}>Completed
+                                                </option>
+                                                <option value="Cancelled"
+                                                    {{ $inquiry->status === 'Cancelled' ? 'selected' : '' }}>Cancelled
+                                                </option>
                                             </select>
                                         </td>
                                         <td>patron</td>
                                         <td>
                                             <button class="reply-btn" data-index="{{ $index }}">Reply</button>
                                             @if ($inquiry->status === 'Completed')
-                                                <button class="undo-btn" data-inquiry-id="{{ $inquiry->inquiry_id }}">Undo</button>
+                                                <button class="undo-btn"
+                                                    data-inquiry-id="{{ $inquiry->inquiry_id }}">Undo</button>
                                             @endif
                                         </td>
                                     </tr>
@@ -92,6 +101,27 @@
             </div>
         </div>
     </div>
+
+    <div id="replyModal" class="modal reply-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeReplyModal">&times;</span>
+            <h2>Reply to Inquiry</h2>
+
+            <label for="replyOptions">Choose a response:</label>
+            <select id="replyOptions" class="reply-select">
+                <option value="" disabled selected>Select a suggestion</option>
+            </select>
+
+            <label for="replyMessage">Message:</label>
+            <textarea id="replyMessage" placeholder="Type your reply..." rows="6"></textarea>
+
+            <div class="modal-actions">
+                <button id="sendReplyBtn">Send Reply</button>
+                <button id="cancelReplyBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')

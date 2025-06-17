@@ -221,6 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
             
             const image = document.getElementById("newPackageImage");
             if (image && image.files[0]) {
+                console.log(image.files[0]);
                 formData.append("image", image.files[0]);
             }
 

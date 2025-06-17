@@ -121,6 +121,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
 
     // Report page
     Route::view('/report', 'admin.a_report')->name('report');
+
+    Route::post('/send-reply', [ReservationController::class, 'sendReply']);
 });
 
 // Logout Route (accessible to authenticated users)
