@@ -217,6 +217,99 @@ select:focus {
   outline-offset: 3px;
 }
 
+.reply-modal {
+    /* display: none; */
+    position: fixed;
+    width: 50%;
+    height: 70%;
+    /*overflow: auto;
+    background-color: rgba(0,0,0,0.6); */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+.reply-select,
+#replyMessage {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    resize: vertical;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#sendReplyBtn {
+    background-color: #28a745;
+    color: #fff;
+}
+
+#cancelReplyBtn,
+.close-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.close-btn {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+    .modal-content {
+        margin-top: 30%;
+        padding: 15px;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .modal-actions button {
+        width: 100%;
+    }
+}
+
+
 /* === Responsive Adjustments === */
 @media (max-width: 768px) {
   .navbar ul {

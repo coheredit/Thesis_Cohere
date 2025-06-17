@@ -83,6 +83,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
 
     Route::view('/report', 'admin.a_report')->name('report');
     Route::view('/profile', 'admin.a_profile')->name('profile');
+
+    Route::post('/send-reply', [ReservationController::class, 'sendReply']);
 });
 
 // Logout Route (accessible to authenticated users)

@@ -10,7 +10,7 @@
 <div class="container">
     <div class="reservation-container">
         <h2>Let's bring your vision to life—just fill out the form.</h2>
-        <form action="{{ route('admin.inquiry.store') }}" method="POST">
+        <form action="{{ route('admin.reserve.store') }}" method="POST">
             @csrf
             <input type="hidden" name="created_by_type" value="admin">
 
