@@ -162,6 +162,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function renderCalendar() {
         if (!calendar || !monthYear) return;
 
+        console.log(dateStatuses);
+
         const month = currentDate.getMonth();
         const year = currentDate.getFullYear();
         monthYear.textContent = new Intl.DateTimeFormat("en-US", {
@@ -197,11 +199,15 @@ document.addEventListener("DOMContentLoaded", function () {
             dayCell.textContent = day;
 
             // Format date as YYYY-M-D to match backend format
-            const dateKey = `${year}-${month + 1}-${day}`;
+            const paddedMonth = String(month + 1).padStart(2, "0");
+            const paddedDay = String(day).padStart(2, "0");
+            const dateKey = `${year}-${paddedMonth}-${paddedDay}`;
+            // const dateKey = `${year}-${month + 1}-${day}`;
             dayCell.setAttribute("data-date", dateKey);
 
             // Apply status if it exists
             if (dateStatuses[dateKey]) {
+                console.log(dateStatuses[dateKey]);
                 applyStatusStyle(dayCell, dateStatuses[dateKey]);
             }
 
@@ -385,7 +391,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Load availability data from backend
     function loadAvailabilityData() {
-        fetch("/admin/availability")
+        fetch("/calendar/availability")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -395,6 +401,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then((dateStatusMap) => {
                 if (dateStatusMap && typeof dateStatusMap === "object") {
                     Object.entries(dateStatusMap).forEach(([date, status]) => {
+                        console.log(date, status);
                         dateStatuses[date] = status;
                     });
                 }
@@ -563,4 +570,17 @@ document.addEventListener("DOMContentLoaded", function () {
     setInterval(loadAvailabilityData, 300000);
 
     console.log("Event management system initialized successfully");
+
+    let dateInput = document.getElementById("date");
+
+    dateInput?.addEventListener("change", () => {
+        const selected = dateInput.value;
+        if (
+            dateStatuses[selected] === "Full" ||
+            dateStatuses[selected] === "Closed"
+        ) {
+            alert("This date is not available. Please choose another.");
+            dateInput.value = "";
+        }
+    });
 });

@@ -10,7 +10,7 @@ use App\Models\Admin;
 
 class Inquiry extends Model
 {
-    protected $table = 'inquiries';
+    protected $table = 'inquiry';
 
     protected $primaryKey = 'inquiry_id';
 

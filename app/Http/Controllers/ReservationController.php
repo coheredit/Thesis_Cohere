@@ -21,6 +21,11 @@ class ReservationController extends Controller
         return view('patron.p_mreserve');
     }
 
+    public function fetch_vreserve(Request $request)
+    {
+        return view('patron.p_vreserve');
+    }
+
     public function store(Request $request)
     {
         Log::info('may data', $request->all());
@@ -76,7 +81,7 @@ class ReservationController extends Controller
                 'theme_motif' => $themeMotif,
                 'message' => $validated['message'],
                 'tracking_code' => $inquiry['tracking_code'],
-            ]));
+            ], null));
         } catch (\Throwable $th) {
             Log::error('Failed to insert inquiry: ' . $th->getMessage());
         }
@@ -87,20 +92,52 @@ class ReservationController extends Controller
 
     public function sendReply(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'email' => 'required|email',
             'message' => 'required|string',
+            'inquiry_id' => 'required|exists:inquiry,inquiry_id',
         ]);
 
+        $inquiry = Inquiry::with('patron')->findOrFail($request->inquiry_id);
+        Log::info($inquiry);
+
         try {
-            Mail::raw($request->message, function ($message) use ($request) {
-                $message->to($request->email)
-                    ->subject('Reply to Your Inquiry');
-            });
+            Mail::to($validated['email'])->send(new ReservationSubmitted(null, [
+                'name'      => $inquiry->patron->name,
+                'message'   => $validated['message'],
+            ]));
 
             return response()->json(['success' => true, 'message' => 'Reply sent successfully.']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to send reply: ' . $e->getMessage()]);
         }
+    }
+
+    public function fetchReservation(Request $request)
+    {
+        $code = $request->input('reservation_code');
+
+        $inquiry = Inquiry::with('patron')->where('tracking_code', $code)->first();
+
+        if (!$inquiry) {
+            return response()->json(['success' => false, 'message' => 'Reservation not found.']);
+        }
+
+        Log::info($inquiry);
+
+        return response()->json([
+            'success' => true,
+            'reservation' => [
+                'Name' => $inquiry->patron->name ?? 'N/A',
+                'Email' => $inquiry->patron->email ?? '-',
+                'Contact' => $inquiry->patron->contact_number ?? '-',
+                'Date' => $inquiry->date ?? '-',
+                'Time' => $inquiry->time ?? '-',
+                'Venue' => $inquiry->venue === 'Others' ? $inquiry->other_venue : $inquiry->venue,
+                'Event Type' => $inquiry->event_type === 'Others' ? $inquiry->other_event_type : $inquiry->event_type,
+                'Theme & Motif' => $inquiry->theme_motif === 'Others' ? $inquiry->other_theme_motif : $inquiry->theme_motif,
+                'Status' => $inquiry->status ?? 'Pending',
+            ]
+        ]);
     }
 }

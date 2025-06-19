@@ -1,16 +1,22 @@
 // resources/js/p_mreserve.js
 
-import './bootstrap';
+import "./bootstrap";
 
 document.addEventListener("DOMContentLoaded", function () {
     const venueSelect = document.getElementById("venue");
-    const otherVenueInput = document.getElementById("otherVenue") || document.getElementById("other_venue");
+    const otherVenueInput =
+        document.getElementById("otherVenue") ||
+        document.getElementById("other_venue");
 
     const themeMotifSelect = document.getElementById("theme_motif");
-    const otherThemeMotifInput = document.getElementById("otherThemeMotif") || document.getElementById("other_theme_motif");
+    const otherThemeMotifInput =
+        document.getElementById("otherThemeMotif") ||
+        document.getElementById("other_theme_motif");
 
     const eventTypeSelect = document.getElementById("event_type");
-    const otherEventTypeInput = document.getElementById("otherEventType") || document.getElementById("other_event_type");
+    const otherEventTypeInput =
+        document.getElementById("otherEventType") ||
+        document.getElementById("other_event_type");
 
     const form = document.querySelector("form");
     const dateInput = document.getElementById("date");
@@ -20,11 +26,47 @@ document.addEventListener("DOMContentLoaded", function () {
     const timeSlotSelect = document.getElementById("time_slot");
 
     const timeSlots = {
-        AM: ["9am–11am", "10am–12pm", "11am–1pm"],
-        PM: ["2pm–4pm", "3pm–5pm", "4pm–6pm"]
+        AM: ["9am–1pm", "10am–2pm", "11am–3pm"],
+        PM: ["4pm-8pm", "5pm–9pm", "6pm–10pm"],
     };
 
     const dateStatuses = {};
+
+    function loadAvailabilityData() {
+        fetch("/calendar/availability")
+            .then((res) => res.json())
+            .then((data) => {
+                Object.entries(data).forEach(([date, status]) => {
+                    dateStatuses[date] = status;
+                });
+                renderCalendar();
+            })
+            .catch((err) => {
+                console.error("Failed to load availability:", err);
+                renderCalendar();
+            });
+    }
+
+    function applyStatusStyle(cell, status) {
+        cell.classList.remove("Available", "Half", "Nearly", "Full", "Closed");
+        switch (status) {
+            case "Available":
+                cell.classList.add("Available");
+                break;
+            case "Half":
+                cell.classList.add("Half");
+                break;
+            case "Nearly":
+                cell.classList.add("Nearly");
+                break;
+            case "Full":
+                cell.classList.add("Full");
+                break;
+            case "Closed":
+                cell.classList.add("Closed");
+                break;
+        }
+    }
 
     function toggleOtherInput(selectEl, inputEl) {
         if (!selectEl || !inputEl) return;
@@ -33,16 +75,23 @@ document.addEventListener("DOMContentLoaded", function () {
         if (selectEl.value !== "Others") inputEl.value = "";
     }
 
-    [[venueSelect, otherVenueInput], [themeMotifSelect, otherThemeMotifInput], [eventTypeSelect, otherEventTypeInput]].forEach(([select, input]) => {
-        select?.addEventListener("change", () => toggleOtherInput(select, input));
+    [
+        [venueSelect, otherVenueInput],
+        [themeMotifSelect, otherThemeMotifInput],
+        [eventTypeSelect, otherEventTypeInput],
+    ].forEach(([select, input]) => {
+        select?.addEventListener("change", () =>
+            toggleOtherInput(select, input)
+        );
         toggleOtherInput(select, input);
     });
 
     periodSelect?.addEventListener("change", function () {
         const selectedPeriod = this.value;
-        timeSlotSelect.innerHTML = '<option value="">Select a time slot</option>';
+        timeSlotSelect.innerHTML =
+            '<option value="">Select a time slot</option>';
         if (timeSlots[selectedPeriod]) {
-            timeSlots[selectedPeriod].forEach(slot => {
+            timeSlots[selectedPeriod].forEach((slot) => {
                 const option = document.createElement("option");
                 option.value = slot;
                 option.textContent = slot;
@@ -89,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
         agreeButton.addEventListener("click", () => {
             if (hasScrolledToBottom) {
                 agreementModal.classList.remove("show");
-                setTimeout(() => agreementModal.style.display = "none", 300);
+                setTimeout(() => (agreementModal.style.display = "none"), 300);
                 form?.classList.remove("form-disabled");
                 document.body.style.overflow = "auto";
             }
@@ -112,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         monthYear.textContent = new Intl.DateTimeFormat("en-US", {
             month: "long",
-            year: "numeric"
+            year: "numeric",
         }).format(currentDate);
 
         const firstDay = new Date(year, month, 1).getDay();
@@ -120,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         calendar.innerHTML = "";
 
-        ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach(day => {
+        ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach((day) => {
             const dayHeader = document.createElement("div");
             dayHeader.classList.add("calendar-day", "day-header");
             dayHeader.textContent = day;
@@ -134,8 +183,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         for (let day = 1; day <= lastDate; day++) {
-            const paddedMonth = String(month + 1).padStart(2, '0');
-            const paddedDay = String(day).padStart(2, '0');
+            const paddedMonth = String(month + 1).padStart(2, "0");
+            const paddedDay = String(day).padStart(2, "0");
             const dateKey = `${year}-${paddedMonth}-${paddedDay}`;
 
             const cell = document.createElement("div");
@@ -143,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
             cell.textContent = day;
             cell.setAttribute("data-date", dateKey);
 
-            if (dateStatuses[dateKey]) {
+            if (dateStatuses[dateKey]) {    
                 applyStatusStyle(cell, dateStatuses[dateKey]);
             }
 
@@ -154,11 +203,21 @@ document.addEventListener("DOMContentLoaded", function () {
     function applyStatusStyle(cell, status) {
         cell.classList.remove("Available", "Half", "Nearly", "Full", "Closed");
         switch (status) {
-            case "Available": cell.classList.add("Available"); break;
-            case "Half": cell.classList.add("Half"); break;
-            case "Nearly": cell.classList.add("Nearly"); break;
-            case "Full": cell.classList.add("Full"); break;
-            case "Closed": cell.classList.add("Closed"); break;
+            case "Available":
+                cell.classList.add("Available");
+                break;
+            case "Half":
+                cell.classList.add("Half");
+                break;
+            case "Nearly":
+                cell.classList.add("Nearly");
+                break;
+            case "Full":
+                cell.classList.add("Full");
+                break;
+            case "Closed":
+                cell.classList.add("Closed");
+                break;
         }
     }
 
@@ -174,14 +233,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function loadAvailabilityData() {
         fetch("/calendar/availability")
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
                 Object.entries(data).forEach(([date, status]) => {
                     dateStatuses[date] = status;
                 });
                 renderCalendar();
             })
-            .catch(err => {
+            .catch((err) => {
                 console.error("Failed to load availability:", err);
                 renderCalendar();
             });
@@ -191,7 +250,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     dateInput?.addEventListener("change", () => {
         const selected = dateInput.value;
-        if (dateStatuses[selected] === "Full" || dateStatuses[selected] === "Closed") {
+        if (
+            dateStatuses[selected] === "Full" ||
+            dateStatuses[selected] === "Closed"
+        ) {
             alert("This date is not available. Please choose another.");
             dateInput.value = "";
         }

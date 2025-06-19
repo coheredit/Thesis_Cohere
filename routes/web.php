@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\AvailabilityController;
 use App\Http\Controllers\Admin\AdminActivityController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\ReservationController as AdminReservationController;
+use App\Models\Inquiry;
+use Illuminate\Support\Facades\Log;
 
 // Patron Routes
 Route::name('patron.')->group(function () {
@@ -35,10 +37,11 @@ Route::name('patron.')->group(function () {
 
     // Payment (proof of receipt upload)
     Route::get('/p_payment', [PaymentController::class, 'index'])->name('p_payment');
-    Route::post('/p_payment', [PaymentController::class, 'store'])->name('payment.store');
+    // Route::post('/p_payment', [PaymentController::class, 'store'])->name('payment.store');
 
     // Placeholder views for other patron pages
-    Route::view('/p_vreserve', 'patron.p_vreserve')->name('p_vreserve');
+    Route::get('/p_vreserve', [ReservationController::class, 'fetch_vreserve'])->name('p_vreserve');
+    // Route::view('/p_vreserve', 'patron.p_vreserve')->name('p_vreserve');
     Route::view('/faq', 'patron.faq')->name('faq');
     Route::view('/guidelines', 'patron.guidelines')->name('guidelines');
 });
@@ -129,7 +132,40 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:admin'])->group(functi
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 // For Calendar Routes
-Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);
+// Route::get('/calendar/availability', [CalendarController::class, 'getAvailability']);
+
+Route::post('/fetch-reservation', [ReservationController::class, 'fetchReservation'])->name('fetch.reservation');
+
+Route::post('/submit-payment', [PaymentController::class, 'store'])->name('payment.store');
+
+Route::get('/calendar/availability', function () {
+    $inquiries = Inquiry::selectRaw('date, COUNT(*) as total')
+        ->groupBy('date')
+        ->get();
+
+    $availability = [];
+
+    Log::info($inquiries);
+
+    foreach ($inquiries as $inquiry) {
+        $count = $inquiry->total;
+        $date = $inquiry->date;
+
+        if ($count >= 4) {
+            $availability[$date] = 'Full';
+        } elseif ($count === 3) {
+            $availability[$date] = 'Nearly';
+        } elseif ($count === 2) {
+            $availability[$date] = 'Half';
+        } elseif ($count === 1) {
+            $availability[$date] = 'Available';
+        } else {
+            $availability[$date] = 'Available'; // Just in case
+        }
+    }
+
+    return response()->json($availability);
+});
 
 // Landing Page
 Route::view('/', 'home');

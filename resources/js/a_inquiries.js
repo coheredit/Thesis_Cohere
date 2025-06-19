@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     attachEventListeners();
 
     let selectedEmail = "";
+    let inquiryId;
 
     const replyModal = document.getElementById("replyModal");
     const replyOptions = document.getElementById("replyOptions");
@@ -74,6 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
             body: JSON.stringify({
                 email: selectedEmail,
                 message: message,
+                inquiry_id: inquiryId,
             }),
         })
             .then((res) => res.json())
@@ -90,6 +92,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".reply-btn").forEach((button) => {
         button.addEventListener("click", function () {
             const row = this.closest("tr");
+
+            inquiryId = row.dataset.inquiryId;
+
             const select = row.querySelector(".status-dropdown");
             const status = select ? select.value : "Pending";
 

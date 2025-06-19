@@ -5,17 +5,21 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Reservation;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
 {
     public function showReservationLogs()
     {
-        $reservations = \App\Models\Reservation::with('patron')
+        $reservations = Reservation::with('patron')
             ->select('*')
             ->latest()
             ->get();
-        return view('admin.reserve_logs', compact('reservations'));
+
+        $payment_logs = Payment::latest()->get();
+
+        return view('admin.reserve_logs', compact('reservations', 'payment_logs'));
     }
 
     public function getReservation($id)
@@ -47,7 +51,6 @@ class ReservationController extends Controller
             ];
 
             return response()->json($responseData);
-
         } catch (\Exception $e) {
             Log::error('Error fetching reservation: ' . $e->getMessage());
 
