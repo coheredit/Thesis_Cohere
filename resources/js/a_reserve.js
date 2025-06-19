@@ -571,6 +571,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     console.log("Event management system initialized successfully");
 
+    const dateUnavailableModal = document.getElementById(
+        "dateUnavailableModal"
+    );
+    const closeUnavailableModal = document.getElementById(
+        "closeUnavailableModal"
+    );
+
     let dateInput = document.getElementById("date");
 
     dateInput?.addEventListener("change", () => {
@@ -579,8 +586,19 @@ document.addEventListener("DOMContentLoaded", function () {
             dateStatuses[selected] === "Full" ||
             dateStatuses[selected] === "Closed"
         ) {
-            alert("This date is not available. Please choose another.");
+            // alert("This date is not available. Please choose another.");
+            dateUnavailableModal.style.display = "block";
             dateInput.value = "";
+        }
+    });
+
+    closeUnavailableModal?.addEventListener("click", () => {
+        dateUnavailableModal.style.display = "none";
+    });
+
+    window.addEventListener("click", function (event) {
+        if (event.target === dateUnavailableModal) {
+            dateUnavailableModal.style.display = "none";
         }
     });
 });

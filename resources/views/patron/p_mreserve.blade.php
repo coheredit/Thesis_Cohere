@@ -116,7 +116,7 @@
             <div class="reservation-container">
                 <h2>Let's bring your vision to life—just fill out the form.</h2>
 
-                @if(session('success'))
+                @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
 
@@ -206,8 +206,7 @@
 
                     <div class="form-group">
                         <label for="message">Other Request:<span>*</span></label>
-                        <textarea id="message" name="message" required
-                            placeholder="Please describe your specific requirements..."></textarea>
+                        <textarea id="message" name="message" required placeholder="Please describe your specific requirements..."></textarea>
                     </div>
 
                     <div class="form-group">
@@ -233,6 +232,14 @@
                     <p><span class="legend-box Closed"></span> Closed</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="dateUnavailableModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal" id="closeUnavailableModal">&times;</span>
+            <h3>Date Not Available</h3>
+            <p>Sorry, the selected date is already full or closed. Please choose another available date.</p>
         </div>
     </div>
 @endsection

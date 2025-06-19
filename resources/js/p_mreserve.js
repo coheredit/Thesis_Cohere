@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
             cell.textContent = day;
             cell.setAttribute("data-date", dateKey);
 
-            if (dateStatuses[dateKey]) {    
+            if (dateStatuses[dateKey]) {
                 applyStatusStyle(cell, dateStatuses[dateKey]);
             }
 
@@ -248,14 +248,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadAvailabilityData();
 
+    const dateUnavailableModal = document.getElementById(
+        "dateUnavailableModal"
+    );
+    const closeUnavailableModal = document.getElementById(
+        "closeUnavailableModal"
+    );
+
     dateInput?.addEventListener("change", () => {
         const selected = dateInput.value;
         if (
             dateStatuses[selected] === "Full" ||
             dateStatuses[selected] === "Closed"
         ) {
-            alert("This date is not available. Please choose another.");
+            // alert("This date is not available. Please choose another.");
+            dateUnavailableModal.style.display = "block";
             dateInput.value = "";
+        }
+    });
+
+    closeUnavailableModal?.addEventListener("click", () => {
+        dateUnavailableModal.style.display = "none";
+    });
+
+    window.addEventListener("click", function (event) {
+        if (event.target === dateUnavailableModal) {
+            dateUnavailableModal.style.display = "none";
         }
     });
 });
